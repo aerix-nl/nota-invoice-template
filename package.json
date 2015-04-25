@@ -4,6 +4,10 @@
   "authors": [
     "Felix Akkermans <felix@aerix.nl"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aerix-nl/nota-invoice-template"
+  },
   "description": "The invoice template used by Aerix (original Nota developer) in production.",
   "licence": "MIT",
   "devDependencies": {

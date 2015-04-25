@@ -1,3 +1,6 @@
+'use strict'
+
+# Workaround to suppress PhantomJS warnings in certain versions
 Function.prototype.bind ||= ( _this ) -> => @apply(_this, arguments)
 
 requirejs.config {
@@ -31,7 +34,6 @@ requirejs.config {
       deps: ['sightglass']
 }
 
-'use strict'
 # In the above config not all dependencies are declared because
 # some of them which this template depends on (e.g. Backbone, _)
 # have already been made available by Nota client earlier.
