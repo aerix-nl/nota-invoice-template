@@ -9,7 +9,7 @@ define dependencies, (Backbone, _, s, moment)->
 
   class Invoice extends Backbone.Model
 
-    language: (country)=>
+    language: (country)->
       return 'nl' unless country? # If no country is specified, we assume Dutch
       dutch = s.contains(country.toLowerCase(), "netherlands") or
               s.contains(country.toLowerCase(), "nederland")
@@ -89,7 +89,7 @@ define dependencies, (Backbone, _, s, moment)->
 
     documentMeta: (data)=>
       'id':               @fullID()
-      'documentName':     @documentName()
+      'documentTitle':     @documentName()
       'filesystemName':   @filesystemName()
 
     currency: (value, symbol = @get('currencySymbol')) =>

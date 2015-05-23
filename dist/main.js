@@ -1,4 +1,5 @@
 (function() {
+  'use strict';
   var base, dependencies;
 
   (base = Function.prototype).bind || (base.bind = function(_this) {
@@ -37,8 +38,6 @@
     }
   });
 
-  'use strict';
-
   dependencies = ['/nota.js', 'invoice', 'rivets', 'underscore.string', 'i18next', 'json!translation_nl', 'json!translation_en', 'moment', 'moment_nl'];
 
   define(dependencies, function(Nota, Invoice, rivets, s, i18n, nl, en, moment) {
@@ -72,11 +71,17 @@
     };
     _.extend(rivets.formatters, invoice);
     render = function(data) {
-      invoice.set(data, {
-        validate: true
-      });
-      i18n.setLng(invoice.language());
+      var e;
       Nota.trigger('template:render:start');
+      try {
+        invoice.set(data, {
+          validate: true
+        });
+      } catch (_error) {
+        e = _error;
+        throw new Error("Provided data is not a valid model: " + e.message);
+      }
+      i18n.setLng(invoice.language());
       rivets.bind(document.body, data);
       rivets.bind(document.head, data);
       return Nota.trigger('template:render:done');
@@ -90,7 +95,6 @@
       Nota.getData(render);
     }
     Nota.trigger('template:loaded');
-    this.invoice = invoice;
     return invoice;
   });
 

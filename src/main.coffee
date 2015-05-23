@@ -74,9 +74,12 @@ define dependencies, (Nota, Invoice, rivets, s, i18n, nl, en, moment) ->
   _.extend rivets.formatters, invoice
 
   render = (data)->
-    invoice.set(data, validate: true)
-    i18n.setLng invoice.language()
     Nota.trigger 'template:render:start'
+    try
+      invoice.set(data, validate: true)
+    catch e
+      throw new Error "Provided data is not a valid model: #{e.message}"
+    i18n.setLng invoice.language()
     rivets.bind document.body, data
     rivets.bind document.head, data
     Nota.trigger 'template:render:done'
@@ -94,7 +97,4 @@ define dependencies, (Nota, Invoice, rivets, s, i18n, nl, en, moment) ->
   # We're done with setup
   Nota.trigger 'template:loaded'
 
-  # Hang the invoice object in the global namespace so we can get to it when
-  # debugging and it for use in other modules
-  @invoice = invoice
   return invoice
