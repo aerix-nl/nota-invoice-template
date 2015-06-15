@@ -74,6 +74,7 @@ define dependencies, (Nota, Invoice, rivets, s, i18n, nl, en, moment) ->
   _.extend rivets.formatters, invoice
 
   render = (data)->
+    # Signal that we've started rendering
     Nota.trigger 'template:render:start'
     try
       invoice.set(data, validate: true)
@@ -82,9 +83,12 @@ define dependencies, (Nota, Invoice, rivets, s, i18n, nl, en, moment) ->
     i18n.setLng invoice.language()
     rivets.bind document.body, data
     rivets.bind document.head, data
+    # Signal that we're done with rendering and that capture can begin
     Nota.trigger 'template:render:done'
 
-  # Provide Nota client with a function to aquire meta data
+  # Provide Nota client with a function to aquire meta data from. This is used
+  # for e.g. providing the proposed filename of the PDF. See the Nota client
+  # API for documentation.
   Nota.setDocumentMeta -> invoice.documentMeta.apply(invoice, arguments)
 
   # Listen and wait for the server to inject data
@@ -94,7 +98,7 @@ define dependencies, (Nota, Invoice, rivets, s, i18n, nl, en, moment) ->
   # injection: we'll have to fetch it ourselves from the server
   else Nota.getData render
 
-  # We're done with setup
+  # Signal that we're done with setup and that we're ready to receive data
   Nota.trigger 'template:loaded'
 
   return invoice
