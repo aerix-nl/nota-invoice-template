@@ -8,7 +8,6 @@ requirejs.config {
   paths:
     # Vendor goodies this template depends on
     'jquery':             'jquery/dist/jquery'
-    'bootstrap':          'bootstrap/dist/bootstrap'
     'backbone':           'backbone/backbone'
     'underscore':         'underscore/underscore'
     'underscore.string':  'underscore.string/dist/underscore.string.min'
@@ -50,7 +49,7 @@ dependencies = [
 ]
 
 # We receive the dependencies as args in the same order as they are in the array
-define dependencies, (Nota, Invoice, rivets, s, i18n, nl, en, moment) ->
+define dependencies, (Nota, Invoice, rivets, s, i18n, nlMap, enMap, moment) ->
   # Signal begin of setup
   Nota.trigger 'template:init'
 
@@ -58,8 +57,8 @@ define dependencies, (Nota, Invoice, rivets, s, i18n, nl, en, moment) ->
    
   i18n.init {
     resStore:
-      en: { translation: en }
-      nl: { translation: nl }
+      en: { translation: enMap }
+      nl: { translation: nlMap }
 
     missingKeyHandler: (lng, ns, key, defaultValue, lngs) ->
       throw new Error arguments
@@ -81,6 +80,7 @@ define dependencies, (Nota, Invoice, rivets, s, i18n, nl, en, moment) ->
     catch e
       throw new Error "Provided data is not a valid model: #{e.message}"
     i18n.setLng invoice.language()
+    console.log invoice.language()
     rivets.bind document.body, data
     rivets.bind document.head, data
     # Signal that we're done with rendering and that capture can begin

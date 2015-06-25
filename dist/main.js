@@ -14,7 +14,6 @@
     baseUrl: '../bower_components/',
     paths: {
       'jquery': 'jquery/dist/jquery',
-      'bootstrap': 'bootstrap/dist/bootstrap',
       'backbone': 'backbone/backbone',
       'underscore': 'underscore/underscore',
       'underscore.string': 'underscore.string/dist/underscore.string.min',
@@ -40,17 +39,17 @@
 
   dependencies = ['/nota.js', 'invoice', 'rivets', 'underscore.string', 'i18next', 'json!translation_nl', 'json!translation_en', 'moment', 'moment_nl'];
 
-  define(dependencies, function(Nota, Invoice, rivets, s, i18n, nl, en, moment) {
+  define(dependencies, function(Nota, Invoice, rivets, s, i18n, nlMap, enMap, moment) {
     var invoice, render;
     Nota.trigger('template:init');
     invoice = new Invoice();
     i18n.init({
       resStore: {
         en: {
-          translation: en
+          translation: enMap
         },
         nl: {
-          translation: nl
+          translation: nlMap
         }
       },
       missingKeyHandler: function(lng, ns, key, defaultValue, lngs) {
@@ -82,6 +81,7 @@
         throw new Error("Provided data is not a valid model: " + e.message);
       }
       i18n.setLng(invoice.language());
+      console.log(invoice.language());
       rivets.bind(document.body, data);
       rivets.bind(document.head, data);
       return Nota.trigger('template:render:done');

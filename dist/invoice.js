@@ -30,7 +30,10 @@
       }
 
       Invoice.prototype.language = function(country) {
-        var dutch;
+        var dutch, ref;
+        if (country == null) {
+          country = (ref = this.get('client')) != null ? ref.country : void 0;
+        }
         if (country == null) {
           return 'nl';
         }
@@ -43,6 +46,10 @@
       };
 
       Invoice.prototype.isInternational = function(country) {
+        var ref;
+        if (country == null) {
+          country = (ref = this.get('client')) != null ? ref.country : void 0;
+        }
         return this.language(country) !== 'nl';
       };
 
@@ -200,7 +207,7 @@
           throw new Error("At least the organization name or contact person name must be provided");
         }
         postalCode = data.client.postalcode;
-        if ((postalCode.length != null) && !this.isInternational(data.client.country)) {
+        if (((postalCode != null ? postalCode.length : void 0) != null) && !this.isInternational(data.client.country)) {
           postalCode = s.clean(postalCode);
           if (postalCode.length < 6) {
             throw new Error("Postal code must be at least 6 characters long");

@@ -10,12 +10,16 @@ define dependencies, (Backbone, _, s, moment)->
   class Invoice extends Backbone.Model
 
     language: (country)->
+      if not country? then country = @get('client')?.country
+
       return 'nl' unless country? # If no country is specified, we assume Dutch
       dutch = s.contains(country.toLowerCase(), "netherlands") or
               s.contains(country.toLowerCase(), "nederland")
       if dutch then return 'nl' else 'en'
 
     isInternational: (country)=>
+      if not country? then country = @get('client')?.country
+
       @language(country) isnt 'nl'
 
     isNaturalInt: (int, attr)->
@@ -129,7 +133,7 @@ define dependencies, (Backbone, _, s, moment)->
       postalCode = data.client.postalcode
       # Postal code is optional, for clients where it is still unknown, but when
       # defined, Dutch postal codes are only valid when 6 characters long.
-      if postalCode.length? and not @isInternational(data.client.country)
+      if postalCode?.length? and not @isInternational(data.client.country)
         postalCode = s.clean(postalCode)
         if postalCode.length < 6
           throw new Error "Postal code must be at least 6 characters long"

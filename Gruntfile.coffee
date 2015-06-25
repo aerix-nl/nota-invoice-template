@@ -1,9 +1,10 @@
-module.exports = (grunt) ->
+module.exports = ( grunt ) ->
+  require('load-grunt-tasks')(grunt)
   grunt.initConfig
-    pkg: grunt.file.readJSON("package.json")
+    pkg: grunt.file.readJSON('package.json')
 
     coffee:
-      compile:
+      source:
         files: [
           expand: true
           cwd: 'src'
@@ -13,36 +14,24 @@ module.exports = (grunt) ->
         ]
 
     sass:
-      compile:
+      source:
         options:
-          compass: true
+          sourceMap: true
         files: [
           expand: true
           cwd: 'stylesheets'
-          src: ['**/*.scss']
+          src: ['**/*.sass', '**/*.scss']
           dest: 'stylesheets'
           ext: '.css'
         ]
 
-    # cjsx:
-    #   compile:
-    #     expand: true
-    #     sourceMap: true
-    #     cwd: 'src'
-    #     src: ['**/*.cjsx'],
-    #     dest: 'dist',
-    #     ext: '.js'
-
-    # Keep an eye on filesystem changes and rebuild
     watch:
       all:
-        files: ['src/**/*.cjsx', 'src/**/*.coffee', 'stylesheets/**/*.scss']
+        files: ['src/**/*.coffee', 'stylesheets/**/*.sass', 'stylesheets/**/*.scss']
         tasks: ['build']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
-  grunt.loadNpmTasks 'grunt-contrib-sass'
-  grunt.loadNpmTasks 'grunt-coffee-react'
   grunt.loadNpmTasks 'grunt-contrib-watch'
 
   grunt.registerTask 'default', ['watch']
-  grunt.registerTask 'build', ['coffee:compile', 'sass:compile'] #'cjsx:compile'
+  grunt.registerTask 'build',   ['coffee:source', 'sass:source']
