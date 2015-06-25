@@ -80,7 +80,6 @@ define dependencies, (Nota, Invoice, rivets, s, i18n, nlMap, enMap, moment) ->
     catch e
       throw new Error "Provided data is not a valid model: #{e.message}"
     i18n.setLng invoice.language()
-    console.log invoice.language()
     rivets.bind document.body, data
     rivets.bind document.head, data
     # Signal that we're done with rendering and that capture can begin

@@ -81,7 +81,6 @@
         throw new Error("Provided data is not a valid model: " + e.message);
       }
       i18n.setLng(invoice.language());
-      console.log(invoice.language());
       rivets.bind(document.body, data);
       rivets.bind(document.head, data);
       return Nota.trigger('template:render:done');
