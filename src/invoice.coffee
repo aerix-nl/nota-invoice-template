@@ -81,7 +81,7 @@ define dependencies, (Backbone, _, s, moment)->
     # Used for the html head title element
     documentName: => 'Invoice '+ @fullID()
 
-    filesystemName: =>
+    filename: =>
       project = @get('projectName')
       customer = @get('client').organization || @get('client').contactPerson
       customer = customer.replace /\s/g, '-' # Spaces to dashes using regex
@@ -92,9 +92,9 @@ define dependencies, (Backbone, _, s, moment)->
         "#{@fullID()}_#{customer}.pdf"
 
     documentMeta: (data)=>
-      'id':               @fullID()
-      'documentTitle':     @documentName()
-      'filesystemName':   @filesystemName()
+      'id':             @fullID()
+      'documentTitle':  @documentName()
+      'filename':       @filename()
 
     currency: (value, symbol = @get('currencySymbol')) =>
       parsed = parseInt(value)

@@ -15,7 +15,7 @@
         this.validate = bind(this.validate, this);
         this.currency = bind(this.currency, this);
         this.documentMeta = bind(this.documentMeta, this);
-        this.filesystemName = bind(this.filesystemName, this);
+        this.filename = bind(this.filename, this);
         this.documentName = bind(this.documentName, this);
         this.vatPercentage = bind(this.vatPercentage, this);
         this.VAT = bind(this.VAT, this);
@@ -139,7 +139,7 @@
         return 'Invoice ' + this.fullID();
       };
 
-      Invoice.prototype.filesystemName = function() {
+      Invoice.prototype.filename = function() {
         var customer, project;
         project = this.get('projectName');
         customer = this.get('client').organization || this.get('client').contactPerson;
@@ -156,7 +156,7 @@
         return {
           'id': this.fullID(),
           'documentTitle': this.documentName(),
-          'filesystemName': this.filesystemName()
+          'filename': this.filename()
         };
       };
 

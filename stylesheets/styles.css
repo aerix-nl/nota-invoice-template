@@ -7,7 +7,7 @@ body {
   color: #1A2C33 !important;
   margin: 35px auto;
   width: 210mm;
-  min-height: 297mm;
+  min-height: 287mm;
   padding-bottom: 3cm;
   box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
@@ -107,7 +107,7 @@ footer {
   bottom: 0;
   font-size: 0.8em;
   line-height: 1.2em;
-  margin: 0 2cm 4mm;
+  margin: 0 2cm 1cm;
   padding-top: 1mm;
   position: absolute;
   width: auto !important;

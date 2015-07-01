@@ -9,7 +9,7 @@ $tertiaryBlue: #1A2C33
 
 $textColor: $tertiaryBlue
 
-$fontStack: "DINPro", "Mako", "Kreon", "Helvetica Neue", Helvetica, 'Trebuchet MS', Arial, sans-serif
+$fontStack: "DINPro", "Mako", "Ropa Sans", "Abel", "Kreon", "Helvetica Neue", Helvetica, 'Trebuchet MS', Arial, sans-serif
 html
   background-color: lightgrey
 
@@ -19,7 +19,7 @@ body
   margin: 35px auto
   width: 210mm
   // height: 297mm // Actual A4-portrait height, but we want to allow multiple pages, so no limit
-  min-height: 297mm
+  min-height: 287mm //Bug: 297mm makes it overflow to 2 pages. 287mm is what PhantomJS considers A4
   padding-bottom: 3cm
   box-shadow: 0 0 30px 0 transparentize(black, 0.5)
   box-sizing: border-box
@@ -145,7 +145,7 @@ footer
   bottom: 0
   font-size: 0.8em
   line-height: 1.2em
-  margin: 0 2cm 4mm
+  margin: 0 2cm 1cm
   padding-top: 1mm
   position: absolute
   width: auto !important
