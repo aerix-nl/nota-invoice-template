@@ -18,15 +18,5 @@
     "momentjs": "~2.9.0",
     "i18next": "~1.8.0",
     "backbone": "~1.1.2"
-  },
-  "nota": {
-    "modelDriven": true,
-    "exampleData": "json/preview.json",
-    "defaultFilename": "invoice.pdf",
-    "paperSize": {
-      "format": "A4",
-      "orientation": "portrait",
-      "border": "0cm"
-    }
   }
 }
