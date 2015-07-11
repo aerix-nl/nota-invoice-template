@@ -12,7 +12,7 @@ body {
   box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   position: relative;
-  font-family: "DINPro", "Mako", "Kreon", "Helvetica Neue", Helvetica, "Trebuchet MS", Arial, sans-serif; }
+  font-family: "DINPro", "Mako", "Ropa Sans", "Abel", "Kreon", "Helvetica Neue", Helvetica, "Trebuchet MS", Arial, sans-serif; }
 
 a, .link {
   color: #259CCF !important; }
@@ -38,7 +38,7 @@ div#envelope-window {
   left: 21mm;
   position: absolute;
   top: 46mm;
-  font-family: "DINPro", "Mako", "Kreon", "Helvetica Neue", Helvetica, "Trebuchet MS", Arial, sans-serif; }
+  font-family: "DINPro", "Mako", "Ropa Sans", "Abel", "Kreon", "Helvetica Neue", Helvetica, "Trebuchet MS", Arial, sans-serif; }
   div#envelope-window span#retour-line {
     border-bottom: 1px solid black;
     display: block;
