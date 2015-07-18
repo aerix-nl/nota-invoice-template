@@ -37,7 +37,7 @@
     }
   });
 
-  dependencies = ['/nota.js', 'invoice', 'rivets', 'underscore.string', 'i18next', 'json!translation_nl', 'json!translation_en', 'moment', 'moment_nl'];
+  dependencies = ['/nota/lib/client.js', 'invoice', 'rivets', 'underscore.string', 'i18next', 'json!translation_nl', 'json!translation_en', 'moment', 'moment_nl'];
 
   define(dependencies, function(Nota, Invoice, rivets, s, i18n, nlMap, enMap, moment) {
     var invoice, render;
@@ -88,11 +88,7 @@
     Nota.setDocumentMeta(function() {
       return invoice.documentMeta.apply(invoice, arguments);
     });
-    if (Nota.phantomRuntime) {
-      Nota.on('data:injected', render);
-    } else {
-      Nota.getData(render);
-    }
+    Nota.getData(render);
     Nota.trigger('template:loaded');
     return invoice;
   });

@@ -37,7 +37,7 @@ requirejs.config {
 # some of them which this template depends on (e.g. Backbone, _)
 # have already been made available by Nota client earlier.
 dependencies = [
-  '/nota.js',
+  '/nota/lib/client.js',
   'invoice',
   'rivets',
   'underscore.string',
@@ -90,12 +90,8 @@ define dependencies, (Nota, Invoice, rivets, s, i18n, nlMap, enMap, moment) ->
   # API for documentation.
   Nota.setDocumentMeta -> invoice.documentMeta.apply(invoice, arguments)
 
-  # Listen and wait for the server to inject data
-  if Nota.phantomRuntime then Nota.on 'data:injected', render
-
-  # Unless we're not running in PhantomJS and we'll never receive an
-  # injection: we'll have to fetch it ourselves from the server
-  else Nota.getData render
+  # We'll have to our data ourselves from the server
+  Nota.getData render
 
   # Signal that we're done with setup and that we're ready to receive data
   Nota.trigger 'template:loaded'
