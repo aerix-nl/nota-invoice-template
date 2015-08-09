@@ -89,7 +89,9 @@
       return invoice.documentMeta.apply(invoice, arguments);
     });
     Nota.getData(render);
+    Nota.on('data:injected', render);
     Nota.trigger('template:loaded');
+    window.render = render;
     return invoice;
   });
 

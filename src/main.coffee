@@ -93,7 +93,11 @@ define dependencies, (Nota, Invoice, rivets, s, i18n, nlMap, enMap, moment) ->
   # We'll have to our data ourselves from the server
   Nota.getData render
 
+  # Also listen for data being set
+  Nota.on 'data:injected', render
+
   # Signal that we're done with setup and that we're ready to receive data
   Nota.trigger 'template:loaded'
 
+  window.render = render
   return invoice
