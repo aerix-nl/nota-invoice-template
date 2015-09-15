@@ -2,136 +2,148 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>{ meta | documentName }</title>
+	<title>Aerix invoice template</title>
 
   <link href="stylesheets/styles.css" rel="stylesheet" type="text/css" media="all">
 	<link href="stylesheets/preview.css" rel="stylesheet" type="text/css" media="screen">
 
-	<script data-main='dist/main' src='nota/vendor/requirejs/require.js'></script>
+	<script src='bower_components/requirejs/require.js' data-main='dist/main'></script>
 	<!-- Please read the Nota README.md on how to turn this into a PDF or preview it -->
 </head>
 <body>
 	
-	<img id="logo" src="images/aerix-logo.svg" alt="Aerix company logo" />
-	<div id="company-info">
-		<p>
-			<strong class="company-fullname">{ | companyFull }</strong><br>
-			<span class="street-address">{ origin.address }</span><br>
-			<span class="post-address">{ origin.postalcode }</span>,
-			<span class="place">{ origin.town }</span><br>
-			<span class="country">{ origin.country }</span><br>
-			<a class="email" rv-href="origin.email|email">{ origin.email }</a><br>
-			<a class="website" rv-href="origin.website|website">{ origin.website }</a>
-		</p>
-		<p id="accounts">
-			IBAN: <span class="iban">{ origin.iban }</span><br>
-			Bank: <span id="bank-name">{ origin.bank }</span><br>
-			BIC/SWIFT: <span id="bic">{ origin.bic }</span><br>
-			BTW:	<span id="vat-number">{ origin.vat }</span><br>
-			KvK: <span id="kvk">{ origin.kvk }</span><br>
-		</p>
-	</div>
-	<div id="envelope-window">
-		<span id="retour-line">
-			<strong class="company-fullname">{ origin | companyFull }</strong>, 
-			<span class="street-address">{ origin.address }</span>,
-			<span class="post-address">{ origin.postalcode }</span>
-			<span class="place">{ origin.town }</span>,
-			<span class="country">{ origin.country }</span>
-		</span>
-
-		<p id="client-block">
-			<strong id="organization"	rv-show="client.organization">
-				{ client.organization }
-			</strong><br>
-			<span id="contact-person"	rv-show="client.contactPerson">
-				{ client.contactPerson }
-			</span><br>
-			<span id="address"			rv-show="client.address">{ client.address }</span><br>
-			<span id="postal-code" 	rv-show="client.postalcode">{ client.postalcode }</span><span id="place" 												 rv-show="client.town">, { client.town }</span><br>
-			<span id="country" 			rv-show="client.country | isInternational">{ client.country }</span>
-		</p>
-	</div>
-	<div id="invoice-meta">
-		<span class="muted">{ 'invoice-number' | i18n | capitalize }</span>
-		<h3 id="invoice-id">{ | fullID }</h3>
-		<table>
-			<tr>
-				<td class="muted">{ 'invoice-date' 	| i18n | capitalize }</td>
-				<td class="muted">{ 'valid-through' | i18n | capitalize }</td>
-			</tr>
-			<tr>
-				<td id="invoice-date">
-					{ meta.date | invoiceDate client.country }
-				</td>
-				<td id="expiration-date">
-					{ meta.date | expiryDate validityPeriod client.country }
-				</td>
-			</tr>
-		</table>
-	</div>
-	<div id="invoice-body">
-		<p class="opening">
-			<span>{ 'dear' 		| i18n | capitalize}</span>
-			<span>{ client 		| clientDisplay }</span>
-			<span>{ 'hereby' 	| i18n }</span>
-			<span>{ 'service' | i18n invoiceItems 'length' }</span>:
-		</p>
-		<table>
-			<colgroup>
-			   <col span="1" class="servicename">
-			   <col span="1" class="price">
-			   <col span="1" class="quantity">
-			   <col span="1" class="subtotal">
-			</colgroup>
-
-			<thead>
-				<tr><th colspan="4" class="project-name">{ projectName }:</th></tr>
-				<tr class="table-meta">
-					<th>{ 'service' 	| i18n | capitalize }</th>
-					<th>{ 'price' 		| i18n | capitalize }</th>
-					<th>{ 'quantity' 	| i18n | capitalize }</th>
-					<th>{ 'amount' 		| i18n | capitalize }</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr class="item" rv-each-item="invoiceItems">
-					<td class="description"	>{ item.description }</td>
-					<td class="price"				>{ item.price | currency }</td>
-					<td class="quantity"		>{ item.quantity }</td>
-					<td class="subtotal" 		>{ item | itemSubtotal | currency }</td>
-				</tr>
-			</tbody>
-
-			<tfoot>
-				<tr>
-					<td colspan="3">{ 'subtotal' | i18n | capitalize}</td>
-					<td class="subtotal">{ | invoiceSubtotal | currency }</td>
-				</tr>
-				<tr>
-					<td colspan="3">{ 'vat' | i18n } (<span class="vat-percentage">{ | vatPercentage }</span>%)</td>
-					<td class="vat">{ | VAT | currency }</td>
-				</tr>
-				<tr><td colspan="3">{ 'total' | i18n | capitalize }</td>
-				<td class="total">{ | invoiceTotal | currency }</td></tr>
-			</tfoot>
-		</table>
-		<span id="closing">
+	<!-- The Handlebars.js template is rendered and reinserted here by the main.js script -->
+	<script id="template" type="text/x-handlebars-template">
+		<img id="logo" src="images/aerix-logo.svg" alt="Aerix company logo" />
+		<div id="company-info">
 			<p>
-				{ 'closing-transfer' | i18n } <strong>{ | invoiceTotal | currency}</strong> { 'closing-to-account' | i18n } <strong>{ origin.iban }</strong>{ 'closing-denoting' | i18n } <strong>{ | fullID }</strong>.
-			</p><p>
-				{ 'closing-questions' | i18n } <a class="email" rv-href="origin.email|email">{ origin.email }</a>.
+				<strong class="company-fullname">{{ companyFull }}</strong><br>
+				<span class="street-address">{{ origin.address }}</span><br>
+				<span class="post-address">{{ origin.postalcode }}</span>,
+				<span class="place">{{ origin.town }}</span><br>
+				<span class="country">{{ origin.country }}</span><br>
+				<a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a><br>
+				<a class="website" href="https://{{ origin.website }}">{{ origin.website }}</a>
 			</p>
-		</span>
-	</div>
-	<footer class="row-fluid">
-		<p class="span6">
-			{ 'expiry-start' | i18n } <span class="validity-period">{ validityPeriod }</span> { 'expiry-please' | i18n } <span id="expiration-date"></span> { 'expiry-transfer' | i18n } <span class="iban">{ origin.iban }</span> { 'expiry-registered' | i18n } <span class="company-name">{ origin.company }</span> { 'expiry-denoting' | i18n }.
-		</p>
-		<p class="span5 offset1">
-			{ 'terms' | i18n }: <a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
-		</p>
-	</footer>
+			<p id="accounts">
+				IBAN: 							<span class="iban">{{ origin.iban }}</span><br>
+				{{i18n 'bank' }}: 	<span id="bank-name">{{ origin.bank }}</span><br>
+				BIC/SWIFT: 					<span id="bic">{{ origin.bic }}</span><br>
+				{{i18n 'vat' }}:		<span id="vat-number">{{ origin.vat }}</span><br>
+				{{i18n 'coc' }}: 		<span id="kvk">{{ origin.kvk }}</span><br>
+			</p>
+		</div>
+
+		<div id="envelope-window">
+			<span id="retour-line">
+				<strong class="company-fullname">{{ companyFull }}</strong>, 
+				<span class="street-address">{{ origin.address }}</span>,
+				<span class="post-address">{{ origin.postalcode }}</span>
+				<span class="place">{{ origin.town }}</span>,
+				<span class="country">{{ origin.country }}</span>
+			</span>
+
+			<p id="client-block">
+				{{#if client.organization}}
+				<strong id="organization">{{ client.organization }}</strong><br>
+				{{/if}}{{#if client.contactPerson}}
+				<span id="contact-person">{{ client.contactPerson }}</span><br>
+				{{/if}}{{#if client.address}}
+				<span id="address">{{ client.address }}</span><br>
+				{{/if}}{{#if client.postalcode}}
+				<span id="postal-code">{{ client.postalcode }}</span>
+				{{/if}}{{#if client.town}}
+				<span id="place">, {{ client.town }}</span><br>
+				{{/if}}{{#if isInternational}}
+				<span id="country">{{ client.country }}</span>
+				{{/if}}
+			</p>
+		</div>
+
+		<div id="invoice-meta">
+			<span class="muted">{{i18n 'invoice-number' }}</span>
+			<h3 id="invoice-id">{{ fullID }}</h3>
+			<table>
+				<tr>
+					<td class="muted">{{i18n 'invoice-date' }}</td>
+					<td class="muted">{{i18n 'valid-through' }}</td>
+				</tr>
+				<tr>
+					<td id="invoice-date">{{ invoiceDate }}</td>
+					<td id="expiration-date">{{ expiryDate }}</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="invoice-body">
+			<p class="opening">
+				<span>{{ i18n 'dear' }}</span>
+				<span>{{ clientDisplay }}</span>
+				<span>{{ i18n 'hereby'  }}</span>
+				<span>{{ i18n 'service' invoiceItems 'length' 'lowercase' }}</span>:
+			</p>
+
+			<table>
+				<colgroup>
+				   <col span="1" class="servicename">
+				   <col span="1" class="price">
+				   <col span="1" class="quantity">
+				   <col span="1" class="subtotal">
+				</colgroup>
+
+				<thead>
+					<tr><th colspan="4" class="project-name">{{ projectName }}:</th></tr>
+					<tr class="table-meta">
+						<th>{{ i18n 'service' }}</th>
+						<th>{{ i18n 'price' }}</th>
+						<th>{{ i18n 'quantity' }}</th>
+						<th>{{ i18n 'amount' }}</th>
+					</tr>
+				</thead>
+
+				<tbody>
+				{{#each invoiceItems}}
+					<tr class="item">
+						<td>{{ 					description}}</td>
+						<td>{{ currency price }}</td>
+						<td>{{ 					quantity}}</td>
+						<td>{{ currency subtotal }}</td>
+					</tr>
+				{{/each}}
+				</tbody>
+
+				<tfoot>
+					<tr>
+						<td colspan="3">{{ i18n 'subtotal' }}</td>
+						<td class="subtotal">{{ currency invoiceSubtotal }}</td>
+					</tr>
+					<tr>
+						<td colspan="3">{{ i18n 'vat' }}
+							<span class="vat-percentage muted">({{ vatPercentage }}%)</span>
+						</td>
+						<td class="vat">{{ currency VAT }}</td>
+					</tr>
+					<tr>
+						<td colspan="3">{{ i18n 'total' }}</td>
+						<td class="total">{{ currency invoiceTotal }}</td>
+					</tr>
+				</tfoot>
+			</table>
+
+			<span id="closing">
+				<p>
+					{{ i18n 'closing-expiry-start' }} {{ validityPeriod }} {{ i18n 'closing-expiry-please' }} <strong>{{ expiryDate }}</strong> {{ i18n 'closing-transfer' }} <strong>{{ currency invoiceTotal }}</strong> {{ i18n 'closing-to-account' }} <strong>{{ origin.iban }}</strong>{{ i18n 'closing-denoting' }} <strong>{{ fullID }}</strong>{{ i18n 'closing-thanks'}}
+				</p><p>
+					{{ i18n 'closing-questions' }} <a class="email" rv-href="origin.email|email">{{ origin.email }}</a>.
+				</p>
+			</span>
+		</div>
+
+		<footer>
+			<p>
+				{{ i18n 'terms' }}: <a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
+			</p>
+		</footer>
+	</script>
 </body>
 </html>

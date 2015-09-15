@@ -1,0 +1,27 @@
+{
+  "invoice-number":         "Factuurnummer",
+  "invoice-date":           "Factuurdatum",
+  "valid-through":          "Vervaldatum",
+  "dear":                   "Beste",
+  "hereby":                 ", hierbij de factuur voor de volgende geleverde",
+  "service":                "Dienst",
+  "service_plural":         "Diensten",
+  "price":                  "Prijs",
+  "quantity":               "Aantal",
+  "amount":                 "Bedrag",
+  "subtotal":               "Subtotaal",
+  "vat":                    "BTW",
+  "coc":                    "KvK",
+  "bank":                   "Bank",
+  "total":                  "Totaal",
+
+  "closing-expiry-start":   "Deze factuur vervalt",
+  "closing-expiry-please":  "dagen na factuurdatum. Wij verzoeken u hierbij vriendelijk voor",
+  "closing-transfer":       "het totaalbedrag van",
+  "closing-to-account":     "over te maken naar rekeningnummer",
+  "closing-denoting":       ", onder vermelding van het factuurnummer",
+  "closing-questions":      "Als u vragen of opmerkingen heeft over deze factuur kunt u uiteraard altijd contact met ons opnemen via",
+  "closing-thanks":         " in de beschrijving. Dank u wel!",
+
+  "terms":                  "Deze factuur is opgesteld in overeenkomst met onze algemene voorwaarden"
+}

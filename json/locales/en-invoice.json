@@ -1,0 +1,27 @@
+{
+  "invoice-number":         "Invoice number",
+  "invoice-date":           "Invoice date",
+  "valid-through":          "Valid through",
+  "dear":                   "Dear",
+  "hereby":                 ", hereby the invoice for the following delivered",
+  "service":                "Service",
+  "service_plural":         "Services",
+  "price":                  "Price",
+  "quantity":               "Quantity",
+  "amount":                 "Amount",
+  "subtotal":               "Subtotal",
+  "vat":                    "VAT",
+  "coc":                    "CoC",
+  "bank":                   "Bank",
+  "total":                  "Total",
+
+  "closing-expiry-start":   "This invoice expires",
+  "closing-expiry-please":  "days after the invoice date. We kindly ask you to transfer before",
+  "closing-transfer":       "the total sum of",
+  "closing-to-account":     "to bank account",
+  "closing-denoting":       ", noting the invoice number",
+  "closing-questions":      "In case you have any questions or comments about this invoice, please don't hesitate to get in touch with us at",
+  "closing-thanks":         " in the description. Thank you!",
+
+  "terms":                  "This invoice has been set up in compliance with our general terms and conditions. These are available (in Dutch) at"
+}
