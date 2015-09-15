@@ -1,0 +1,34 @@
+{
+  "invoice":                "invoice",
+  "quotation":              "quoatation",
+  "number":                 "number",
+  "date":                   "date",
+  "valid-through":          "Valid through",
+  "opening-dear":           "Dear",
+  "opening-hereby":         "hereby the",
+  "opening-for":            "for the following delivered",
+  "service":                "Service",
+  "service_plural":         "Services",
+  "price":                  "Price",
+  "quantity":               "Quantity",
+  "amount":                 "Amount",
+  "subtotal":               "Subtotal",
+  "vat":                    "VAT",
+  "coc":                    "CoC",
+  "bank":                   "Bank",
+  "total":                  "Total",
+
+  "this":                   "This",
+  "expires":                "expires",
+  "days-after":             "days after the",
+
+  "closing-expiry-please":  "We kindly ask you to transfer before",
+  "closing-transfer":       "the total sum of",
+  "closing-to-account":     "to bank account",
+  "closing-denoting":       "noting the",
+  "closing-thanks":         "in the description. Thank you!",
+  "closing-questions":      "In case you have any questions or comments about",
+  "closing-contact":        "please don't hesitate to get in touch with us at",
+
+  "terms":                  "has been set up in compliance with our general terms and conditions. These are available (in Dutch) at"
+}

@@ -1,43 +1,85 @@
 (function() {
   var dependencies,
-    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    hasProp = {}.hasOwnProperty;
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  dependencies = ['backbone', 'underscore', 'underscore.string', 'moment', 'moment_nl'];
+  dependencies = ['underscore', 'underscore.string', 'moment', 'moment_nl'];
 
-  define(dependencies, function(Backbone, _, s, moment) {
+  define(dependencies, function(_, s, moment) {
     var Invoice;
-    return Invoice = (function(superClass) {
-      extend(Invoice, superClass);
-
-      function Invoice() {
+    Invoice = (function() {
+      function Invoice(data) {
         this.validate = bind(this.validate, this);
         this.currency = bind(this.currency, this);
-        this.documentMeta = bind(this.documentMeta, this);
-        this.filename = bind(this.filename, this);
-        this.documentName = bind(this.documentName, this);
-        this.vatPercentage = bind(this.vatPercentage, this);
+        this.VATrate = bind(this.VATrate, this);
         this.VAT = bind(this.VAT, this);
         this.invoiceTotal = bind(this.invoiceTotal, this);
         this.invoiceSubtotal = bind(this.invoiceSubtotal, this);
         this.expiryDate = bind(this.expiryDate, this);
         this.invoiceDate = bind(this.invoiceDate, this);
         this.fullID = bind(this.fullID, this);
-        this.companyFull = bind(this.companyFull, this);
         this.isInternational = bind(this.isInternational, this);
-        return Invoice.__super__.constructor.apply(this, arguments);
+        this.fiscalType = bind(this.fiscalType, this);
+        this.companyFull = bind(this.companyFull, this);
+        this.filename = bind(this.filename, this);
+        this.documentName = bind(this.documentName, this);
+        this.documentMeta = bind(this.documentMeta, this);
+        _.extend(this, data);
       }
 
+      Invoice.prototype.documentMeta = function(data) {
+        return {
+          'id': this.fullID(),
+          'documentTitle': this.documentName(),
+          'filename': this.filename()
+        };
+      };
+
+      Invoice.prototype.documentName = function() {
+        return s.capitalize(this.fiscalType() + ' ' + this.fullID());
+      };
+
+      Invoice.prototype.filename = function() {
+        var client, extension, filename, project;
+        client = this.clientDisplay();
+        client = client.replace(/\s/g, '-');
+        filename = (this.fullID()) + "_" + client;
+        extension = ".pdf";
+        if (this.projectName != null) {
+          project = this.projectName.replace(/\s/g, '-');
+          filename = filename + ("_" + project);
+        }
+        if (this.meta.period != null) {
+          filename = filename + ("_P" + period);
+        }
+        if (this.isQuotation()) {
+          filename = filename + "_O";
+        }
+        return filename + extension;
+      };
+
+      Invoice.prototype.companyFull = function() {
+        return this.origin.company + ' ' + this.origin.lawform;
+      };
+
+      Invoice.prototype.fiscalType = function() {
+        if (this.meta.type === 'quotation' || this.meta.type === 'invoice') {
+          return this.meta.type;
+        } else if (this.meta.type == null) {
+          return 'invoice';
+        } else {
+          throw new Error('Unsupported template fiscal type. The model "meta.type" should be either invoice, quotation or undefined (defaults to invoice).');
+        }
+      };
+
       Invoice.prototype.language = function(country) {
-        var dutch, ref;
+        var dutch;
         if (country == null) {
-          country = (ref = this.get('client')) != null ? ref.country : void 0;
+          country = this.client.country;
         }
         if (country == null) {
           return 'nl';
         }
-        dutch = s.contains(country.toLowerCase(), "netherlands") || s.contains(country.toLowerCase(), "nederland");
+        dutch = s.contains(country.toLowerCase(), "netherlands") || s.contains(country.toLowerCase(), "nederland") || s.contains(country.toLowerCase(), "holland") || country.trim().toLowerCase() === "nl";
         if (dutch) {
           return 'nl';
         } else {
@@ -46,9 +88,8 @@
       };
 
       Invoice.prototype.isInternational = function(country) {
-        var ref;
         if (country == null) {
-          country = (ref = this.get('client')) != null ? ref.country : void 0;
+          country = this.client.country;
         }
         return this.language(country) !== 'nl';
       };
@@ -61,12 +102,8 @@
           throw new Error(attr + " must be a positive integer");
         }
         if (parseInt(int, 10) !== parseFloat(int, 10)) {
-          throw new Error(attr + " must be an integer");
+          throw new Error(attr + " must be an integer (not floating point)");
         }
-      };
-
-      Invoice.prototype.companyFull = function() {
-        return this.get('origin').company + ' ' + this.get('origin').lawform;
       };
 
       Invoice.prototype.email = function(email) {
@@ -74,49 +111,50 @@
       };
 
       Invoice.prototype.website = function(website) {
-        return "https:www." + website;
+        return "https://www." + website;
       };
 
       Invoice.prototype.fullID = function() {
         var date, meta;
-        meta = this.get('meta');
+        meta = this.meta;
         date = new Date(meta.date);
         return date.getUTCFullYear() + '.' + s.pad(meta.id.toString(), 4, '0');
       };
 
       Invoice.prototype.invoiceDate = function() {
-        if (this.isInternational(this.get('client').country)) {
+        if (this.isInternational(this.client.country)) {
           moment.locale('en');
         } else {
           moment.locale('nl');
         }
-        return moment(this.get('meta').date).format('LL');
+        return moment(this.meta.date).format('LL');
       };
 
-      Invoice.prototype.expiryDate = function(date, period, country) {
-        if (this.isInternational(this.get('client').country)) {
+      Invoice.prototype.expiryDate = function(date, period) {
+        if (date == null) {
+          date = this.meta.date;
+        }
+        if (period == null) {
+          period = this.validityPeriod;
+        }
+        if (this.isInternational()) {
           moment.locale('en');
         } else {
           moment.locale('nl');
         }
-        return moment(this.get('meta').date).add(period, 'days').format('LL');
+        return moment(this.meta.date).add(period, 'days').format('LL');
       };
 
-      Invoice.prototype.clientDisplay = function(client) {
-        return client.contactPerson || client.organization;
+      Invoice.prototype.clientDisplay = function() {
+        return this.client.contactPerson || this.client.organization;
       };
 
-      Invoice.prototype.itemSubtotal = function(itemObj) {
-        var subtotal;
-        subtotal = itemObj.price * itemObj.quantity;
-        if ((itemObj.discount != null) > 0) {
-          subtotal = subtotal * (1 - itemObj.discount);
-        }
-        return subtotal;
+      Invoice.prototype.itemsPlural = function() {
+        return this.invoiceItems.length > 1;
       };
 
       Invoice.prototype.invoiceSubtotal = function() {
-        return _.reduce(this.get('invoiceItems'), ((function(_this) {
+        return _.reduce(this.invoiceItems, ((function(_this) {
           return function(sum, item) {
             return sum + _this.itemSubtotal(item);
           };
@@ -128,43 +166,19 @@
       };
 
       Invoice.prototype.VAT = function() {
-        return this.invoiceSubtotal() * this.get('vatPercentage');
+        return this.invoiceSubtotal() * this.vatPercentage;
       };
 
-      Invoice.prototype.vatPercentage = function() {
-        return this.get('vatPercentage') * 100;
+      Invoice.prototype.VATrate = function() {
+        return this.vatPercentage * 100;
       };
 
-      Invoice.prototype.documentName = function() {
-        return 'Invoice ' + this.fullID();
-      };
-
-      Invoice.prototype.filename = function() {
-        var customer, project;
-        project = this.get('projectName');
-        customer = this.get('client').organization || this.get('client').contactPerson;
-        customer = customer.replace(/\s/g, '-');
-        if (project != null) {
-          project = project.replace(/\s/g, '-');
-          return (this.fullID()) + "_" + customer + "_" + project + ".pdf";
-        } else {
-          return (this.fullID()) + "_" + customer + ".pdf";
+      Invoice.prototype.currency = function(value) {
+        var parsed, symbol;
+        if ("function" === typeof value) {
+          value = value();
         }
-      };
-
-      Invoice.prototype.documentMeta = function(data) {
-        return {
-          'id': this.fullID(),
-          'documentTitle': this.documentName(),
-          'filename': this.filename()
-        };
-      };
-
-      Invoice.prototype.currency = function(value, symbol) {
-        var parsed;
-        if (symbol == null) {
-          symbol = this.get('currencySymbol');
-        }
+        symbol = this.currencySymbol;
         parsed = parseInt(value);
         if (isNaN(parsed)) {
           throw new Error("Could not parse value '" + value + "'");
@@ -173,8 +187,17 @@
         }
       };
 
-      Invoice.prototype.capitalize = function(string) {
-        return s.capitalize(string);
+      Invoice.prototype.itemSubtotal = function(data) {
+        var subtotal;
+        subtotal = data.price * data.quantity;
+        if ((data.discount != null) > 0) {
+          subtotal = subtotal * (1 - data.discount);
+        }
+        return subtotal;
+      };
+
+      Invoice.prototype.decapitalize = function(string) {
+        return string.toLowerCase();
       };
 
       Invoice.prototype.validate = function(data) {
@@ -243,7 +266,8 @@
 
       return Invoice;
 
-    })(Backbone.Model);
+    })();
+    return this.Invoice = Invoice;
   });
 
 }).call(this);

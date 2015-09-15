@@ -1,24 +1,71 @@
 dependencies = [
-  'backbone'
   'underscore'
   'underscore.string',
   'moment',
   'moment_nl'
 ]
-define dependencies, (Backbone, _, s, moment)->
+define dependencies, (_, s, moment)->
 
-  class Invoice extends Backbone.Model
+  class Invoice
+
+    constructor: (data)-> 
+      _.extend @, data
+
+    documentMeta: (data)=>
+      'id':             @fullID()
+      'documentTitle':  @documentName()
+      'filename':       @filename()
+
+    # Used for the html head title element
+    documentName: => 
+      s.capitalize @fiscalType() + ' ' + @fullID()
+
+    filename: =>
+      client = @clientDisplay()
+      client = client.replace /\s/g, '-' # Spaces to dashes using regex
+      filename = "#{@fullID()}_#{client}"
+      extension = ".pdf"
+
+      if @projectName?
+        project = @projectName.replace /\s/g, '-' # Spaces to dashes using regex
+        filename = filename + "_#{project}"
+      
+      if @meta.period?
+        filename = filename + "_P#{period}"
+
+      if @isQuotation()
+        filename = filename + "_O"
+
+      filename + extension
+
+    companyFull: =>
+      @origin.company+' '+@origin.lawform
+
+    fiscalType: =>
+      # Supported types
+      if @meta.type is 'quotation' or @meta.type is 'invoice'
+        @meta.type
+      else if not @meta.type? # Default type if undefined
+        'invoice'
+      else
+        throw new Error 'Unsupported template fiscal type. The model
+        "meta.type" should be either invoice, quotation or undefined (defaults
+        to invoice).'
+
 
     language: (country)->
-      if not country? then country = @get('client')?.country
+      if not country? then country = @client.country
 
       return 'nl' unless country? # If no country is specified, we assume Dutch
+
       dutch = s.contains(country.toLowerCase(), "netherlands") or
-              s.contains(country.toLowerCase(), "nederland")
+              s.contains(country.toLowerCase(), "nederland") or
+              s.contains(country.toLowerCase(), "holland") or
+              country.trim().toLowerCase() is "nl"
       if dutch then return 'nl' else 'en'
 
     isInternational: (country)=>
-      if not country? then country = @get('client')?.country
+      if not country? then country = @client.country
 
       @language(country) isnt 'nl'
 
@@ -28,82 +75,81 @@ define dependencies, (Backbone, _, s, moment)->
       if parseInt(int, 10) <= 0
         throw new Error "#{attr} must be a positive integer"
       if (parseInt(int, 10) isnt parseFloat(int, 10))
-        throw new Error "#{attr} must be an integer"
+        throw new Error "#{attr} must be an integer (not floating point)"
 
-    companyFull: =>
-      @get('origin').company+' '+@get('origin').lawform
+
 
     email: (email) ->
       return "mailto:#{email}"
     website: (website) ->
-      return "https:www.#{website}"
+      return "https://www.#{website}"
     fullID: =>
-      meta = @get('meta')
+      meta = @meta
       date = new Date(meta.date)
       date.getUTCFullYear()+'.'+s.pad(meta.id.toString(), 4, '0')
 
     invoiceDate: =>
-      if @isInternational(@get('client').country)
+      if @isInternational(@client.country)
         moment.locale 'en'
       else
         moment.locale 'nl'
 
-      moment(@get('meta').date).format('LL')
-    expiryDate: (date, period, country)=>
-      if @isInternational(@get('client').country)
+      moment(@meta.date).format('LL')
+
+    expiryDate: (date, period)=>
+      if not date?    then date     = @meta.date
+      if not period?  then period   = @validityPeriod
+
+      if @isInternational()
         moment.locale 'en'
       else
         moment.locale 'nl'
 
-      moment(@get('meta').date).add(period, 'days').format('LL')
-    clientDisplay: (client) ->
-      client.contactPerson or client.organization
+      moment(@meta.date).add(period, 'days').format('LL')
+      
+    clientDisplay: ->
+      @client.contactPerson or @client.organization
 
-    # Calculates the item subtotal (price times quantity, and then a possible discount applied)
-    itemSubtotal: (itemObj)->
-      # Calculate the subtotal of this item
-      subtotal = itemObj.price * itemObj.quantity
-      # Apply discount over subtotal if it exists
-      if itemObj.discount? > 0 then subtotal = subtotal * (1-itemObj.discount)
-      subtotal
+    # Useful for i18n ... 'this service'/'these services'
+    itemsPlural: ->
+      @invoiceItems.length > 1
 
     # Subtotal of all the invoice items without taxes, but including their individual discounts
     invoiceSubtotal: =>
-      _.reduce @get('invoiceItems'), ( (sum, item)=> sum + @itemSubtotal item ), 0
+      _.reduce @invoiceItems, ( (sum, item)=> sum + @itemSubtotal item ), 0
 
     invoiceTotal: => @invoiceSubtotal() + @VAT()
     
     # VAT over the provided value or the invoice subtotal
     VAT: =>
-      @invoiceSubtotal() * @get('vatPercentage')
+      @invoiceSubtotal() * @vatPercentage
 
-    vatPercentage: => (@get('vatPercentage') * 100)
-    # Used for the html head title element
-    documentName: => 'Invoice '+ @fullID()
+    VATrate: => (@vatPercentage * 100)
 
-    filename: =>
-      project = @get('projectName')
-      customer = @get('client').organization || @get('client').contactPerson
-      customer = customer.replace /\s/g, '-' # Spaces to dashes using regex
-      if project?
-        project = project.replace /\s/g, '-' # Spaces to dashes using regex
-        "#{@fullID()}_#{customer}_#{project}.pdf"
-      else
-        "#{@fullID()}_#{customer}.pdf"
+    # Renders the value (and evaluates it first if it's a function) as a
+    # currency (tldr; puts a € or such in fron of it)
+    currency: (value) =>
 
-    documentMeta: (data)=>
-      'id':             @fullID()
-      'documentTitle':  @documentName()
-      'filename':       @filename()
+      # TODO: Fugly hack because Handlebars evaluate a function when passed to
+      # a helper as the value
+      if "function" is typeof value then value = value()
 
-    currency: (value, symbol = @get('currencySymbol')) =>
+      symbol = @currencySymbol
       parsed = parseInt(value)
       if isNaN(parsed)
         throw new Error("Could not parse value '" + value + "'")
       else
         return symbol + ' ' + value.toFixed(2)
 
-    capitalize: (string)-> s.capitalize(string)
+    # Calculates the item subtotal (price times quantity, and then a possible discount applied)
+    itemSubtotal: (data)->
+      # Calculate the subtotal of this item
+      subtotal = data.price * data.quantity
+      # Apply discount over subtotal if it exists
+      if data.discount? > 0 then subtotal = subtotal * (1-data.discount)
+      subtotal
+
+    decapitalize: (string)-> string.toLowerCase()
 
     # Validate the new attributes of the model before accepting them
     validate: (data)=>
@@ -158,3 +204,7 @@ define dependencies, (Backbone, _, s, moment)->
           throw new Error "Discount specified out of range (must be between 0 and 1)"
         if item.quantity? and item.quantity < 1
           throw new Error "When specified, quantity must be greater than one"
+
+
+  # Hook ourself into the global namespace so we can be interfaced with
+  this.Invoice = Invoice

@@ -14,9 +14,9 @@ body {
   position: relative;
   font-family: "DINPro", "Mako", "Ropa Sans", "Abel", "Kreon", "Helvetica Neue", Helvetica, "Trebuchet MS", Arial, sans-serif; }
 
-a, .link {
+a, .hyperlink {
   color: #259CCF !important; }
-  a:hover, .link:hover {
+  a:hover, .hyperlink:hover {
     color: #15678A !important; }
 
 .muted, div#company-info p#accounts, div#invoice-meta span {

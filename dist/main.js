@@ -16,9 +16,8 @@
       'jquery': 'jquery/dist/jquery',
       'backbone': 'backbone/backbone',
       'underscore': 'underscore/underscore',
-      'underscore.string': 'underscore.string/dist/underscore.string.min',
-      'jed': 'jed/jed',
-      'rivets': 'rivets/dist/rivets',
+      'underscore.string': 'underscore.string/lib/underscore.string',
+      'handlebars': 'handlebars/handlebars.amd',
       'sightglass': 'sightglass/index',
       'moment': 'momentjs/moment',
       'moment_nl': 'momentjs/locale/nl',
@@ -27,8 +26,10 @@
       'text': 'requirejs-text/text',
       'requirejs': 'requirejs/require',
       'invoice': '/dist/invoice',
-      'translation_nl': '/json/locales/nl.json',
-      'translation_en': '/json/locales/en.json'
+      'translation_nl_inv': '/json/locales/nl-invoice.json',
+      'translation_en_inv': '/json/locales/en-invoice.json',
+      'translation_nl_quot': '/json/locales/nl-quotation.json',
+      'translation_en_quot': '/json/locales/en-quotation.json'
     },
     shim: {
       rivets: {
@@ -37,64 +38,91 @@
     }
   });
 
-  dependencies = ['/nota.js', 'invoice', 'rivets', 'underscore.string', 'i18next', 'json!translation_nl', 'json!translation_en', 'moment', 'moment_nl'];
+  dependencies = ['/nota/lib/client.js', 'invoice', 'jquery', 'handlebars', 'underscore.string', 'i18next', 'json!translation_nl_inv', 'json!translation_en_inv', 'moment', 'moment_nl'];
 
-  define(dependencies, function(Nota, Invoice, rivets, s, i18n, nlMap, enMap, moment) {
-    var invoice, render;
-    Nota.trigger('template:init');
-    invoice = new Invoice();
-    i18n.init({
-      resStore: {
-        en: {
-          translation: enMap
+  define(dependencies, function(Nota, Invoice, $, Handlebars, s, i18n, nlMap, enMap, moment) {
+    var e, initializeTemplate, render;
+    initializeTemplate = function() {
+      var render, template;
+      i18n.init({
+        resStore: {
+          en: {
+            translation: enMap
+          },
+          nl: {
+            translation: nlMap
+          }
         },
-        nl: {
-          translation: nlMap
+        missingKeyHandler: function(lng, ns, key, defaultValue, lngs) {
+          throw new Error(arguments);
         }
-      },
-      missingKeyHandler: function(lng, ns, key, defaultValue, lngs) {
-        throw new Error(arguments);
-      }
-    });
-    rivets.formatters.i18n = function(key, count, readout) {
-      if (count != null) {
-        if (readout != null) {
-          count = count[readout];
+      });
+      Handlebars.registerHelper('i18n', function(i18n_key, count, attr, caselevel) {
+        var value;
+        if ("function" === typeof i18n_key) {
+          i18n_key = i18n_key();
         }
-        return i18n.t(key, {
-          count: count
-        });
-      } else {
-        return i18n.t(key);
-      }
-    };
-    _.extend(rivets.formatters, invoice);
-    render = function(data) {
-      var e;
-      Nota.trigger('template:render:start');
-      try {
-        invoice.set(data, {
-          validate: true
-        });
-      } catch (_error) {
-        e = _error;
-        throw new Error("Provided data is not a valid model: " + e.message);
-      }
-      i18n.setLng(invoice.language());
-      rivets.bind(document.body, data);
-      rivets.bind(document.head, data);
-      return Nota.trigger('template:render:done');
-    };
-    Nota.setDocumentMeta(function() {
-      return invoice.documentMeta.apply(invoice, arguments);
-    });
-    if (Nota.phantomRuntime) {
-      Nota.on('data:injected', render);
-    } else {
+        if ("number" === typeof count) {
+          value = i18n.t(i18n_key, {
+            count: count
+          });
+        } else if ("number" === typeof (count != null ? count[attr] : void 0)) {
+          value = i18n.t(i18n_key, {
+            count: count[attr]
+          });
+        } else {
+          value = i18n.t(i18n_key);
+        }
+        switch (caselevel) {
+          case 'lowercase':
+            return value.toLowerCase();
+          case 'uppercase':
+            return value.toUpperCase();
+          case 'capitalize':
+            return s.capitalize(value);
+          default:
+            return value;
+        }
+      });
+      template = Handlebars.compile($('script#template').html());
+      render = function(data) {
+        var e, i, invoice, item, len, ref;
+        Nota.trigger('template:render:start');
+        invoice = new Invoice(data);
+        Handlebars.registerHelper('currency', invoice.currency);
+        Handlebars.registerHelper('decapitalize', invoice.decapitalize);
+        ref = invoice.invoiceItems;
+        for (i = 0, len = ref.length; i < len; i++) {
+          item = ref[i];
+          item.subtotal = invoice.itemSubtotal(item);
+        }
+        try {
+          invoice.validate(data);
+        } catch (_error) {
+          e = _error;
+          throw new Error("An error ocurred during rendering. The provided data to render is not a valid model for this template: " + e.message);
+        }
+        i18n.setLng(invoice.language());
+        $('body').html(template(invoice));
+        return Nota.trigger('template:render:done');
+      };
+      Nota.setDocumentMeta(function() {
+        return invoice.documentMeta.apply(invoice, arguments);
+      });
       Nota.getData(render);
+      Nota.on('data:injected', render);
+      return render;
+    };
+    Nota.trigger('template:init');
+    try {
+      render = initializeTemplate();
+      Nota.trigger('template:loaded');
+    } catch (_error) {
+      e = _error;
+      console.error("An error occured during template initialization:");
+      throw e;
     }
-    Nota.trigger('template:loaded');
-    return invoice;
+    return window.render = render;
   });
 
 }).call(this);

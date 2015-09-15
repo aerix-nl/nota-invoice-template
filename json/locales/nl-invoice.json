@@ -1,0 +1,34 @@
+{
+  "invoice":                "factuur",
+  "quotation":              "offerte",
+  "number":                 "nummer",
+  "date":                   "datum",
+  "valid-through":          "Vervaldatum",
+  "opening-dear":           "Beste",
+  "opening-hereby":         "hierbij de",
+  "opening-for":            "voor de volgende geleverde",
+  "service":                "Dienst",
+  "service_plural":         "Diensten",
+  "price":                  "Prijs",
+  "quantity":               "Aantal",
+  "amount":                 "Bedrag",
+  "subtotal":               "Subtotaal",
+  "vat":                    "BTW",
+  "coc":                    "KvK",
+  "bank":                   "Bank",
+  "total":                  "Totaal",
+
+  "this":                   "Deze",
+  "expires":                "vervalt",
+  "days-after":             "dagen na de",
+
+  "closing-expiry-please":  "Wij verzoeken u hierbij vriendelijk voor",
+  "closing-transfer":       "het totaalbedrag van",
+  "closing-to-account":     "over te maken naar rekeningnummer",
+  "closing-denoting":       "onder vermelding van het",
+  "closing-thanks":         "in de beschrijving. Dank u wel!",
+  "closing-questions":      "Als u vragen of opmerkingen heeft over deze",
+  "closing-contact":        "kunt u uiteraard altijd contact met ons opnemen via",
+
+  "terms":                  "is opgesteld in overeenkomst met onze algemene voorwaarden"
+}
