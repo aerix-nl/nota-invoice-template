@@ -59,21 +59,29 @@
       });
       Handlebars.registerHelper('i18n', function(i18n_key, count, attr, caselevel) {
         var value;
+        if ("function" === typeof i18n_key) {
+          i18n_key = i18n_key();
+        }
         if ("number" === typeof count) {
           value = i18n.t(i18n_key, {
             count: count
           });
-        } else if ("number" === typeof count[attr]) {
+        } else if ("number" === typeof (count != null ? count[attr] : void 0)) {
           value = i18n.t(i18n_key, {
             count: count[attr]
           });
         } else {
           value = i18n.t(i18n_key);
         }
-        if (caselevel === 'lowercase') {
-          return value.toLowerCase();
-        } else {
-          return value;
+        switch (caselevel) {
+          case 'lowercase':
+            return value.toLowerCase();
+          case 'uppercase':
+            return value.toUpperCase();
+          case 'capitalize':
+            return s.capitalize(value);
+          default:
+            return value;
         }
       });
       template = Handlebars.compile($('script#template').html());

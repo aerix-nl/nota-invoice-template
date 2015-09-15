@@ -11,26 +11,47 @@ define dependencies, (_, s, moment)->
     constructor: (data)-> 
       _.extend @, data
 
-    # Used for the html head title element
-    documentName: => 'Invoice '+ @fullID()
-
     documentMeta: (data)=>
       'id':             @fullID()
       'documentTitle':  @documentName()
       'filename':       @filename()
 
+    # Used for the html head title element
+    documentName: => 
+      s.capitalize @fiscalType() + ' ' + @fullID()
+
     filename: =>
-      project = @projectName
-      customer = @client.organization || @client.contactPerson
-      customer = customer.replace /\s/g, '-' # Spaces to dashes using regex
-      if project?
-        project = project.replace /\s/g, '-' # Spaces to dashes using regex
-        "#{@fullID()}_#{customer}_#{project}.pdf"
-      else
-        "#{@fullID()}_#{customer}.pdf"
+      client = @clientDisplay()
+      client = client.replace /\s/g, '-' # Spaces to dashes using regex
+      filename = "#{@fullID()}_#{client}"
+      extension = ".pdf"
+
+      if @projectName?
+        project = @projectName.replace /\s/g, '-' # Spaces to dashes using regex
+        filename = filename + "_#{project}"
+      
+      if @meta.period?
+        filename = filename + "_P#{period}"
+
+      if @isQuotation()
+        filename = filename + "_O"
+
+      filename + extension
 
     companyFull: =>
       @origin.company+' '+@origin.lawform
+
+    fiscalType: =>
+      # Supported types
+      if @meta.type is 'quotation' or @meta.type is 'invoice'
+        @meta.type
+      else if not @meta.type? # Default type if undefined
+        'invoice'
+      else
+        throw new Error 'Unsupported template fiscal type. The model
+        "meta.type" should be either invoice, quotation or undefined (defaults
+        to invoice).'
+
 
     language: (country)->
       if not country? then country = @client.country
@@ -40,7 +61,7 @@ define dependencies, (_, s, moment)->
       dutch = s.contains(country.toLowerCase(), "netherlands") or
               s.contains(country.toLowerCase(), "nederland") or
               s.contains(country.toLowerCase(), "holland") or
-              s.trim(country.toLowerCase()) is "nl"
+              country.trim().toLowerCase() is "nl"
       if dutch then return 'nl' else 'en'
 
     isInternational: (country)=>
@@ -103,7 +124,7 @@ define dependencies, (_, s, moment)->
     VAT: =>
       @invoiceSubtotal() * @vatPercentage
 
-    vatPercentage: => (@vatPercentage * 100)
+    VATrate: => (@vatPercentage * 100)
 
     # Renders the value (and evaluates it first if it's a function) as a
     # currency (tldr; puts a € or such in fron of it)

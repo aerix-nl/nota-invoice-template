@@ -1,9 +1,12 @@
 {
-  "invoice-number":         "Factuurnummer",
-  "invoice-date":           "Factuurdatum",
+  "invoice":                "factuur",
+  "quotation":              "offerte",
+  "number":                 "nummer",
+  "date":                   "datum",
   "valid-through":          "Vervaldatum",
-  "dear":                   "Beste",
-  "hereby":                 ", hierbij de factuur voor de volgende geleverde",
+  "opening-dear":           "Beste",
+  "opening-hereby":         "hierbij de",
+  "opening-for":            "voor de volgende geleverde",
   "service":                "Dienst",
   "service_plural":         "Diensten",
   "price":                  "Prijs",
@@ -15,13 +18,17 @@
   "bank":                   "Bank",
   "total":                  "Totaal",
 
-  "closing-expiry-start":   "Deze factuur vervalt",
-  "closing-expiry-please":  "dagen na factuurdatum. Wij verzoeken u hierbij vriendelijk voor",
+  "this":                   "Deze",
+  "expires":                "vervalt",
+  "days-after":             "dagen na de",
+
+  "closing-expiry-please":  "Wij verzoeken u hierbij vriendelijk voor",
   "closing-transfer":       "het totaalbedrag van",
   "closing-to-account":     "over te maken naar rekeningnummer",
-  "closing-denoting":       ", onder vermelding van het factuurnummer",
-  "closing-questions":      "Als u vragen of opmerkingen heeft over deze factuur kunt u uiteraard altijd contact met ons opnemen via",
-  "closing-thanks":         " in de beschrijving. Dank u wel!",
+  "closing-denoting":       "onder vermelding van het",
+  "closing-thanks":         "in de beschrijving. Dank u wel!",
+  "closing-questions":      "Als u vragen of opmerkingen heeft over deze",
+  "closing-contact":        "kunt u uiteraard altijd contact met ons opnemen via",
 
-  "terms":                  "Deze factuur is opgesteld in overeenkomst met onze algemene voorwaarden"
+  "terms":                  "is opgesteld in overeenkomst met onze algemene voorwaarden"
 }

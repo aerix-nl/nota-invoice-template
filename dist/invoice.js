@@ -10,7 +10,7 @@
       function Invoice(data) {
         this.validate = bind(this.validate, this);
         this.currency = bind(this.currency, this);
-        this.vatPercentage = bind(this.vatPercentage, this);
+        this.VATrate = bind(this.VATrate, this);
         this.VAT = bind(this.VAT, this);
         this.invoiceTotal = bind(this.invoiceTotal, this);
         this.invoiceSubtotal = bind(this.invoiceSubtotal, this);
@@ -18,16 +18,13 @@
         this.invoiceDate = bind(this.invoiceDate, this);
         this.fullID = bind(this.fullID, this);
         this.isInternational = bind(this.isInternational, this);
+        this.fiscalType = bind(this.fiscalType, this);
         this.companyFull = bind(this.companyFull, this);
         this.filename = bind(this.filename, this);
-        this.documentMeta = bind(this.documentMeta, this);
         this.documentName = bind(this.documentName, this);
+        this.documentMeta = bind(this.documentMeta, this);
         _.extend(this, data);
       }
-
-      Invoice.prototype.documentName = function() {
-        return 'Invoice ' + this.fullID();
-      };
 
       Invoice.prototype.documentMeta = function(data) {
         return {
@@ -37,21 +34,41 @@
         };
       };
 
+      Invoice.prototype.documentName = function() {
+        return s.capitalize(this.fiscalType() + ' ' + this.fullID());
+      };
+
       Invoice.prototype.filename = function() {
-        var customer, project;
-        project = this.projectName;
-        customer = this.client.organization || this.client.contactPerson;
-        customer = customer.replace(/\s/g, '-');
-        if (project != null) {
-          project = project.replace(/\s/g, '-');
-          return (this.fullID()) + "_" + customer + "_" + project + ".pdf";
-        } else {
-          return (this.fullID()) + "_" + customer + ".pdf";
+        var client, extension, filename, project;
+        client = this.clientDisplay();
+        client = client.replace(/\s/g, '-');
+        filename = (this.fullID()) + "_" + client;
+        extension = ".pdf";
+        if (this.projectName != null) {
+          project = this.projectName.replace(/\s/g, '-');
+          filename = filename + ("_" + project);
         }
+        if (this.meta.period != null) {
+          filename = filename + ("_P" + period);
+        }
+        if (this.isQuotation()) {
+          filename = filename + "_O";
+        }
+        return filename + extension;
       };
 
       Invoice.prototype.companyFull = function() {
         return this.origin.company + ' ' + this.origin.lawform;
+      };
+
+      Invoice.prototype.fiscalType = function() {
+        if (this.meta.type === 'quotation' || this.meta.type === 'invoice') {
+          return this.meta.type;
+        } else if (this.meta.type == null) {
+          return 'invoice';
+        } else {
+          throw new Error('Unsupported template fiscal type. The model "meta.type" should be either invoice, quotation or undefined (defaults to invoice).');
+        }
       };
 
       Invoice.prototype.language = function(country) {
@@ -62,7 +79,7 @@
         if (country == null) {
           return 'nl';
         }
-        dutch = s.contains(country.toLowerCase(), "netherlands") || s.contains(country.toLowerCase(), "nederland") || s.contains(country.toLowerCase(), "holland") || s.trim(country.toLowerCase()) === "nl";
+        dutch = s.contains(country.toLowerCase(), "netherlands") || s.contains(country.toLowerCase(), "nederland") || s.contains(country.toLowerCase(), "holland") || country.trim().toLowerCase() === "nl";
         if (dutch) {
           return 'nl';
         } else {
@@ -152,7 +169,7 @@
         return this.invoiceSubtotal() * this.vatPercentage;
       };
 
-      Invoice.prototype.vatPercentage = function() {
+      Invoice.prototype.VATrate = function() {
         return this.vatPercentage * 100;
       };
 

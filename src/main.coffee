@@ -68,17 +68,23 @@ define dependencies, (Nota, Invoice, $, Handlebars, s, i18n, nlMap, enMap, momen
     }
 
     Handlebars.registerHelper 'i18n', (i18n_key, count, attr, caselevel)->
+
+      # TODO: Fugly hack because Handlebars evaluate a function when passed to
+      # a helper as the value
+      if "function" is typeof i18n_key then i18n_key = i18n_key()
+
       if "number" is typeof count
         value = i18n.t(i18n_key, count: count)
-      else if "number" is typeof count[attr]
+      else if "number" is typeof count?[attr]
         value = i18n.t(i18n_key, count: count[attr])
       else
         value = i18n.t(i18n_key)
 
-      if caselevel is 'lowercase'
-        value.toLowerCase()
-      else
-        value
+      switch caselevel
+        when 'lowercase' then value.toLowerCase()
+        when 'uppercase' then value.toUpperCase()
+        when 'capitalize' then s.capitalize(value)
+        else value
 
     # Get and compile template once to optimize for rendering iterations later
     template = Handlebars.compile $('script#template').html()
