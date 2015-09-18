@@ -31,7 +31,7 @@ define dependencies, (_, s, moment)->
         filename = filename + "_#{project}"
       
       if @meta.period?
-        filename = filename + "_P#{period}"
+        filename = filename + "_P#{@meta.period}"
 
       if @isQuotation()
         filename = filename + "_O"
@@ -52,6 +52,8 @@ define dependencies, (_, s, moment)->
         "meta.type" should be either invoice, quotation or undefined (defaults
         to invoice).'
 
+    isQuotation: =>
+      @fiscalType() is 'quotation'
 
     language: (country)->
       if not country? then country = @client.country

@@ -18,6 +18,7 @@
         this.invoiceDate = bind(this.invoiceDate, this);
         this.fullID = bind(this.fullID, this);
         this.isInternational = bind(this.isInternational, this);
+        this.isQuotation = bind(this.isQuotation, this);
         this.fiscalType = bind(this.fiscalType, this);
         this.companyFull = bind(this.companyFull, this);
         this.filename = bind(this.filename, this);
@@ -49,7 +50,7 @@
           filename = filename + ("_" + project);
         }
         if (this.meta.period != null) {
-          filename = filename + ("_P" + period);
+          filename = filename + ("_P" + this.meta.period);
         }
         if (this.isQuotation()) {
           filename = filename + "_O";
@@ -69,6 +70,10 @@
         } else {
           throw new Error('Unsupported template fiscal type. The model "meta.type" should be either invoice, quotation or undefined (defaults to invoice).');
         }
+      };
+
+      Invoice.prototype.isQuotation = function() {
+        return this.fiscalType() === 'quotation';
       };
 
       Invoice.prototype.language = function(country) {

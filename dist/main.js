@@ -89,13 +89,6 @@
         var e, i, invoice, item, len, ref;
         Nota.trigger('template:render:start');
         invoice = new Invoice(data);
-        Handlebars.registerHelper('currency', invoice.currency);
-        Handlebars.registerHelper('decapitalize', invoice.decapitalize);
-        ref = invoice.invoiceItems;
-        for (i = 0, len = ref.length; i < len; i++) {
-          item = ref[i];
-          item.subtotal = invoice.itemSubtotal(item);
-        }
         try {
           invoice.validate(data);
         } catch (_error) {
@@ -103,12 +96,19 @@
           throw new Error("An error ocurred during rendering. The provided data to render is not a valid model for this template: " + e.message);
         }
         i18n.setLng(invoice.language());
+        Handlebars.registerHelper('currency', invoice.currency);
+        Handlebars.registerHelper('decapitalize', invoice.decapitalize);
+        ref = invoice.invoiceItems;
+        for (i = 0, len = ref.length; i < len; i++) {
+          item = ref[i];
+          item.subtotal = invoice.itemSubtotal(item);
+        }
         $('body').html(template(invoice));
+        Nota.setDocumentMeta(function() {
+          return invoice.documentMeta.apply(invoice, arguments);
+        });
         return Nota.trigger('template:render:done');
       };
-      Nota.setDocumentMeta(function() {
-        return invoice.documentMeta.apply(invoice, arguments);
-      });
       Nota.getData(render);
       Nota.on('data:injected', render);
       return render;

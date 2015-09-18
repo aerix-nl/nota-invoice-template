@@ -134,16 +134,20 @@
 			</table>
 
 			<span id="closing" class="muted">
-				<p>
-					{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'expires' }} {{ validityPeriod }}
-					{{ i18n 'days-after'}} {{i18n fiscalType }}{{i18n 'date' }}.
+				{{#if isQuotation }}
+					<p>{{ i18n 'closing-quotation' }} {{ i18n 'service' invoiceItems 'length' 'lowercase' }}.</p>
+				{{else}}
+					<p>
+						{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'expires' }} {{ validityPeriod }}
+						{{ i18n 'days-after'}} {{i18n fiscalType }}{{i18n 'date' }}.
 
-					{{ i18n 'closing-expiry-please' }} <strong>{{ expiryDate }}</strong>
-					{{ i18n 'closing-transfer' }} <strong>{{ currency invoiceTotal }}</strong>
-					{{ i18n 'closing-to-account' }} <strong>{{ origin.iban }}</strong>,
-					{{ i18n 'closing-denoting' }} {{i18n fiscalType }}{{i18n 'number' }} <strong>{{ fullID }}</strong>
-					{{ i18n 'closing-thanks'}}
-				</p>
+						{{ i18n 'closing-expiry-please' }} <strong>{{ expiryDate }}</strong>
+						{{ i18n 'closing-transfer' }} <strong>{{ currency invoiceTotal }}</strong>
+						{{ i18n 'closing-to-account' }} <strong>{{ origin.iban }}</strong>,
+						{{ i18n 'closing-denoting' }} {{i18n fiscalType }}{{i18n 'number' }} <strong>{{ fullID }}</strong>
+						{{ i18n 'closing-thanks'}}
+					</p>
+				{{/if}}
 				<p>
 					{{ i18n 'closing-questions' }} {{ i18n fiscalType }}, {{ i18n 'closing-contact' }}
 					<a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a>.
