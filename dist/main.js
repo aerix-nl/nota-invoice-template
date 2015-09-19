@@ -14,11 +14,8 @@
     baseUrl: '../bower_components/',
     paths: {
       'jquery': 'jquery/dist/jquery',
-      'backbone': 'backbone/backbone',
-      'underscore': 'underscore/underscore',
       'underscore.string': 'underscore.string/lib/underscore.string',
       'handlebars': 'handlebars/handlebars.amd',
-      'sightglass': 'sightglass/index',
       'moment': 'momentjs/moment',
       'moment_nl': 'momentjs/locale/nl',
       'i18next': 'i18next/i18next.amd.withJQuery',
