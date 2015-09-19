@@ -1,5 +1,7 @@
 # Aerix invoice template
 
+<img src="https://cloud.aerix.nl/index.php/s/3cVZGiRYSw7Nx7e/download" styles="width: 80; box-shadow: 4px 4px black;">
+
 This an example invoice template for [Nota](https://github.com/aerix-nl/nota) that demonstrates procedurally generated documents with basic rendering and arithmetic. This was the first template made and actualy used in prodution by Aerix. Producing such invoices was the driver that sparked the development of Nota in 2013.
 
 #### Usage
