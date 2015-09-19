@@ -5,13 +5,14 @@
 An example invoice template that demonstrates procedurally generated documents based on JSON input data. See [`preview.json`](https://github.com/aerix-nl/nota-invoice-template/blob/master/json/preview.json) for the source data of the above preview. This template can be rendered to PDF using [Nota](https://github.com/aerix-nl/nota). This was the first template made and actualy used in prodution by [Aerix](https://aerix.nl). Producing such invoices was the driver that sparked the development of Nota in 2013.
 
 ## Features
-* Does all the invoice arithmatic for you (item subtotal based on price and quantity, subtotal, VAT, total)
-* Computes date of invoice expiration after specified validity period
-* Detects country of client and automatically translates invoice to English for posting abroad
-* Automatically formats filename (with suffixes for quotations and periodical invoices like monthly webhosting)
-* Supports quotations. Automatically switches between invoice and quotation mode based on type specified in meta data
-* Clever addressing resolution based on available data of client
-* Has model validation so errors are thrown when incorrect data is being rendered
+* Does all the invoice arithmatic for you (subtotals, VAT, discounts, no more embarrasing calculator mistakes guaranteed).
+* Invoice internationalisation. Detects country of client and automatically sets language (Dutch and English supported, but more could easily be added).
+* Automatically formats output PDF filename (based on ID, client and project title).
+
+* Invoice model validation (an error is throw when attempting to render an invalid invoice to prevent sending out faulty invoices to clients)
+* Supports quotations. Automatically switches between invoice and quotation mode based on type specified in meta data.
+* Computes date of invoice expiration after specified validity period.
+* And many more
 
 ## Tech used
 * Handlebars.js
