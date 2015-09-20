@@ -63,13 +63,13 @@
 
 		<div id="invoice-meta">
 			<span class="muted">
-				{{i18n fiscalType null null 'capitalize'}}{{i18n 'number' }}
+				{{i18n fiscalType null null 'capitalize'}} {{i18n 'number' }}
 			</span>
 			<h3 id="invoice-id">{{ fullID }}</h3>
 			<table>
 				<tr>
 					<td class="muted">
-						{{i18n fiscalType null null 'capitalize'}}{{i18n 'date' }}
+						{{i18n fiscalType null null 'capitalize'}} {{i18n 'date' }}
 					</td>
 					<td class="muted">{{i18n 'valid-through' }}</td>
 				</tr>
@@ -82,30 +82,55 @@
 
 		<div id="invoice-body">
 			<p class="opening">
-				{{ i18n 'opening-dear' }} {{ clientDisplay }}, {{ i18n 'opening-hereby' }}
-				{{ i18n fiscalType }} {{ i18n 'opening-for' }}
+				{{ i18n 'dear' }} {{ clientDisplay }}, {{ i18n 'opening-hereby' }} {{ i18n fiscalType }}
+				{{#if isQuotation }}
+				{{ i18n 'opening-proposed' }}
+				{{else}}
+				{{ i18n 'opening-delivered' }}
+				{{/if}}
 				{{ i18n 'service' invoiceItems 'length' 'lowercase' }}:
 			</p>
 
 			<table>
-				<colgroup>
-				   <col span="1" class="servicename">
-				   <col span="1" class="price">
-				   <col span="1" class="quantity">
-				   <col span="1" class="subtotal">
+				<colgroup data-colums="{{ tableColumns }}">
+				  <col span="1" class="servicename">
+				  <col span="1" class="price">
+				  <col span="1" class="quantity">
+				  {{#if hasDiscounts}}
+				  <col span="1" class="discount">
+				  {{/if}}
+				  <col span="1" class="subtotal">
 				</colgroup>
 
 				<thead>
-					<tr><th colspan="4" class="project-name">{{ projectName }}:</th></tr>
+					<tr><th colspan="{{ tableColumns }}" class="project-name">{{ projectName }}:</th></tr>
 					<tr class="table-meta">
 						<th>{{ i18n 'service' }}</th>
 						<th>{{ i18n 'price' }}</th>
 						<th>{{ i18n 'quantity' }}</th>
+						{{#if hasDiscounts }}
+						<th>{{ i18n 'discount' }}</th>
+						{{/if}}
 						<th>{{ i18n 'amount' }}</th>
 					</tr>
 				</thead>
 
 				<tbody>
+				{{#if hasDiscounts }}
+				{{#each invoiceItems}}
+					<tr class="item">
+						<td>{{ 					description}}</td>
+						<td>{{ currency price }}</td>
+						<td>{{ 					quantity}}</td>
+						{{#if discount }}
+						<td>-{{ ../discountDisplay }}%</td>
+						{{ else }}
+						<td></td>
+						{{/if}}
+						<td>{{ currency subtotal }}</td>
+					</tr>
+				{{/each}}
+				{{ else }}
 				{{#each invoiceItems}}
 					<tr class="item">
 						<td>{{ 					description}}</td>
@@ -114,20 +139,21 @@
 						<td>{{ currency subtotal }}</td>
 					</tr>
 				{{/each}}
+				{{/if}}
 				</tbody>
 
 				<tfoot>
 					<tr>
-						<td colspan="3">{{ i18n 'subtotal' }}</td>
+						<td colspan="{{ tableFooterColspan }}">{{ i18n 'subtotal' }}</td>
 						<td class="subtotal">{{ currency invoiceSubtotal }}</td>
 					</tr>
 					<tr>
-						<td colspan="3">{{ VATrate }}% {{ i18n 'vat' }}</span>
+						<td colspan="{{ tableFooterColspan }}">{{ VATrate }}% {{ i18n 'vat' }}</span>
 						</td>
 						<td class="vat">{{ currency VAT }}</td>
 					</tr>
 					<tr>
-						<td colspan="3">{{ i18n 'total' }}</td>
+						<td colspan="{{ tableFooterColspan }}">{{ i18n 'total' }}</td>
 						<td class="total">{{ currency invoiceTotal }}</td>
 					</tr>
 				</tfoot>
@@ -136,10 +162,11 @@
 			<span id="closing" class="muted">
 				{{#if isQuotation }}
 					<p>{{ i18n 'closing-quotation' }} {{ i18n 'service' invoiceItems 'length' 'lowercase' }}.</p>
+					<p>{{ i18n 'closing-terms' }} <a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.</p>
 				{{else}}
 					<p>
 						{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'expires' }} {{ validityPeriod }}
-						{{ i18n 'days-after'}} {{i18n fiscalType }}{{i18n 'date' }}.
+						{{ i18n 'days-after'}} {{i18n fiscalType }} {{i18n 'date' }}.
 
 						{{ i18n 'closing-expiry-please' }} <strong>{{ expiryDate }}</strong>
 						{{ i18n 'closing-transfer' }} <strong>{{ currency invoiceTotal }}</strong>
@@ -155,12 +182,14 @@
 			</span>
 		</div>
 
+		{{#unless isQuotation}}
 		<footer class="muted">
 			<p>
 				{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'terms' }}:
 				<a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
 			</p>
 		</footer>
+		{{/unless}}
 	</script>
 </body>
 </html>

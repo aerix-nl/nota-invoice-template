@@ -8,6 +8,7 @@ requirejs.config {
   paths:
     # Vendor goodies this template depends on
     'jquery':                'jquery/dist/jquery'
+    'underscore':            'underscore/underscore'
     'underscore.string':     'underscore.string/lib/underscore.string'
     'handlebars':            'handlebars/handlebars.amd'
     'moment':                'momentjs/moment'

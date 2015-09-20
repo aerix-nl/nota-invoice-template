@@ -4,13 +4,15 @@
   "number":                 "nummer",
   "date":                   "datum",
   "valid-through":          "Vervaldatum",
-  "opening-dear":           "Beste",
+  "dear":                   "Beste",
   "opening-hereby":         "hierbij de",
-  "opening-for":            "voor de volgende geleverde",
+  "opening-delivered":      "voor de volgende geleverde",
+  "opening-proposed":       "voor de voorgestelde",
   "service":                "Dienst",
   "service_plural":         "Diensten",
   "price":                  "Prijs",
   "quantity":               "Aantal",
+  "discount":               "Korting",
   "amount":                 "Bedrag",
   "subtotal":               "Subtotaal",
   "vat":                    "BTW",
@@ -30,6 +32,7 @@
   "closing-questions":      "Als u vragen of opmerkingen heeft over deze",
   "closing-contact":        "kunt u uiteraard altijd contact met ons opnemen via",
   "closing-quotation":      "Wij verzoeken u hierbij vriendelijk contact op te nemen wanneer u akkoord gaat met de offerte voor de betreffende te leveren",
+  "closing-terms":          "Tenzij aangegeven in eerdere correspondentie zijn onze algemene voorwaarden van toepassing op deze offerte. Bekijk ze alstublieft op ",
 
   "terms":                  "is opgesteld in overeenkomst met onze algemene voorwaarden"
 }

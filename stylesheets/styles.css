@@ -66,15 +66,26 @@ div#invoice-body {
   div#invoice-body table {
     width: 100%;
     margin-bottom: 1cm; }
-    div#invoice-body table colgroup col.servicename {
-      width: 70%; }
-    div#invoice-body table colgroup col.price {
-      width: 11%; }
-    div#invoice-body table colgroup col.quantity {
-      width: 8%; }
     div#invoice-body table colgroup col.subtotal {
-      width: 11%;
       text-align: right; }
+    div#invoice-body table colgroup[data-colums="4"] col.servicename {
+      width: 70%; }
+    div#invoice-body table colgroup[data-colums="4"] col.price {
+      width: 11%; }
+    div#invoice-body table colgroup[data-colums="4"] col.quantity {
+      width: 8%; }
+    div#invoice-body table colgroup[data-colums="4"] col.subtotal {
+      width: 11%; }
+    div#invoice-body table colgroup[data-colums="5"] col.servicename {
+      width: 60%; }
+    div#invoice-body table colgroup[data-colums="5"] col.price {
+      width: 11%; }
+    div#invoice-body table colgroup[data-colums="5"] col.quantity {
+      width: 11%; }
+    div#invoice-body table colgroup[data-colums="5"] col.discount {
+      width: 7%; }
+    div#invoice-body table colgroup[data-colums="5"] col.subtotal {
+      width: 11%; }
     div#invoice-body table th.project-name {
       height: 2em;
       border-bottom: 2px solid #1A2C33 !important;

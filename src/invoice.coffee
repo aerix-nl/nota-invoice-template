@@ -116,6 +116,19 @@ define dependencies, (_, s, moment)->
     itemsPlural: ->
       @invoiceItems.length > 1
 
+    # Useful for i18n ... 'this service'/'these services'
+    hasDiscounts: ->
+      _.some @invoiceItems, (item)-> item.discount? > 0
+
+    tableColumns: ->
+      if @hasDiscounts() then 5 else 4
+
+    tableFooterColspan: ->
+      if @hasDiscounts() then 4 else 3
+
+    discountDisplay: ->
+      (@discount * 100)
+
     # Subtotal of all the invoice items without taxes, but including their individual discounts
     invoiceSubtotal: =>
       _.reduce @invoiceItems, ( (sum, item)=> sum + @itemSubtotal item ), 0
@@ -144,11 +157,11 @@ define dependencies, (_, s, moment)->
         return symbol + ' ' + value.toFixed(2)
 
     # Calculates the item subtotal (price times quantity, and then a possible discount applied)
-    itemSubtotal: (data)->
+    itemSubtotal: (item)->
       # Calculate the subtotal of this item
-      subtotal = data.price * data.quantity
+      subtotal = item.price * item.quantity
       # Apply discount over subtotal if it exists
-      if data.discount? > 0 then subtotal = subtotal * (1-data.discount)
+      if item.discount? > 0 then subtotal = subtotal * (1-item.discount)
       subtotal
 
     decapitalize: (string)-> string.toLowerCase()

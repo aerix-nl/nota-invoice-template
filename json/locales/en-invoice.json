@@ -4,13 +4,15 @@
   "number":                 "number",
   "date":                   "date",
   "valid-through":          "Valid through",
-  "opening-dear":           "Dear",
+  "dear":                   "Dear",
   "opening-hereby":         "hereby the",
-  "opening-for":            "for the following delivered",
+  "opening-delivered":      "for the following delivered",
+  "opening-proposed":       "for the proposed",
   "service":                "Service",
   "service_plural":         "Services",
   "price":                  "Price",
   "quantity":               "Quantity",
+  "discount":               "Discount",
   "amount":                 "Amount",
   "subtotal":               "Subtotal",
   "vat":                    "VAT",
@@ -30,6 +32,7 @@
   "closing-questions":      "In case you have any questions or comments about",
   "closing-contact":        "please don't hesitate to get in touch with us at",
   "closing-quotation":      "We hereby kindly request that you get in touch with us if you agree with the quotation for the beforementioned",
+  "closing-terms":          "Unless otherwise specified in earlier correspondence, our general terms and conditions apply to this quotation. Please have a look at them at",
 
   "terms":                  "has been set up in compliance with our general terms and conditions. These are available (in Dutch) at"
 }

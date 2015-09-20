@@ -158,6 +158,32 @@
         return this.invoiceItems.length > 1;
       };
 
+      Invoice.prototype.hasDiscounts = function() {
+        return _.some(this.invoiceItems, function(item) {
+          return (item.discount != null) > 0;
+        });
+      };
+
+      Invoice.prototype.tableColumns = function() {
+        if (this.hasDiscounts()) {
+          return 5;
+        } else {
+          return 4;
+        }
+      };
+
+      Invoice.prototype.tableFooterColspan = function() {
+        if (this.hasDiscounts()) {
+          return 4;
+        } else {
+          return 3;
+        }
+      };
+
+      Invoice.prototype.discountDisplay = function() {
+        return this.discount * 100;
+      };
+
       Invoice.prototype.invoiceSubtotal = function() {
         return _.reduce(this.invoiceItems, ((function(_this) {
           return function(sum, item) {
@@ -192,11 +218,11 @@
         }
       };
 
-      Invoice.prototype.itemSubtotal = function(data) {
+      Invoice.prototype.itemSubtotal = function(item) {
         var subtotal;
-        subtotal = data.price * data.quantity;
-        if ((data.discount != null) > 0) {
-          subtotal = subtotal * (1 - data.discount);
+        subtotal = item.price * item.quantity;
+        if ((item.discount != null) > 0) {
+          subtotal = subtotal * (1 - item.discount);
         }
         return subtotal;
       };

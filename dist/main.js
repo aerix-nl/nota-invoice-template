@@ -14,6 +14,7 @@
     baseUrl: '../bower_components/',
     paths: {
       'jquery': 'jquery/dist/jquery',
+      'underscore': 'underscore/underscore',
       'underscore.string': 'underscore.string/lib/underscore.string',
       'handlebars': 'handlebars/handlebars.amd',
       'moment': 'momentjs/moment',
