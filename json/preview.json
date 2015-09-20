@@ -1,7 +1,6 @@
 {
   "meta": {
     "id": 15,
-    "period": 3,
     "date": "2013-12-25"
   },
   "origin": {
@@ -14,7 +13,7 @@
     "email": "contact@mycompany.com",
     "website": "mycompany.com",
     "iban": "NL12 ABCD 1234 1234 12",
-    "bank": "Triodos Bank",
+    "bank": "ABCD Bank",
     "bic": "RABONL2U",
     "kvk": "123456789",
     "vat": "AB1233405923489"
@@ -28,9 +27,9 @@
     "address": "Client Street 11a",
     "postalcode": "6543TR",
     "town": "Client Town",
-    "country": "Netherlands, The"
+    "country": "Client Country"
   },
-  "projectName": "Optional project name which will be placed on top of table",
+  "projectName": "Optional project name",
   "invoiceItems": [
     {
       "description": "Service string",
@@ -39,8 +38,7 @@
     }, {
       "description": "Product string",
       "quantity": 14,
-      "price": 10,
-      "discount": 0.1
+      "price": 10
     }
   ]
 }

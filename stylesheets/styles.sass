@@ -87,7 +87,12 @@ div#invoice-body
   table
     width: 100%
     margin-bottom: 1cm
+
     colgroup
+      col.subtotal
+        text-align: right
+
+    colgroup[data-colums="4"]
       col.servicename
         width: 70%
      
@@ -99,8 +104,22 @@ div#invoice-body
      
       col.subtotal
         width: 11%
-        text-align: right
+
+    colgroup[data-colums="5"]
+      col.servicename
+        width: 60%
      
+      col.price
+        width: 11%
+     
+      col.quantity
+        width: 11%
+
+      col.discount
+        width: 7%
+     
+      col.subtotal
+        width: 11%
    
     th.project-name
       height: 2em

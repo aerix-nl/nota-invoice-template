@@ -8,11 +8,9 @@ requirejs.config {
   paths:
     # Vendor goodies this template depends on
     'jquery':                'jquery/dist/jquery'
-    'backbone':              'backbone/backbone'
     'underscore':            'underscore/underscore'
     'underscore.string':     'underscore.string/lib/underscore.string'
     'handlebars':            'handlebars/handlebars.amd'
-    'sightglass':            'sightglass/index'
     'moment':                'momentjs/moment'
     'moment_nl':             'momentjs/locale/nl'
     'i18next':               'i18next/i18next.amd.withJQuery'
@@ -96,30 +94,31 @@ define dependencies, (Nota, Invoice, $, Handlebars, s, i18n, nlMap, enMap, momen
       # Invoice provides helpers, formatters and model validation
       invoice = new Invoice(data)
 
+      try
+        invoice.validate(data)
+      catch e
+        throw new Error "An error ocurred during rendering. The provided data
+        to render is not a valid model for this template: #{e.message}"
+      
+      i18n.setLng invoice.language()
+
       Handlebars.registerHelper 'currency', invoice.currency
       Handlebars.registerHelper 'decapitalize', invoice.decapitalize
 
       # TODO: Fugly hack because Handlebars doesn't allow chaining functions
       for item in invoice.invoiceItems
         item.subtotal = invoice.itemSubtotal item
-
-      try
-        invoice.validate(data)
-      catch e
-        throw new Error "An error ocurred during rendering. The provided data
-        to render is not a valid model for this template: #{e.message}"
-      i18n.setLng invoice.language()
       
       # The acutal rendering call. Resulting HTML is placed into body DOM
       $('body').html template(invoice)
 
+      # Provide Nota client with a function to aquire meta data from. This is used
+      # for e.g. providing the proposed filename of the PDF. See the Nota client
+      # API for documentation.
+      Nota.setDocumentMeta -> invoice.documentMeta.apply(invoice, arguments)
+
       # Signal that we're done with rendering and that capture can begin
       Nota.trigger 'template:render:done'
-
-    # Provide Nota client with a function to aquire meta data from. This is used
-    # for e.g. providing the proposed filename of the PDF. See the Nota client
-    # API for documentation.
-    Nota.setDocumentMeta -> invoice.documentMeta.apply(invoice, arguments)
 
     # We'll have to our data ourselves from the server
     Nota.getData render

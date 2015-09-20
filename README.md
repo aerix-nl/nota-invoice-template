@@ -1,16 +1,42 @@
 # Aerix invoice template
 
-This an example invoice template for [Nota](https://github.com/aerix-nl/nota) that demonstrates procedurally generated documents with basic rendering and arithmetic. This was the first template made and actualy used in prodution by Aerix. Producing such invoices was the driver that sparked the development of Nota in 2013.
+<img src="https://cloud.aerix.nl/index.php/s/3cVZGiRYSw7Nx7e/download" styles="width: 80; box-shadow: 4px 4px black;">
 
-#### Usage
+An example invoice template that demonstrates procedurally generated documents based on JSON input data. See [`preview.json`](https://github.com/aerix-nl/nota-invoice-template/blob/master/json/preview.json) for the source data of the above preview. This template can be rendered to PDF using [Nota](https://github.com/aerix-nl/nota). This was the first template made and actualy used in prodution by [Aerix](https://aerix.nl). Producing such invoices was the driver that sparked the development of Nota in 2013.
 
-This template comes with Nota by default as an example. Install [Nota](https://github.com/aerix-nl/nota) and run `./nota --template=example-invoice --preview` for a preview.
+## Features
 
-#### Features
-* Does all the invoice arithmatic for you (item subtotal based on price and quantity, subtotal, VAT, total)
-* Computes date of invoice expiration after specified validity period
-* Detects country of client and automatically translates invoice to English for posting abroad
-* Automatically formats filename (with suffixes for quotations and periodical invoices like monthly webhosting)
-* Supports quotations. Automatically switches between invoice and quotation mode based on type specified in meta data
-* Clever addressing resolution based on available data of client
-* Has model validation so errors are thrown when incorrect data is being rendered
+* [Does all the invoice arithmatic for you](https://github.com/aerix-nl/nota-invoice-template/blob/development/src/invoice.coffee#L120) (subtotals, VAT, discounts, no more embarrasing calculator mistakes guaranteed).
+
+<img src="https://cloud.aerix.nl/index.php/s/GV3KQQKsb2FTKJ7/download">
+<img src="https://cloud.aerix.nl/index.php/s/ei4ZfIargtrvvZ5/download">
+
+* [Supports quotations](https://github.com/aerix-nl/nota-invoice-template/blob/master/template.html#L137). Automatically switches between invoice and quotation mode based on type specified in meta data.
+
+<img src="https://cloud.aerix.nl/index.php/s/cJ2F3bEmcdnIePr/download">
+
+* [Invoice internationalisation](https://github.com/aerix-nl/nota-invoice-template/blob/development/src/main.coffee#L102). Detects country of client and automatically sets language (Dutch and English supported, but more could easily be added).
+* [Automatically formats output PDF filename](https://github.com/aerix-nl/nota-invoice-template/blob/master/src/invoice.coffee#L23) (based on ID, client and project title). For example `2014.0044_Client-Company-Optional-project-name.pdf`. See the link to the source code for cases of formatting.
+* [Invoice model validation](https://github.com/aerix-nl/nota-invoice-template/blob/master/src/invoice.coffee#L157) (an error is throw when attempting to render an invalid invoice to prevent sending out faulty invoices to clients).
+* [Expiration date](https://github.com/aerix-nl/nota-invoice-template/blob/master/src/invoice.coffee#L101). Expiration date of the invoice (or quotation) expires is calculated based on a configurable validity period.
+* And many more ...
+
+## Tech used
+* Handlebars.js
+* i18next.js
+* Moment.js
+* jQuery
+* Sass
+* CoffeeScript
+* RequireJS
+* Grunt
+* Bower
+
+## Usage
+This template comes by default with the [Nota CLI](https://github.com/aerix-nl/nota-cli) as an example. Install it using `npm install nota-cli`.
+
+#### Preview in browser
+In the Nota CLI folder, run `./nota --template=example-invoice --preview` for a preview.
+
+#### Render to PDF with your own data
+In the Nota CLI directory, run `./nota --template=example-invoice --data=<path/to/data.json`. The output PDF will be located in the same directory. Specify the location with the flag `--output=<path/to/output.pdf>`, and try the other options available with `./nota --help`.

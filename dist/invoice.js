@@ -18,6 +18,7 @@
         this.invoiceDate = bind(this.invoiceDate, this);
         this.fullID = bind(this.fullID, this);
         this.isInternational = bind(this.isInternational, this);
+        this.isQuotation = bind(this.isQuotation, this);
         this.fiscalType = bind(this.fiscalType, this);
         this.companyFull = bind(this.companyFull, this);
         this.filename = bind(this.filename, this);
@@ -49,7 +50,7 @@
           filename = filename + ("_" + project);
         }
         if (this.meta.period != null) {
-          filename = filename + ("_P" + period);
+          filename = filename + ("_P" + this.meta.period);
         }
         if (this.isQuotation()) {
           filename = filename + "_O";
@@ -69,6 +70,10 @@
         } else {
           throw new Error('Unsupported template fiscal type. The model "meta.type" should be either invoice, quotation or undefined (defaults to invoice).');
         }
+      };
+
+      Invoice.prototype.isQuotation = function() {
+        return this.fiscalType() === 'quotation';
       };
 
       Invoice.prototype.language = function(country) {
@@ -153,6 +158,32 @@
         return this.invoiceItems.length > 1;
       };
 
+      Invoice.prototype.hasDiscounts = function() {
+        return _.some(this.invoiceItems, function(item) {
+          return (item.discount != null) > 0;
+        });
+      };
+
+      Invoice.prototype.tableColumns = function() {
+        if (this.hasDiscounts()) {
+          return 5;
+        } else {
+          return 4;
+        }
+      };
+
+      Invoice.prototype.tableFooterColspan = function() {
+        if (this.hasDiscounts()) {
+          return 4;
+        } else {
+          return 3;
+        }
+      };
+
+      Invoice.prototype.discountDisplay = function() {
+        return this.discount * 100;
+      };
+
       Invoice.prototype.invoiceSubtotal = function() {
         return _.reduce(this.invoiceItems, ((function(_this) {
           return function(sum, item) {
@@ -187,11 +218,11 @@
         }
       };
 
-      Invoice.prototype.itemSubtotal = function(data) {
+      Invoice.prototype.itemSubtotal = function(item) {
         var subtotal;
-        subtotal = data.price * data.quantity;
-        if ((data.discount != null) > 0) {
-          subtotal = subtotal * (1 - data.discount);
+        subtotal = item.price * item.quantity;
+        if ((item.discount != null) > 0) {
+          subtotal = subtotal * (1 - item.discount);
         }
         return subtotal;
       };
