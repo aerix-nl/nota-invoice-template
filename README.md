@@ -6,11 +6,12 @@ An example invoice template that demonstrates procedurally generated documents b
 
 ## Features
 
-[Does all the invoice arithmatic for you](https://github.com/aerix-nl/nota-invoice-template/blob/development/src/invoice.coffee#L120) (subtotals, VAT, discounts, no more embarrasing calculator mistakes guaranteed).
+* [Does all the invoice arithmatic for you](https://github.com/aerix-nl/nota-invoice-template/blob/development/src/invoice.coffee#L120) (subtotals, VAT, discounts, no more embarrasing calculator mistakes guaranteed).
+
 <img src="https://cloud.aerix.nl/index.php/s/GV3KQQKsb2FTKJ7/download">
 <img src="https://cloud.aerix.nl/index.php/s/ei4ZfIargtrvvZ5/download">
 
-[Supports quotations](https://github.com/aerix-nl/nota-invoice-template/blob/master/template.html#L137). Automatically switches between invoice and quotation mode based on type specified in meta data.
+* [Supports quotations](https://github.com/aerix-nl/nota-invoice-template/blob/master/template.html#L137). Automatically switches between invoice and quotation mode based on type specified in meta data.
 
 <img src="https://cloud.aerix.nl/index.php/s/cJ2F3bEmcdnIePr/download">
 
