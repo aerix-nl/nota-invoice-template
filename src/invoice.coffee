@@ -1,10 +1,12 @@
 dependencies = [
   'underscore'
   'underscore.string',
+  'tv4',
+  'json!schema',
   'moment',
   'moment_nl'
 ]
-define dependencies, (_, s, moment)->
+define dependencies, (_, s, tv4, schema, moment)->
 
   class Invoice
 
@@ -171,6 +173,9 @@ define dependencies, (_, s, moment)->
       unless _.keys(data).length > 0
         throw new Error "Provided model has no attributes. "+
           "Check the arguments of this model's initialization call."
+
+      if not tv4.validate data, schema
+        throw tv4.error
 
       unless data.meta? then throw new Error "No invoice meta-data provided"
 
