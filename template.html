@@ -159,23 +159,27 @@
 				</tfoot>
 			</table>
 
-			<span id="closing" class="muted">
+			<span id="closing">
 				{{#if isQuotation }}
-					<p>{{ i18n 'closing-quotation' }} {{ i18n 'service' invoiceItems 'length' 'lowercase' }}.</p>
-					<p>{{ i18n 'closing-terms' }} <a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.</p>
+				<p class="muted">
+				{{ i18n 'closing-quotation' }} {{ i18n 'service' invoiceItems 'length' 'lowercase' }}.
+				</p>
+				<p class="muted">
+				{{ i18n 'closing-terms' }} <a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
+				</p>
 				{{else}}
-					<p>
-						{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'expires' }} {{ validityPeriod }}
-						{{ i18n 'days-after'}} {{i18n fiscalType }} {{i18n 'date' }}.
+				<p class="muted">
+					{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'expires' }} {{ validityPeriod }}
+					{{ i18n 'days-after'}} {{i18n fiscalType }} {{i18n 'date' }}.
 
-						{{ i18n 'closing-expiry-please' }} <strong>{{ expiryDate }}</strong>
-						{{ i18n 'closing-transfer' }} <strong>{{ currency invoiceTotal }}</strong>
-						{{ i18n 'closing-to-account' }} <strong>{{ origin.iban }}</strong>,
-						{{ i18n 'closing-denoting' }} {{i18n fiscalType }}{{i18n 'number' }} <strong>{{ fullID }}</strong>
-						{{ i18n 'closing-thanks'}}
-					</p>
+					{{ i18n 'closing-expiry-please' }} <strong>{{ expiryDate }}</strong>
+					{{ i18n 'closing-transfer' }} <strong>{{ currency invoiceTotal }}</strong>
+					{{ i18n 'closing-to-account' }} <strong>{{ origin.iban }}</strong>,
+					{{ i18n 'closing-denoting' }} {{i18n fiscalType }} {{i18n 'number' }} <strong>{{ fullID }}</strong>
+					{{ i18n 'closing-thanks'}}
+				</p>
 				{{/if}}
-				<p>
+				<p class="muted">
 					{{ i18n 'closing-questions' }} {{ i18n fiscalType }}, {{ i18n 'closing-contact' }}
 					<a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a>.
 				</p>
@@ -190,6 +194,26 @@
 			</p>
 		</footer>
 		{{/unless}}
+	</script>
+
+	<!-- Though technically this error template has Handlebars.js formatting,
+	it's only used by the template main.js script in case of errors during startup -->
+	<script id="template-error" type="text/x-handlebars-template">
+		<img id="logo" src="images/aerix-logo.svg" alt="Aerix company logo" />
+		<div class="error-container">
+			<h1>Invoice automation error</h1>
+			<p>
+			If you (a client of Aerix) receive this invoice, we sincerely apologize.
+			Our invoices are automatically generated, and this means an error
+			occured that we haven't seen before. Please get in touch with us at <a
+			href="mailto:contact@aerix.nl">contact@aerix.nl</a>, and we'll get this
+			sorted out right away.
+			</p>
+			<p>Technical details:</p>
+			<ul>
+				<li class="error"></li>
+			</ul>
+		</div>
 	</script>
 </body>
 </html>

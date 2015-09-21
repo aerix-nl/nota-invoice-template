@@ -5,27 +5,28 @@ Function.prototype.bind ||= ( _this ) -> => @apply(_this, arguments)
 
 requirejs.config {
   baseUrl: '../bower_components/'
+  enforceDefine: true
   paths:
     # Vendor goodies this template depends on
-    'jquery':                'jquery/dist/jquery'
-    'underscore':            'underscore/underscore'
-    'underscore.string':     'underscore.string/lib/underscore.string'
-    'handlebars':            'handlebars/handlebars.amd'
-    'moment':                'momentjs/moment'
-    'moment_nl':             'momentjs/locale/nl'
-    'i18next':               'i18next/i18next.amd.withJQuery'
+    'jquery':                 'jquery/dist/jquery'
+    'underscore':             'underscore/underscore'
+    'underscore.string':      'underscore.string/lib/underscore.string'
+    'handlebars':             'handlebars/handlebars.amd'
+    'moment':                 'momentjs/moment'
+    'moment_nl':              'momentjs/locale/nl'
+    'i18next':                'i18next/i18next.amd.withJQuery'
+    'tv4':                    'tv4/tv4'
 
     # RequireJS json! deps
-    'json':                  'requirejs-plugins/src/json'
-    'text':                  'requirejs-text/text'
-    'requirejs':             'requirejs/require'
+    'json':                   'requirejs-plugins/src/json'
+    'text':                   'requirejs-text/text'
+    'requirejs':              'requirejs/require'
 
     # Template stuff
-    'invoice':               '/dist/invoice'
-    'translation_nl_inv':    '/json/locales/nl-invoice.json'
-    'translation_en_inv':    '/json/locales/en-invoice.json'
-    'translation_nl_quot':   '/json/locales/nl-quotation.json'
-    'translation_en_quot':   '/json/locales/en-quotation.json'
+    'invoice':                '/dist/invoice'
+    'schema':                 '/json/schema.json'
+    'translation_nl':         '/json/locales/nl.json'
+    'translation_en':         '/json/locales/en.json'
 
   shim:
     rivets:
@@ -42,15 +43,15 @@ dependencies = [
   'handlebars',
   'underscore.string',
   'i18next',
-  'json!translation_nl_inv',
-  'json!translation_en_inv',
+  'json!translation_nl',
+  'json!translation_en',
   'moment',
   'moment_nl'
 ]
 
-
-# We receive the dependencies as args in the same order as they are in the array
-define dependencies, (Nota, Invoice, $, Handlebars, s, i18n, nlMap, enMap, moment) ->
+# This function will be executed when all dependencies have successfully
+# loaded (they are passed in as arguments).
+onDependenciesLoaded = (Nota, Invoice, $, Handlebars, s, i18n, nlMap, enMap, moment) ->
 
   initializeTemplate = ()->
      
@@ -98,7 +99,7 @@ define dependencies, (Nota, Invoice, $, Handlebars, s, i18n, nlMap, enMap, momen
         invoice.validate(data)
       catch e
         throw new Error "An error ocurred during rendering. The provided data
-        to render is not a valid model for this template: #{e.message}"
+        to render is not a valid model for this template. #{e.message}"
       
       i18n.setLng invoice.language()
 
@@ -150,3 +151,30 @@ define dependencies, (Nota, Invoice, $, Handlebars, s, i18n, nlMap, enMap, momen
   # Convenient to have in the global scope for debugging
   window.render = render
 
+# Some vanillaJS error handling
+onDependencyError = (error)->
+  # Ensure we get the template from the body on the first error, and save it
+  # in the global namepspace for all later erros
+  if not window.errorTemplate?
+    window.errorTemplate = document.getElementById('template-error').innerHTML
+    document.body.innerHTML = window.errorTemplate
+
+  # Make an instance of the error list item
+  if not window.errorListItem?
+    window.errorListItem = document.querySelectorAll("div.error-container ul li.error")[0]
+    document.querySelectorAll("div.error-container ul")[0].innerHTML = ""
+
+  # Fill the list with error list items
+  errorList = document.querySelectorAll("div.error-container ul")[0]
+  li = errorListItem.cloneNode()
+  li.innerHTML = error
+  errorList.appendChild li
+
+  # Continue the error: it should still be visible in the console
+  throw error
+
+# In case of script loading errors
+requirejs.onError = onDependencyError
+
+# Time to load the dependencies, and if all goes well, start up the invoice
+define dependencies, onDependenciesLoaded, onDependencyError

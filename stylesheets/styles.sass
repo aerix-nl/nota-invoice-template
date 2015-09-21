@@ -1,4 +1,5 @@
 @import '../bower_components/bootstrap/dist/css/bootstrap.css'
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900);
 
 $primaryOrange: #E38A24
 $secondaryOrange: #945205
@@ -9,7 +10,8 @@ $tertiaryBlue: #1A2C33
 
 $textColor: $tertiaryBlue
 
-$fontStack: "DINPro", "Mako", "Ropa Sans", "Abel", "Kreon", "Helvetica Neue", Helvetica, 'Trebuchet MS', Arial, sans-serif
+$fontStack: "Roboto", "Georgia", serif
+
 html
   background-color: lightgrey
 
@@ -72,7 +74,7 @@ div#invoice-meta
     @extend .muted
   h3
     font-size: 2.5em
-    font-weight: 100
+    font-weight: 300 !important
     line-height: 1em
     margin-top: 0
     margin-bottom: 1cm
@@ -167,3 +169,15 @@ footer
   position: absolute
   width: auto !important
   letter-spacing: 0.013em
+
+div.error-container
+  padding: 15mm 21mm
+  background-color: darken(red, 20) !important
+  color: transparentize(white, 0.4)  !important
+
+  a 
+    color: white !important
+
+  h1
+    font-weight: 100
+    color: white !important

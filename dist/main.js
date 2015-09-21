@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var base, dependencies;
+  var base, dependencies, onDependenciesLoaded, onDependencyError;
 
   (base = Function.prototype).bind || (base.bind = function(_this) {
     return (function(_this) {
@@ -12,6 +12,7 @@
 
   requirejs.config({
     baseUrl: '../bower_components/',
+    enforceDefine: true,
     paths: {
       'jquery': 'jquery/dist/jquery',
       'underscore': 'underscore/underscore',
@@ -20,14 +21,14 @@
       'moment': 'momentjs/moment',
       'moment_nl': 'momentjs/locale/nl',
       'i18next': 'i18next/i18next.amd.withJQuery',
+      'tv4': 'tv4/tv4',
       'json': 'requirejs-plugins/src/json',
       'text': 'requirejs-text/text',
       'requirejs': 'requirejs/require',
       'invoice': '/dist/invoice',
-      'translation_nl_inv': '/json/locales/nl-invoice.json',
-      'translation_en_inv': '/json/locales/en-invoice.json',
-      'translation_nl_quot': '/json/locales/nl-quotation.json',
-      'translation_en_quot': '/json/locales/en-quotation.json'
+      'schema': '/json/schema.json',
+      'translation_nl': '/json/locales/nl.json',
+      'translation_en': '/json/locales/en.json'
     },
     shim: {
       rivets: {
@@ -36,9 +37,9 @@
     }
   });
 
-  dependencies = ['/nota/lib/client.js', 'invoice', 'jquery', 'handlebars', 'underscore.string', 'i18next', 'json!translation_nl_inv', 'json!translation_en_inv', 'moment', 'moment_nl'];
+  dependencies = ['/nota/lib/client.js', 'invoice', 'jquery', 'handlebars', 'underscore.string', 'i18next', 'json!translation_nl', 'json!translation_en', 'moment', 'moment_nl'];
 
-  define(dependencies, function(Nota, Invoice, $, Handlebars, s, i18n, nlMap, enMap, moment) {
+  onDependenciesLoaded = function(Nota, Invoice, $, Handlebars, s, i18n, nlMap, enMap, moment) {
     var e, initializeTemplate, render;
     initializeTemplate = function() {
       var render, template;
@@ -91,7 +92,7 @@
           invoice.validate(data);
         } catch (_error) {
           e = _error;
-          throw new Error("An error ocurred during rendering. The provided data to render is not a valid model for this template: " + e.message);
+          throw new Error("An error ocurred during rendering. The provided data to render is not a valid model for this template. " + e.message);
         }
         i18n.setLng(invoice.language());
         Handlebars.registerHelper('currency', invoice.currency);
@@ -121,6 +122,27 @@
       throw e;
     }
     return window.render = render;
-  });
+  };
+
+  onDependencyError = function(error) {
+    var errorList, li;
+    if (window.errorTemplate == null) {
+      window.errorTemplate = document.getElementById('template-error').innerHTML;
+      document.body.innerHTML = window.errorTemplate;
+    }
+    if (window.errorListItem == null) {
+      window.errorListItem = document.querySelectorAll("div.error-container ul li.error")[0];
+      document.querySelectorAll("div.error-container ul")[0].innerHTML = "";
+    }
+    errorList = document.querySelectorAll("div.error-container ul")[0];
+    li = errorListItem.cloneNode();
+    li.innerHTML = error;
+    errorList.appendChild(li);
+    throw error;
+  };
+
+  requirejs.onError = onDependencyError;
+
+  define(dependencies, onDependenciesLoaded, onDependencyError);
 
 }).call(this);

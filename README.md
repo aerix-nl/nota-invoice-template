@@ -15,10 +15,10 @@ An example invoice template that demonstrates procedurally generated documents b
 
 <img src="https://cloud.aerix.nl/index.php/s/cJ2F3bEmcdnIePr/download">
 
-* [Invoice internationalisation](https://github.com/aerix-nl/nota-invoice-template/blob/development/src/main.coffee#L102). Detects country of client and automatically sets language (Dutch and English supported, but more could easily be added).
+* [Invoice internationalisation](https://github.com/aerix-nl/nota-invoice-template/blob/development/src/main.coffee#L103). Detects country of client and automatically sets language (Dutch and English supported, but more could easily be added).
 * [Automatically formats output PDF filename](https://github.com/aerix-nl/nota-invoice-template/blob/master/src/invoice.coffee#L23) (based on ID, client and project title). For example `2014.0044_Client-Company-Optional-project-name.pdf`. See the link to the source code for cases of formatting.
-* [Invoice model validation](https://github.com/aerix-nl/nota-invoice-template/blob/master/src/invoice.coffee#L157) (an error is throw when attempting to render an invalid invoice to prevent sending out faulty invoices to clients).
-* [Expiration date](https://github.com/aerix-nl/nota-invoice-template/blob/master/src/invoice.coffee#L101). Expiration date of the invoice (or quotation) expires is calculated based on a configurable validity period.
+* [Invoice model validation](https://github.com/aerix-nl/nota-invoice-template/blob/master/src/invoice.coffee#L157). An error is throw when attempting to render an invalid invoice to prevent sending out faulty invoices to clients.
+* [Expiration date](https://github.com/aerix-nl/nota-invoice-template/blob/master/src/invoice.coffee#L170). Expiration date of the invoice (or quotation) expires is calculated based on a configurable validity period.
 * And many more ...
 
 ## Tech used

@@ -2,9 +2,9 @@
   var dependencies,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  dependencies = ['underscore', 'underscore.string', 'moment', 'moment_nl'];
+  dependencies = ['underscore', 'underscore.string', 'tv4', 'json!schema', 'moment', 'moment_nl'];
 
-  define(dependencies, function(_, s, moment) {
+  define(dependencies, function(_, s, tv4, schema, moment) {
     var Invoice;
     Invoice = (function() {
       function Invoice(data) {
@@ -235,6 +235,9 @@
         var allItemsValid, date, id, period, postalCode, ref;
         if (!(_.keys(data).length > 0)) {
           throw new Error("Provided model has no attributes. " + "Check the arguments of this model's initialization call.");
+        }
+        if (!tv4.validate(data, schema)) {
+          throw tv4.error;
         }
         if (data.meta == null) {
           throw new Error("No invoice meta-data provided");

@@ -24,8 +24,8 @@
   "expires":                "expires",
   "days-after":             "days after the",
 
-  "closing-expiry-please":  "We kindly ask you to transfer before",
-  "closing-transfer":       "the total sum of",
+  "closing-expiry-please":  "We kindly ask you to transfer (before",
+  "closing-transfer":       ") the total sum of",
   "closing-to-account":     "to bank account",
   "closing-denoting":       "noting the",
   "closing-thanks":         "in the description. Thank you!",
