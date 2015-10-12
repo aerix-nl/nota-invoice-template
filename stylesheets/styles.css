@@ -125,14 +125,20 @@ footer {
   width: auto !important;
   letter-spacing: 0.013em; }
 
-div.error-container {
+div.error-container, div.manual-container {
   padding: 15mm 21mm;
-  background-color: #990000 !important;
   color: rgba(255, 255, 255, 0.6) !important; }
-  div.error-container a {
+  div.error-container a, div.manual-container a {
     color: white !important; }
-  div.error-container h1 {
+  div.error-container h1, div.manual-container h1 {
     font-weight: 100;
     color: white !important; }
+
+div.error-container {
+  background-color: #990000 !important; }
+
+div.manual-container {
+  background-color: #4D6FB3 !important;
+  display: none; }
 
 /*# sourceMappingURL=styles.css.map */

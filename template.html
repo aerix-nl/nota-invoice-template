@@ -200,11 +200,21 @@
 	it's only used by the template main.js script in case of errors during startup -->
 	<script id="template-error" type="text/x-handlebars-template">
 		<img id="logo" src="images/aerix-logo.svg" alt="Aerix company logo" />
+		<div class="manual-container">
+			<h1>Nota server not running</h1>
+			<p> It appears the Nota server is not running, which is required for this
+			template. <br> Please install Grunt (using NodeJS' <code>npm install
+			grunt</code>) and run <code>grunt nota:preview</code> in the template
+			directory to preview this template in the browser.</p>
+
+			<p>Please also make sure this template's dependencies have been
+			installed using: <br> <code>npm install && bower install</code>.</p>
+		</div>
 		<div class="error-container">
-			<h1>Invoice automation error</h1>
+			<h1>Accounting automation error</h1>
 			<p>
-			If you (a client of Aerix) receive this invoice, we sincerely apologize.
-			Our invoices are automatically generated, and this means an error
+			If you (a client of Aerix) receive this, we sincerely apologize.
+			Our documents are automatically generated, and this means an error
 			occured that we haven't seen before. Please get in touch with us at <a
 			href="mailto:contact@aerix.nl">contact@aerix.nl</a>, and we'll get this
 			sorted out right away.

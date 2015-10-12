@@ -23,7 +23,7 @@ define dependencies, (_, s, tv4, schema, moment)->
       s.capitalize @fiscalType() + ' ' + @fullID()
 
     filename: =>
-      client = @clientDisplay()
+      client = @clientDisplay('company')
       client = client.replace /\s/g, '-' # Spaces to dashes using regex
       filename = "#{@fullID()}_#{client}"
       extension = ".pdf"
@@ -111,8 +111,11 @@ define dependencies, (_, s, tv4, schema, moment)->
 
       moment(@meta.date).add(period, 'days').format('LL')
       
-    clientDisplay: ->
-      @client.contactPerson or @client.organization
+    clientDisplay: (priority)->
+      if priority is 'company'
+        @client.organization or @client.contactPerson
+      else
+        @client.contactPerson or @client.organization
 
     # Useful for i18n ... 'this service'/'these services'
     itemsPlural: ->
@@ -174,6 +177,8 @@ define dependencies, (_, s, tv4, schema, moment)->
         throw new Error "Provided model has no attributes. "+
           "Check the arguments of this model's initialization call."
 
+      # Perform a validation of the proposed data again the JSON Schema (draft
+      # 04) of the invoice. This makes sure of most requirements of the data.
       if not tv4.validate data, schema
         throw tv4.error
 

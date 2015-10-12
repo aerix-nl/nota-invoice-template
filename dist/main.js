@@ -11,8 +11,7 @@
   });
 
   requirejs.config({
-    baseUrl: '../bower_components/',
-    enforceDefine: true,
+    baseUrl: 'bower_components/',
     paths: {
       'jquery': 'jquery/dist/jquery',
       'underscore': 'underscore/underscore',
@@ -29,11 +28,6 @@
       'schema': '/json/schema.json',
       'translation_nl': '/json/locales/nl.json',
       'translation_en': '/json/locales/en.json'
-    },
-    shim: {
-      rivets: {
-        deps: ['sightglass']
-      }
     }
   });
 
@@ -125,7 +119,7 @@
   };
 
   onDependencyError = function(error) {
-    var errorList, li;
+    var errorList, li, manual;
     if (window.errorTemplate == null) {
       window.errorTemplate = document.getElementById('template-error').innerHTML;
       document.body.innerHTML = window.errorTemplate;
@@ -138,6 +132,10 @@
     li = errorListItem.cloneNode();
     li.innerHTML = error;
     errorList.appendChild(li);
+    if (error.requireModules[0] === "/nota/lib/client.js") {
+      manual = document.querySelectorAll("div.manual-container")[0];
+      manual.style.display = 'block';
+    }
     throw error;
   };
 
