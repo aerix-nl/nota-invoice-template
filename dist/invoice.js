@@ -41,7 +41,7 @@
 
       Invoice.prototype.filename = function() {
         var client, extension, filename, project;
-        client = this.clientDisplay();
+        client = this.clientDisplay('company');
         client = client.replace(/\s/g, '-');
         filename = (this.fullID()) + "_" + client;
         extension = ".pdf";
@@ -150,8 +150,12 @@
         return moment(this.meta.date).add(period, 'days').format('LL');
       };
 
-      Invoice.prototype.clientDisplay = function() {
-        return this.client.contactPerson || this.client.organization;
+      Invoice.prototype.clientDisplay = function(priority) {
+        if (priority === 'company') {
+          return this.client.organization || this.client.contactPerson;
+        } else {
+          return this.client.contactPerson || this.client.organization;
+        }
       };
 
       Invoice.prototype.itemsPlural = function() {

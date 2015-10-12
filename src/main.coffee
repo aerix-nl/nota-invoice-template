@@ -4,8 +4,7 @@
 Function.prototype.bind ||= ( _this ) -> => @apply(_this, arguments)
 
 requirejs.config {
-  baseUrl: '../bower_components/'
-  enforceDefine: true
+  baseUrl: 'bower_components/'
   paths:
     # Vendor goodies this template depends on
     'jquery':                 'jquery/dist/jquery'
@@ -27,10 +26,6 @@ requirejs.config {
     'schema':                 '/json/schema.json'
     'translation_nl':         '/json/locales/nl.json'
     'translation_en':         '/json/locales/en.json'
-
-  shim:
-    rivets:
-      deps: ['sightglass']
 }
 
 # In the above config not all dependencies are declared because
@@ -169,6 +164,10 @@ onDependencyError = (error)->
   li = errorListItem.cloneNode()
   li.innerHTML = error
   errorList.appendChild li
+
+  if error.requireModules[0] is "/nota/lib/client.js"
+    manual = document.querySelectorAll("div.manual-container")[0]
+    manual.style.display = 'block'
 
   # Continue the error: it should still be visible in the console
   throw error
