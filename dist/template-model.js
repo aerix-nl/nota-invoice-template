@@ -5,10 +5,10 @@
   dependencies = ['underscore', 'underscore.string', 'tv4', 'json!schema', 'moment', 'moment_nl'];
 
   define(dependencies, function() {
-    var Invoice, _, moment, s, schema, tv4;
+    var TemplateModel, _, moment, s, schema, tv4;
     _ = arguments[0], s = arguments[1], tv4 = arguments[2], schema = arguments[3], moment = arguments[4];
-    Invoice = (function() {
-      function Invoice(data) {
+    TemplateModel = (function() {
+      function TemplateModel(data) {
         this.validate = bind(this.validate, this);
         this.currency = bind(this.currency, this);
         this.VATrate = bind(this.VATrate, this);
@@ -28,7 +28,7 @@
         _.extend(this, data);
       }
 
-      Invoice.prototype.documentMeta = function(data) {
+      TemplateModel.prototype.documentMeta = function(data) {
         return {
           'id': this.fullID(),
           'documentTitle': this.documentName(),
@@ -36,11 +36,11 @@
         };
       };
 
-      Invoice.prototype.documentName = function() {
+      TemplateModel.prototype.documentName = function() {
         return s.capitalize(this.fiscalType() + ' ' + this.fullID());
       };
 
-      Invoice.prototype.filename = function() {
+      TemplateModel.prototype.filename = function() {
         var client, extension, filename, project;
         client = this.clientDisplay('company');
         client = client.replace(/\s/g, '-');
@@ -59,11 +59,11 @@
         return filename + extension;
       };
 
-      Invoice.prototype.companyFull = function() {
+      TemplateModel.prototype.companyFull = function() {
         return this.origin.company + ' ' + this.origin.lawform;
       };
 
-      Invoice.prototype.fiscalType = function() {
+      TemplateModel.prototype.fiscalType = function() {
         if (this.meta.type === 'quotation' || this.meta.type === 'invoice') {
           return this.meta.type;
         } else if (this.meta.type == null) {
@@ -73,11 +73,11 @@
         }
       };
 
-      Invoice.prototype.isQuotation = function() {
+      TemplateModel.prototype.isQuotation = function() {
         return this.fiscalType() === 'quotation';
       };
 
-      Invoice.prototype.language = function(country) {
+      TemplateModel.prototype.language = function(country) {
         var dutch;
         if (country == null) {
           country = this.client.country;
@@ -93,14 +93,14 @@
         }
       };
 
-      Invoice.prototype.isInternational = function(country) {
+      TemplateModel.prototype.isInternational = function(country) {
         if (country == null) {
           country = this.client.country;
         }
         return this.language(country) !== 'nl';
       };
 
-      Invoice.prototype.isNaturalInt = function(int, attr) {
+      TemplateModel.prototype.isNaturalInt = function(int, attr) {
         if (isNaN(parseInt(int, 10))) {
           throw new Error(attr + " could not be parsed");
         }
@@ -112,22 +112,22 @@
         }
       };
 
-      Invoice.prototype.email = function(email) {
+      TemplateModel.prototype.email = function(email) {
         return "mailto:" + email;
       };
 
-      Invoice.prototype.website = function(website) {
+      TemplateModel.prototype.website = function(website) {
         return "https://www." + website;
       };
 
-      Invoice.prototype.fullID = function() {
+      TemplateModel.prototype.fullID = function() {
         var date, meta;
         meta = this.meta;
         date = new Date(meta.date);
         return date.getUTCFullYear() + '.' + s.pad(meta.id.toString(), 4, '0');
       };
 
-      Invoice.prototype.invoiceDate = function() {
+      TemplateModel.prototype.invoiceDate = function() {
         if (this.isInternational(this.client.country)) {
           moment.locale('en');
         } else {
@@ -136,7 +136,7 @@
         return moment(this.meta.date).format('LL');
       };
 
-      Invoice.prototype.expiryDate = function(date, period) {
+      TemplateModel.prototype.expiryDate = function(date, period) {
         if (date == null) {
           date = this.meta.date;
         }
@@ -151,7 +151,7 @@
         return moment(this.meta.date).add(period, 'days').format('LL');
       };
 
-      Invoice.prototype.clientDisplay = function(priority) {
+      TemplateModel.prototype.clientDisplay = function(priority) {
         if (priority === 'company') {
           return this.client.organization || this.client.contactPerson;
         } else {
@@ -159,17 +159,17 @@
         }
       };
 
-      Invoice.prototype.itemsPlural = function() {
+      TemplateModel.prototype.itemsPlural = function() {
         return this.invoiceItems.length > 1;
       };
 
-      Invoice.prototype.hasDiscounts = function() {
+      TemplateModel.prototype.hasDiscounts = function() {
         return _.some(this.invoiceItems, function(item) {
           return (item.discount != null) > 0;
         });
       };
 
-      Invoice.prototype.tableColumns = function() {
+      TemplateModel.prototype.tableColumns = function() {
         if (this.hasDiscounts()) {
           return 5;
         } else {
@@ -177,7 +177,7 @@
         }
       };
 
-      Invoice.prototype.tableFooterColspan = function() {
+      TemplateModel.prototype.tableFooterColspan = function() {
         if (this.hasDiscounts()) {
           return 4;
         } else {
@@ -185,11 +185,11 @@
         }
       };
 
-      Invoice.prototype.discountDisplay = function() {
+      TemplateModel.prototype.discountDisplay = function() {
         return this.discount * 100;
       };
 
-      Invoice.prototype.invoiceSubtotal = function() {
+      TemplateModel.prototype.invoiceSubtotal = function() {
         return _.reduce(this.invoiceItems, ((function(_this) {
           return function(sum, item) {
             return sum + _this.itemSubtotal(item);
@@ -197,19 +197,19 @@
         })(this)), 0);
       };
 
-      Invoice.prototype.invoiceTotal = function() {
+      TemplateModel.prototype.invoiceTotal = function() {
         return this.invoiceSubtotal() + this.VAT();
       };
 
-      Invoice.prototype.VAT = function() {
+      TemplateModel.prototype.VAT = function() {
         return this.invoiceSubtotal() * this.vatPercentage;
       };
 
-      Invoice.prototype.VATrate = function() {
+      TemplateModel.prototype.VATrate = function() {
         return this.vatPercentage * 100;
       };
 
-      Invoice.prototype.currency = function(value) {
+      TemplateModel.prototype.currency = function(value) {
         var parsed, symbol;
         if ("function" === typeof value) {
           value = value();
@@ -223,7 +223,7 @@
         }
       };
 
-      Invoice.prototype.itemSubtotal = function(item) {
+      TemplateModel.prototype.itemSubtotal = function(item) {
         var subtotal;
         subtotal = item.price * item.quantity;
         if ((item.discount != null) > 0) {
@@ -232,11 +232,11 @@
         return subtotal;
       };
 
-      Invoice.prototype.decapitalize = function(string) {
+      TemplateModel.prototype.decapitalize = function(string) {
         return string.toLowerCase();
       };
 
-      Invoice.prototype.validate = function(data) {
+      TemplateModel.prototype.validate = function(data) {
         var allItemsValid, date, id, period, postalCode, ref;
         if (!(_.keys(data).length > 0)) {
           throw new Error("Provided model has no attributes. " + "Check the arguments of this model's initialization call.");
@@ -303,10 +303,10 @@
         });
       };
 
-      return Invoice;
+      return TemplateModel;
 
     })();
-    return this.Invoice = Invoice;
+    return TemplateModel;
   });
 
 }).call(this);

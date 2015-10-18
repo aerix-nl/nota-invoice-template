@@ -4,16 +4,16 @@ html {
   background-color: lightgrey; }
 
 body {
+  position: relative;
+  font-family: "Roboto", "Georgia", serif; }
+
+.page {
   background-color: white;
   color: #1A2C33 !important;
-  margin: 35px auto;
-  width: 210mm;
   min-height: 287mm;
   padding-bottom: 3cm;
   box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
-  box-sizing: border-box;
-  position: relative;
-  font-family: "Roboto", "Georgia", serif; }
+  box-sizing: border-box; }
 
 a, .hyperlink {
   color: #259CCF !important; }
@@ -24,21 +24,18 @@ a, .hyperlink {
   color: #8d9699 !important; }
 
 img#logo {
-  margin: 15mm 21mm;
   width: 75mm; }
 
 div#company-info {
   display: inline-block;
   float: right;
-  margin: 15mm 15mm 0 0;
   text-align: right; }
   div#company-info p#accounts {
     margin-top: 1cm; }
 
 div#envelope-window {
-  left: 21mm;
-  position: absolute;
-  top: 46mm;
+  margin-top: 1em;
+  display: inline-block;
   font-family: "Roboto", "Georgia", serif; }
   div#envelope-window span#retour-line {
     border-bottom: 1px solid black;
@@ -51,10 +48,10 @@ div#invoice-meta {
   float: left;
   text-align: left;
   clear: both;
-  margin: 8mm 15mm 8mm 21mm; }
+  margin: 8mm 0; }
   div#invoice-meta h3 {
     font-size: 2.5em;
-    font-weight: 300 !important;
+    font-weight: 300;
     line-height: 1em;
     margin-top: 0;
     margin-bottom: 1cm; }
@@ -62,8 +59,7 @@ div#invoice-meta {
     padding-left: 1cm; }
 
 div#invoice-body {
-  clear: both;
-  margin: 0 15mm 0 21mm; }
+  clear: both; }
   div#invoice-body table {
     width: 100%;
     margin-bottom: 1cm; }
@@ -109,6 +105,7 @@ div#invoice-body {
     div#invoice-body table tbody tr:first-child:last-child {
       vertical-align: middle; }
     div#invoice-body table tfoot {
+      display: table-row-group;
       border-top: 1px solid rgba(26, 44, 51, 0.5); }
       div#invoice-body table tfoot tr:first-child {
         height: 2em;
@@ -125,13 +122,16 @@ footer {
   width: auto !important;
   letter-spacing: 0.013em; }
 
+section.messages {
+  margin: 4em -21mm 0 -21mm; }
+
 div.error-container, div.manual-container {
-  padding: 15mm 21mm;
+  padding: 4em;
   color: rgba(255, 255, 255, 0.6) !important; }
   div.error-container a, div.manual-container a {
     color: white !important; }
   div.error-container h1, div.manual-container h1 {
-    font-weight: 100;
+    font-weight: 200;
     color: white !important; }
 
 div.error-container {

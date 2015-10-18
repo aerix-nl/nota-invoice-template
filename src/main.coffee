@@ -22,134 +22,60 @@ requirejs.config {
     'requirejs':              'requirejs/require'
 
     # Template stuff
-    'invoice':                '/dist/invoice'
+    'template-controller':    '/dist/template-controller'
+    'template-model':         '/dist/template-model'
     'schema':                 '/json/schema.json'
     'translation_nl':         '/json/locales/nl.json'
     'translation_en':         '/json/locales/en.json'
+
+    # Vendor stuff (that is not available on Bower.js booo! :/ )
+    'css-regions':            '/dist/vendor/css-regions-polyfill'
 }
 
 # In the above config not all dependencies are declared because
 # some of them which this template depends on (e.g. Backbone, _)
 # have already been made available by Nota client earlier.
 dependencies = [
-  '/nota/lib/client.js',
-  'invoice',
-  'jquery',
-  'handlebars',
-  'underscore.string',
-  'i18next',
-  'json!translation_nl',
-  'json!translation_en',
-  'moment',
-  'moment_nl'
+  '/nota/lib/client.js'
+  'template-controller'
 ]
 
 # This function will be executed when all dependencies have successfully
 # loaded (they are passed in as arguments).
-onDependenciesLoaded = (Nota, Invoice, $, Handlebars, s, i18n, nlMap, enMap, moment) ->
-
-  initializeTemplate = ()->
-     
-    # Set up internationalisation with support for translations in English and Dutch
-    i18n.init {
-      resStore:
-        en: { translation: enMap }
-        nl: { translation: nlMap }
-
-      # In case of missing translation
-      missingKeyHandler: (lng, ns, key, defaultValue, lngs) ->
-        throw new Error arguments
-    }
-
-    Handlebars.registerHelper 'i18n', (i18n_key, count, attr, caselevel)->
-
-      # TODO: Fugly hack because Handlebars evaluate a function when passed to
-      # a helper as the value
-      if "function" is typeof i18n_key then i18n_key = i18n_key()
-
-      if "number" is typeof count
-        value = i18n.t(i18n_key, count: count)
-      else if "number" is typeof count?[attr]
-        value = i18n.t(i18n_key, count: count[attr])
-      else
-        value = i18n.t(i18n_key)
-
-      switch caselevel
-        when 'lowercase' then value.toLowerCase()
-        when 'uppercase' then value.toUpperCase()
-        when 'capitalize' then s.capitalize(value)
-        else value
-
-    # Get and compile template once to optimize for rendering iterations later
-    template = Handlebars.compile $('script#template').html()
-
-    render = (data)->
-      # Signal that we've started rendering
-      Nota.trigger 'template:render:start'
-
-      # Invoice provides helpers, formatters and model validation
-      invoice = new Invoice(data)
-
-      try
-        invoice.validate(data)
-      catch e
-        throw new Error "An error ocurred during rendering. The provided data
-        to render is not a valid model for this template. #{e.message}"
-      
-      i18n.setLng invoice.language()
-
-      Handlebars.registerHelper 'currency', invoice.currency
-      Handlebars.registerHelper 'decapitalize', invoice.decapitalize
-
-      # TODO: Fugly hack because Handlebars doesn't allow chaining functions
-      for item in invoice.invoiceItems
-        item.subtotal = invoice.itemSubtotal item
-      
-      # The acutal rendering call. Resulting HTML is placed into body DOM
-      $('body').html template(invoice)
-
-      # Provide Nota client with a function to aquire meta data from. This is used
-      # for e.g. providing the proposed filename of the PDF. See the Nota client
-      # API for documentation.
-      Nota.setDocumentMeta -> invoice.documentMeta.apply(invoice, arguments)
-
-      # Signal that we're done with rendering and that capture can begin
-      Nota.trigger 'template:render:done'
-
-    # We'll have to our data ourselves from the server
-    Nota.getData render
-
-    # Also listen for data being set
-    Nota.on 'data:injected', render
-
-    return render
-  
-
-  # -----------------------------------------------------------------------
-
+onDependenciesLoaded = ( ) ->
+  # Unpack all the dependencie we receive in the arguments
+  [Nota, TemplateController] = arguments
+    
+  # We can disable module/script load error catching now. From here on we use our own
+  # (Nota.logError) which works with the limitations of PhantomJS and gets the error objects into
+  # the consoles (requirejs.onError catches ALL errors and prevents them from reaching the console,
+  # which is really annoying when you can use that info in Node.js backend for logging).
+  requirejs.onError = (err)-> throw err
 
   # Signal begin of setup
   Nota.trigger 'template:init'
 
   try
-    # If initialization succeeds then it returns the render function which can
-    # be used to directly render data
-    render = initializeTemplate()
+    template = new TemplateController()
+  catch error
+    onError(error)
+    Nota.logError "An error occured during template initialization.", error
 
-    # Signal that we're done with setup and that we're ready to receive data
-    Nota.trigger 'template:loaded'
+  # Also listen for data being set
+  Nota.on 'data:injected', template.render
 
-  catch e
-    console.error "An error occured during template initialization:"
-    throw e
+  # Signal that we're done with setup and that we're ready to receive data
+  Nota.trigger 'template:loaded'
 
-  # Convenient to have in the global scope for debugging
-  window.render = render
+  # If running outside PhantomJS we'll have to our data ourselves from the server
+  Nota.getData template.render
 
-# Some vanillaJS error handling
-onDependencyError = (error)->
+  return TemplateController
+
+# Some vanillaJS error handling in case we can't load the modules (including jQuery)
+onError = (error, root)->
   # Ensure we get the template from the body on the first error, and save it
-  # in the global namepspace for all later erros
+  # in the root for all later erros
   if not window.errorTemplate?
     window.errorTemplate = document.getElementById('template-error').innerHTML
     document.body.innerHTML = window.errorTemplate
@@ -164,16 +90,18 @@ onDependencyError = (error)->
   li = errorListItem.cloneNode()
   li.innerHTML = error
   errorList.appendChild li
-
-  if error.requireModules[0] is "/nota/lib/client.js"
+ 
+  if error.requireModules?[0] is "/nota/lib/client.js"
+    console.log 44
     manual = document.querySelectorAll("div.manual-container")[0]
+    console.log manual
     manual.style.display = 'block'
 
-  # Continue the error: it should still be visible in the console
-  throw error
+  # If Nota's .logError isn't available, continue to throw the error so it shows up in consoles
+  if error.requireModules? then throw error
 
-# In case of script loading errors
-requirejs.onError = onDependencyError
+# For catching script/module load errors
+requirejs.onError = onError
 
 # Time to load the dependencies, and if all goes well, start up the invoice
-define dependencies, onDependenciesLoaded, onDependencyError
+define dependencies, onDependenciesLoaded, onError

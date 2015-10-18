@@ -8,6 +8,7 @@ body {
   box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   position: relative;
-  margin: 35px auto; }
+  margin: 35px auto;
+  padding: 15mm 21mm; }
 
 /*# sourceMappingURL=preview.css.map */

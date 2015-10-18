@@ -6,9 +6,11 @@ dependencies = [
   'moment',
   'moment_nl'
 ]
-define dependencies, (_, s, tv4, schema, moment)->
+define dependencies, ()->
+  # Unpack the loaded dependencies we receive as arguments
+  [_, s, tv4, schema, moment] = arguments
 
-  class Invoice
+  class TemplateModel
 
     constructor: (data)-> 
       _.extend @, data
@@ -230,6 +232,4 @@ define dependencies, (_, s, tv4, schema, moment)->
         if item.quantity? and item.quantity < 1
           throw new Error "When specified, quantity must be greater than one"
 
-
-  # Hook ourself into the global namespace so we can be interfaced with
-  this.Invoice = Invoice
+  return TemplateModel
