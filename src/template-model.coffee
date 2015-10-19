@@ -15,6 +15,14 @@ define dependencies, ()->
     constructor: (data)-> 
       _.extend @, data
 
+      # TODO:
+      # Fugly hack, list of computed properties because Handlebars doesn't allow chaining functions
+      for item in @invoiceItems
+        item.subtotal = @itemSubtotal item
+
+      # Split invoice items into services and products (default to product)
+      @itemCategories = _.groupBy @invoiceItems, (item)-> if item.type? then type else 'product'
+
     documentMeta: (data)=>
       'id':             @fullID()
       'documentTitle':  @documentName()

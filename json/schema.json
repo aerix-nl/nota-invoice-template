@@ -179,8 +179,13 @@
             "type": "number",
             "minimum": 0
           },
+          "type": {
+            "id": "http://aerix.nl/invoice-schema/invoiceItems/regular/type",
+            "type": "string",
+            "pattern": "product|service"
+          },
           "discount": {
-            "id": "http://jsonschema.net/invoiceItems/1/discount",
+            "id": "http://aerix.nl/invoice-schema/invoiceItems/regular/discount",
             "type": "number",
             "minimum": 0
           }

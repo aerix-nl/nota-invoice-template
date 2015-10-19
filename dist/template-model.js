@@ -25,7 +25,20 @@
         this.filename = bind(this.filename, this);
         this.documentName = bind(this.documentName, this);
         this.documentMeta = bind(this.documentMeta, this);
+        var i, item, len, ref;
         _.extend(this, data);
+        ref = this.invoiceItems;
+        for (i = 0, len = ref.length; i < len; i++) {
+          item = ref[i];
+          item.subtotal = this.itemSubtotal(item);
+        }
+        this.itemCategories = _.groupBy(this.invoiceItems, function(item) {
+          if (item.type != null) {
+            return type;
+          } else {
+            return 'product';
+          }
+        });
       }
 
       TemplateModel.prototype.documentMeta = function(data) {
