@@ -24,6 +24,9 @@
   "expires":                "vervalt",
   "days-after":             "dagen na de",
 
+  "page":                   "Pagina",
+  "of-page-num":            "van de",
+
   "closing-expiry-please":  "Wij verzoeken u hierbij vriendelijk voor",
   "closing-transfer":       "het totaalbedrag van",
   "closing-to-account":     "over te maken naar rekeningnummer",

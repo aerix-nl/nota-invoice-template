@@ -24,6 +24,9 @@
   "expires":                "expires",
   "days-after":             "days after the",
 
+  "page":                   "Page",
+  "of-page-num":            "of",
+
   "closing-expiry-please":  "We kindly ask you to transfer (before",
   "closing-transfer":       ") the total sum of",
   "closing-to-account":     "to bank account",

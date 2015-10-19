@@ -53,15 +53,14 @@
         });
         if (!Nota.phantomRuntime) {
           require(['css-regions'], function(cssRegions) {
-            return console.log("TODO: finished pagination implementation in browser preview");
+            return console.log("TODO: pagination and page numbers in browser preview");
           });
         }
-        console.log("TODO: implement page numbers");
         this.template = Handlebars.compile($('script#template').html());
       }
 
       TemplateController.prototype.render = function(data) {
-        var contextMessage, error, i, item, len, model, ref;
+        var contextMessage, error, model, multipage;
         Nota.trigger('template:render:start');
         model = new TemplateModel(data);
         try {
@@ -75,15 +74,15 @@
         i18n.setLng(model.language());
         Handlebars.registerHelper('currency', model.currency);
         Handlebars.registerHelper('decapitalize', model.decapitalize);
-        ref = model.invoiceItems;
-        for (i = 0, len = ref.length; i < len; i++) {
-          item = ref[i];
-          item.subtotal = model.itemSubtotal(item);
-        }
         $('body').html(this.template(model));
-        Nota.setDocumentMeta(function() {
-          return model.documentMeta.apply(model, arguments);
-        });
+        Nota.setDocument('meta', model.documentMeta());
+        multipage = ($('body').height() / 3.187864111498258) > 287;
+        if (multipage) {
+          Nota.setDocument('footer', {
+            height: "1cm",
+            contents: "<span style=\"float:right; font-family: Roboto, sans-serif; color:#8D9699 !important;\">\n  " + (i18n.t('page')) + " {{pageNum}} " + (i18n.t('of-page-num')) + " {{numPages}}\n</span>"
+          });
+        }
         return Nota.trigger('template:render:done');
       };
 
