@@ -8,8 +8,8 @@
     var $, Handlebars, TemplateController, TemplateModel, _, cssRegions, enMap, i18n, nlMap, s;
     TemplateModel = arguments[0], $ = arguments[1], Handlebars = arguments[2], s = arguments[3], i18n = arguments[4], nlMap = arguments[5], enMap = arguments[6], cssRegions = arguments[7], _ = arguments[8], s = arguments[9];
     TemplateController = (function() {
-      function TemplateController(onError1) {
-        this.onError = onError1;
+      function TemplateController(renderError) {
+        this.renderError = renderError;
         this.render = bind(this.render, this);
         i18n.init({
           resStore: {
@@ -56,26 +56,33 @@
             return console.log("TODO: pagination and page numbers in browser preview");
           });
         }
-        this.template = Handlebars.compile($('script#template').html());
+        this.template = Handlebars.compile($('script#template-main').html());
       }
 
       TemplateController.prototype.render = function(data) {
-        var contextMessage, error, model, multipage;
+        var contextMessage, error, multipage;
         Nota.trigger('template:render:start');
-        model = new TemplateModel(data);
         try {
-          model.validate(data);
+          this.model = new TemplateModel(data);
+          this.model.validate(data);
         } catch (_error) {
           error = _error;
           contextMessage = "An error ocurred during rendering. The provided data to render is not a valid model for this template.";
-          onError(error);
-          Nota.logError(contextMessage, error);
+          this.renderError(error, contextMessage);
+          Nota.logError(error, contextMessage);
         }
-        i18n.setLng(model.language());
-        Handlebars.registerHelper('currency', model.currency);
-        Handlebars.registerHelper('decapitalize', model.decapitalize);
-        $('body').html(this.template(model));
-        Nota.setDocument('meta', model.documentMeta());
+        i18n.setLng(this.model.language());
+        Handlebars.registerHelper('currency', this.model.currency);
+        Handlebars.registerHelper('decapitalize', this.model.decapitalize);
+        try {
+          $('body').html(this.template(this.model));
+        } catch (_error) {
+          error = _error;
+          contextMessage = "An error ocurred during rendering. Templating engine Handlebars.js encounted an error with the given data.";
+          this.renderError(error, contextMessage);
+          Nota.logError(error, contextMessage);
+        }
+        Nota.setDocument('meta', this.model.documentMeta());
         multipage = ($('body').height() / 3.187864111498258) > 287;
         if (multipage) {
           Nota.setDocument('footer', {

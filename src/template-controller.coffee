@@ -16,7 +16,7 @@ define dependencies, ()->
 
   class TemplateController
 
-    constructor: (@onError)->
+    constructor: (@renderError)->
 
       # Set up internationalisation with support for translations in English and Dutch
       i18n.init {
@@ -60,37 +60,49 @@ define dependencies, ()->
           console.log "TODO: pagination and page numbers in browser preview"
 
       # Get and compile template once to optimize for rendering iterations later
-      @template = Handlebars.compile $('script#template').html()
+      @template = Handlebars.compile $('script#template-main').html()
+
+      # @templatePartials = {
+      #   'tableHeader': Handlebars.compile $('script#table-header').html()
+      # }
 
 
     render: (data)=>
       # Signal that we've started rendering
       Nota.trigger 'template:render:start'
 
-      # TemplateModel provides helpers, formatters and model validation
-      model = new TemplateModel(data)
 
       try
-        model.validate(data)
+        # TemplateModel provides helpers, formatters and model validation
+        @model = new TemplateModel(data)
+        @model.validate(data)
       catch error
         # Supplement error message with contextual information and forward it
         contextMessage = "An error ocurred during rendering. The provided data
         to render is not a valid model for this template."
-        onError(error)
-        Nota.logError(contextMessage, error)
+        @renderError(error, contextMessage)
+        Nota.logError(error, contextMessage)
 
-      i18n.setLng model.language()
+      i18n.setLng @model.language()
 
-      Handlebars.registerHelper 'currency', model.currency
-      Handlebars.registerHelper 'decapitalize', model.decapitalize
+      Handlebars.registerHelper 'currency', @model.currency
+      Handlebars.registerHelper 'decapitalize', @model.decapitalize
       
-      # The acutal rendering call. Resulting HTML is placed into body DOM
-      $('body').html @template(model)
+      try
+        # The acutal rendering call. Resulting HTML is placed into body DOM
+        $('body').html @template(@model)
+      catch error
+        # Supplement error message with contextual information and forward it
+        contextMessage = "An error ocurred during rendering. Templating engine
+        Handlebars.js encounted an error with the given data."
+        @renderError(error, contextMessage)
+        Nota.logError(error, contextMessage)
+
 
       # Provide Nota client with meta data from. This is fetched by PhantomJS
       # for e.g. providing the proposed filename of the PDF. See the Nota client
       # API for documentation.
-      Nota.setDocument 'meta', model.documentMeta()
+      Nota.setDocument 'meta', @model.documentMeta()
 
       # Set footer to generate page numbers, but only if we're so tall that we know we'll get
       # multiple pages as output (body is taller than one document page (287mm, see stylehseet for

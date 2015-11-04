@@ -43,19 +43,20 @@
     };
     Nota.trigger('template:init');
     try {
-      template = new TemplateController();
+      template = new TemplateController(onError);
     } catch (_error) {
       error = _error;
       onError(error);
-      Nota.logError("An error occured during template initialization.", error);
+      Nota.logError(error, "An error occured during template initialization.");
     }
     Nota.on('data:injected', template.render);
     Nota.trigger('template:loaded');
     Nota.getData(template.render);
-    return TemplateController;
+    window.template = template;
+    return template;
   };
 
-  onError = function(error, root) {
+  onError = function(error, contextMessage) {
     var errorList, li, manual, ref;
     if (window.errorTemplate == null) {
       window.errorTemplate = document.getElementById('template-error').innerHTML;
@@ -67,12 +68,10 @@
     }
     errorList = document.querySelectorAll("div.error-container ul")[0];
     li = errorListItem.cloneNode();
-    li.innerHTML = error;
+    li.innerHTML = contextMessage + ' ' + error;
     errorList.appendChild(li);
     if (((ref = error.requireModules) != null ? ref[0] : void 0) === "/nota/lib/client.js") {
-      console.log(44);
       manual = document.querySelectorAll("div.manual-container")[0];
-      console.log(manual);
       manual.style.display = 'block';
     }
     if (error.requireModules != null) {

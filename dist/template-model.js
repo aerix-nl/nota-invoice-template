@@ -10,35 +10,46 @@
     TemplateModel = (function() {
       function TemplateModel(data) {
         this.validate = bind(this.validate, this);
+        this.serviceSubtotal = bind(this.serviceSubtotal, this);
+        this.productSubtotal = bind(this.productSubtotal, this);
         this.currency = bind(this.currency, this);
+        this.servicesTotal = bind(this.servicesTotal, this);
+        this.productsTotal = bind(this.productsTotal, this);
+        this.total = bind(this.total, this);
         this.VATrate = bind(this.VATrate, this);
+        this.VATservices = bind(this.VATservices, this);
+        this.VATproducts = bind(this.VATproducts, this);
         this.VAT = bind(this.VAT, this);
-        this.invoiceTotal = bind(this.invoiceTotal, this);
-        this.invoiceSubtotal = bind(this.invoiceSubtotal, this);
+        this.servicesSubtotal = bind(this.servicesSubtotal, this);
+        this.productsSubtotal = bind(this.productsSubtotal, this);
+        this.subtotal = bind(this.subtotal, this);
         this.expiryDate = bind(this.expiryDate, this);
-        this.invoiceDate = bind(this.invoiceDate, this);
+        this.bookingDate = bind(this.bookingDate, this);
         this.fullID = bind(this.fullID, this);
         this.isInternational = bind(this.isInternational, this);
+        this.isInvoice = bind(this.isInvoice, this);
         this.isQuotation = bind(this.isQuotation, this);
         this.fiscalType = bind(this.fiscalType, this);
         this.companyFull = bind(this.companyFull, this);
         this.filename = bind(this.filename, this);
         this.documentName = bind(this.documentName, this);
         this.documentMeta = bind(this.documentMeta, this);
-        var i, item, len, ref;
+        var i, j, len, len1, pr, ref, ref1, sr;
         _.extend(this, data);
-        ref = this.invoiceItems;
-        for (i = 0, len = ref.length; i < len; i++) {
-          item = ref[i];
-          item.subtotal = this.itemSubtotal(item);
-        }
-        this.itemCategories = _.groupBy(this.invoiceItems, function(item) {
-          if (item.type != null) {
-            return type;
-          } else {
-            return 'product';
+        if (this.products != null) {
+          ref = this.products;
+          for (i = 0, len = ref.length; i < len; i++) {
+            pr = ref[i];
+            pr.subtotal = this.productSubtotal(pr);
           }
-        });
+        }
+        if (this.services != null) {
+          ref1 = this.services;
+          for (j = 0, len1 = ref1.length; j < len1; j++) {
+            sr = ref1[j];
+            sr.subtotal = this.serviceSubtotal(sr);
+          }
+        }
       }
 
       TemplateModel.prototype.documentMeta = function(data) {
@@ -88,6 +99,10 @@
 
       TemplateModel.prototype.isQuotation = function() {
         return this.fiscalType() === 'quotation';
+      };
+
+      TemplateModel.prototype.isInvoice = function() {
+        return this.fiscalType() === 'invoice';
       };
 
       TemplateModel.prototype.language = function(country) {
@@ -140,7 +155,7 @@
         return date.getUTCFullYear() + '.' + s.pad(meta.id.toString(), 4, '0');
       };
 
-      TemplateModel.prototype.invoiceDate = function() {
+      TemplateModel.prototype.bookingDate = function() {
         if (this.isInternational(this.client.country)) {
           moment.locale('en');
         } else {
@@ -176,22 +191,51 @@
         return this.invoiceItems.length > 1;
       };
 
-      TemplateModel.prototype.hasDiscounts = function() {
-        return _.some(this.invoiceItems, function(item) {
+      TemplateModel.prototype.hasDiscounts = function(category) {
+        var check, products, services;
+        check = function(item) {
           return (item.discount != null) > 0;
-        });
-      };
-
-      TemplateModel.prototype.tableColumns = function() {
-        if (this.hasDiscounts()) {
-          return 5;
-        } else {
-          return 4;
+        };
+        products = _.some(this.products, check);
+        services = _.some(this.services, check);
+        switch (category) {
+          case 'products':
+            return products;
+          case 'services':
+            return services;
+          default:
+            return products || services;
         }
       };
 
-      TemplateModel.prototype.tableFooterColspan = function() {
-        if (this.hasDiscounts()) {
+      TemplateModel.prototype.hasProductsDiscounts = function() {
+        return this.hasDiscounts('products');
+      };
+
+      TemplateModel.prototype.hasServicesDiscounts = function() {
+        return this.hasDiscounts('services');
+      };
+
+      TemplateModel.prototype.hasProducts = function() {
+        var ref;
+        return ((ref = this.products) != null ? ref.length : void 0) > 0;
+      };
+
+      TemplateModel.prototype.hasServices = function() {
+        var ref;
+        return ((ref = this.services) != null ? ref.length : void 0) > 0;
+      };
+
+      TemplateModel.prototype.productsTableFooterColspan = function() {
+        if (this.hasDiscounts('products')) {
+          return 4;
+        } else {
+          return 3;
+        }
+      };
+
+      TemplateModel.prototype.servicesTableFooterColspan = function() {
+        if (this.hasDiscounts('services')) {
           return 4;
         } else {
           return 3;
@@ -202,55 +246,101 @@
         return this.discount * 100;
       };
 
-      TemplateModel.prototype.invoiceSubtotal = function() {
-        return _.reduce(this.invoiceItems, ((function(_this) {
+      TemplateModel.prototype.subtotal = function(category) {
+        var products, services;
+        products = _.reduce(this.products, ((function(_this) {
           return function(sum, item) {
-            return sum + _this.itemSubtotal(item);
+            return sum + _this.productSubtotal(item);
           };
         })(this)), 0);
+        services = _.reduce(this.services, ((function(_this) {
+          return function(sum, item) {
+            return sum + _this.serviceSubtotal(item);
+          };
+        })(this)), 0);
+        switch (category) {
+          case 'products':
+            return products;
+          case 'services':
+            return services;
+          default:
+            return products + services;
+        }
       };
 
-      TemplateModel.prototype.invoiceTotal = function() {
-        return this.invoiceSubtotal() + this.VAT();
+      TemplateModel.prototype.productsSubtotal = function() {
+        return this.subtotal('products');
       };
 
-      TemplateModel.prototype.VAT = function() {
-        return this.invoiceSubtotal() * this.vatPercentage;
+      TemplateModel.prototype.servicesSubtotal = function() {
+        return this.subtotal('services');
+      };
+
+      TemplateModel.prototype.VAT = function(category) {
+        return this.subtotal(category) * this.vatPercentage;
+      };
+
+      TemplateModel.prototype.VATproducts = function() {
+        return this.VAT('products');
+      };
+
+      TemplateModel.prototype.VATservices = function() {
+        return this.VAT('services');
       };
 
       TemplateModel.prototype.VATrate = function() {
         return this.vatPercentage * 100;
       };
 
+      TemplateModel.prototype.total = function(category) {
+        return this.subtotal(category) + this.VAT(category);
+      };
+
+      TemplateModel.prototype.productsTotal = function() {
+        return this.total('products');
+      };
+
+      TemplateModel.prototype.servicesTotal = function() {
+        return this.total('services');
+      };
+
       TemplateModel.prototype.currency = function(value) {
         var parsed, symbol;
+        if (value == null) {
+          throw new Error("Asked to render currency of undefined variable");
+        }
         if ("function" === typeof value) {
           value = value();
         }
         symbol = this.currencySymbol;
         parsed = parseInt(value);
         if (isNaN(parsed)) {
-          throw new Error("Could not parse value '" + value + "'");
+          throw new Error("Could not parse value '" + value + "' to integer");
         } else {
-          return symbol + ' ' + value.toFixed(2);
+          return symbol + ' ' + parsed.toFixed(2);
         }
       };
 
-      TemplateModel.prototype.itemSubtotal = function(item) {
+      TemplateModel.prototype.productSubtotal = function(item) {
         var subtotal;
         subtotal = item.price * item.quantity;
-        if ((item.discount != null) > 0) {
+        if (item.discount != null) {
           subtotal = subtotal * (1 - item.discount);
         }
         return subtotal;
       };
 
-      TemplateModel.prototype.decapitalize = function(string) {
-        return string.toLowerCase();
+      TemplateModel.prototype.serviceSubtotal = function(item) {
+        var subtotal;
+        subtotal = item.hours * this.hourlyRate;
+        if (item.discount != null) {
+          subtotal = subtotal * (1 - item.discount);
+        }
+        return subtotal;
       };
 
       TemplateModel.prototype.validate = function(data) {
-        var allItemsValid, date, id, period, postalCode, ref;
+        var date, i, id, item, j, len, len1, period, postalCode, ref, ref1, ref2, ref3;
         if (!(_.keys(data).length > 0)) {
           throw new Error("Provided model has no attributes. " + "Check the arguments of this model's initialization call.");
         }
@@ -292,28 +382,33 @@
             throw new Error('Postal code must be of format /\\d{4}\\s?[A-z]{2}/, e.g. 1234AB or 1234 ab');
           }
         }
-        if (!((((ref = data.invoiceItems) != null ? ref.length : void 0) != null) && data.invoiceItems.length > 0)) {
-          throw new Error("No items to show in invoice provided. Must be an array with at least one entry");
+        if (((this.services == null) && !this.products) || ((ref = this.services) != null ? ref.length : void 0) === 0 && this.products.length === 0) {
+          throw new Error("Document must contain at least some products or services. Found none in either category instead. Documents with an empty body are not valid.");
         }
-        return allItemsValid = _.every(data.invoiceItems, function(item, idx) {
-          var price, ref1;
-          if (!((((ref1 = item.description) != null ? ref1.length : void 0) != null) > 0)) {
-            throw new Error("Description not provided or of no length");
+        if (((ref1 = this.services) != null ? ref1.length : void 0) > 0 && (this.hourlyRate == null)) {
+          throw new Error("No hourly service price rate provided. Must be provided because items contain services.");
+        }
+        if (this.services != null) {
+          ref2 = this.services;
+          for (i = 0, len = ref2.length; i < len; i++) {
+            item = ref2[i];
+            if (item.subtotal === 0) {
+              throw new Error("Subtotal of 0 for service item '" + item.description + "' with " + item.hours + " hours");
+            }
           }
-          price = parseFloat(item.price, 10);
-          if (isNaN(price)) {
-            throw new Error("Price is not a valid floating point number");
+        }
+        if (this.products != null) {
+          ref3 = this.products;
+          for (j = 0, len1 = ref3.length; j < len1; j++) {
+            item = ref3[j];
+            if (item.subtotal === 0) {
+              throw new Error("Subtotal of 0 for product item '" + item.description + "' with a quantity of " + item.quantity);
+            }
           }
-          if (!(price > 0)) {
-            throw new Error("Price must be greater than zero");
-          }
-          if ((item.discount != null) && (item.discount < 0 || item.discount > 1)) {
-            throw new Error("Discount specified out of range (must be between 0 and 1)");
-          }
-          if ((item.quantity != null) && item.quantity < 1) {
-            throw new Error("When specified, quantity must be greater than one");
-          }
-        });
+        }
+        if (this.subtotal() < 1) {
+          throw new Error("Subtotal of " + (this.subtotal()) + " too low for real world usage patterns");
+        }
       };
 
       return TemplateModel;

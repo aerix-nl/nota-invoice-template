@@ -26,7 +26,8 @@ body
   // TODO: a single 297mm page somehow overflows to 2 pages during capture. Apparently 287mm is
   // what PhantomJS considers A4 :/ try find fix
   min-height: 287mm 
-  padding-bottom: 3cm
+  padding-left: 21mm
+  padding-right: 21mm
   box-shadow: 0 0 30px 0 transparentize(black, 0.5)
   box-sizing: border-box
 
@@ -34,47 +35,67 @@ a, .hyperlink
   color: $primaryBlue !important
   &:hover
     color: $secondaryBlue !important
- 
+
+h1
+  color: $secondaryBlue !important
+  font-size: 3.4em
+  font-weight: 200
+  line-height: 1em
+
+h4
+  color: $secondaryBlue !important
+  font-size: 1em
+  span.subtext
+    font-weight: normal
+
 // Override bootstrap
 .muted
   color: mix($textColor, white) !important
 
+@mixin muted
+  color: mix($textColor, white) !important
+
+$logoHeight: 44mm
 img#logo
-  width: 75mm
+  height: $logoHeight
+  margin-bottom: 6mm
+  margin-left: 6mm
+
+h1#document-type
+  letter-spacing: 1mm
+  margin-bottom: 15mm
+
+div.column
+  &.left
+    float: left
+  &.right
+    float: right
+    margin-top: $logoHeight - 1mm
+
+table.meta
+  width: 86mm
+  colgroup
+    col.meta-name
+      width: 3.4cm
+
+h1.inverse
+  margin: 2mm -21mm 12mm 0px
+  padding: 3mm 8mm
+  background-color: $secondaryBlue !important
+  color: white !important
 
 div#company-info
-  display: inline-block
-  float: right
-  text-align: right
+  p
+    display: inline-block
+    margin-bottom: 0
   p#accounts
-    @extend .muted
-    margin-top: 1cm
- 
-div#envelope-window
-  margin-top: 1em
-  display: inline-block
-  font-family: $fontStack 
+    @include muted
+    margin-left: 26%
 
-div#invoice-meta
-  $side: left
-  float: $side
-  text-align: $side
-  clear: both
-  margin: 8mm 0
-  span
-    @extend .muted
-  h3
-    font-size: 2.5em
-    font-weight: 300
-    line-height: 1em
-    margin-top: 0
-    margin-bottom: 1cm
  
-  table tr td:nth-child(2n)
-    padding-left: 1cm
- 
-div#invoice-body
+div#body
   clear: both
+  padding-top: 1cm
 
   table
     width: 100%
@@ -84,8 +105,37 @@ div#invoice-body
       col.subtotal
         text-align: right
 
-    colgroup[data-colums="4"]
+    &.services
       col.servicename
+        width: 50%
+     
+      col.hourlyrate
+        width: 30%
+     
+      col.hours
+        width: 10%
+     
+      col.subtotal
+        width: 10%
+
+    &.services.hasDiscounts colgroup
+      col.servicename
+        width: 40%
+     
+      col.hourlyrate
+        width: 30%
+     
+      col.hours
+        width: 11%
+
+      col.discount
+        width: 7%
+     
+      col.subtotal
+        width: 11%
+
+    &.products colgroup
+      col.description
         width: 70%
      
       col.price
@@ -97,8 +147,8 @@ div#invoice-body
       col.subtotal
         width: 11%
 
-    colgroup[data-colums="5"]
-      col.servicename
+    &.products.hasDiscounts colgroup
+      col.description
         width: 60%
      
       col.price
@@ -113,13 +163,9 @@ div#invoice-body
       col.subtotal
         width: 11%
    
-    th.project-name
-      height: 2em
-      border-bottom: 2px solid $textColor !important
-      text-align: center
-   
     tr.table-meta
       height: 2em
+      border-top: 2px solid $textColor !important
       border-bottom: 1px solid transparentize($textColor, 0.5)
       th
         text-align: left
@@ -149,17 +195,35 @@ div#invoice-body
       tr:first-child
         height: 2em
         vertical-align: bottom
- 
-footer
-  border-top: 1px solid $textColor
-  bottom: 0
-  font-size: 0.8em
-  line-height: 1.2em
-  margin: 0 2cm 1cm
-  padding-top: 1mm
-  position: absolute
-  width: auto !important
-  letter-spacing: 0.013em
+
+
+div.colorband
+  background-color: $secondaryBlue !important
+  color: white !important
+  margin: 8mm -21mm
+  padding: 1mm 21mm
+  clear: both
+  position: relative
+  overflow: hidden
+
+.paper
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  box-shadow: 0 0 20px 0px black
+
+$width: 28em
+.layer1
+  background-color: $primaryBlue !important
+  width: $width + 4
+.layer2
+  background-color: $primaryOrange !important
+  width: $width + 2
+.layer3
+  background-color: $secondaryOrange !important
+  width: $width
+  box-shadow: none
 
 section.messages
   margin: 4em -21mm 0 -21mm

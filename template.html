@@ -14,31 +14,16 @@
 <body class="page">
 	
 	<!-- The Handlebars.js template is rendered and reinserted here by the main.js script -->
-	<script id="template" type="text/x-handlebars-template">
-		<img id="logo" src="images/aerix-logo.svg" alt="Aerix company logo" />
-		<div id="company-info">
-			<p>
-				<strong class="company-fullname">{{ companyFull }}</strong><br>
-				<span class="street-address">{{ origin.address }}</span><br>
-				<span class="post-address">{{ origin.postalcode }}</span>,
-				<span class="place">{{ origin.town }}</span><br>
-				<span class="country">{{ origin.country }}</span><br>
-				<a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a><br>
-				<a class="website" href="https://{{ origin.website }}">{{ origin.website }}</a>
-			</p>
-			<p id="accounts">
-				IBAN: 							<span class="iban">{{ origin.iban }}</span><br>
-				{{i18n 'bank' }}: 	<span id="bank-name">{{ origin.bank }}</span><br>
-				BIC/SWIFT: 					<span id="bic">{{ origin.bic }}</span><br>
-				{{i18n 'vat' }}:		<span id="vat-number">{{ origin.vat }}</span><br>
-				{{i18n 'coc' }}: 		<span id="kvk">{{ origin.kvk }}</span><br>
-			</p>
-		</div>
+	<script id="template-main" type="text/x-handlebars-template">
 
-		<div id="envelope-window">
+		<div class="column left">
+			<img id="logo" src="images/aerix-logo-round.svg" alt="Aerix company logo" />
+			<h1 id="document-type">{{i18n fiscalType null null 'uppercase'}}.</h1>
+			
+			<h4>{{i18n 'to'}}</h4>
 			<p id="client-block">
 				{{#if client.organization}}
-				<strong id="organization">{{ client.organization }}</strong><br>
+				<strong>{{ client.organization }}</strong><br>
 				{{/if}}{{#if client.contactPerson}}
 				<span id="contact-person">{{ client.contactPerson }}</span><br>
 				{{/if}}{{#if client.address}}
@@ -46,61 +31,68 @@
 				{{/if}}{{#if client.postalcode}}
 				<span id="postal-code">{{ client.postalcode }}</span>
 				{{/if}}{{#if client.town}}
-				<span id="place">, {{ client.town }}</span><br>
+				<span id="place">, {{ client.town }}</span>
 				{{/if}}{{#if isInternational}}
-				<span id="country">{{ client.country }}</span>
+				, <span id="country">{{ client.country }}</span>
 				{{/if}}
 			</p>
+
 		</div>
 
-		<div id="invoice-meta">
-			<span class="muted">
-				{{i18n fiscalType null null 'capitalize'}} {{i18n 'number' }}
-			</span>
-			<h3 id="invoice-id">{{ fullID }}</h3>
-			<table>
+		<div class="column right">
+			<h4>{{i18n fiscalType null null 'capitalize'}} {{i18n 'total' null null 'lowercase'}}</h4>
+			<h1 class="inverse">{{ currency subtotal }}</h1>
+
+			<h4>{{i18n 'details'}}</h4>
+			<table class="meta">
+				<colgroup>
+				  <col span="1" class="meta-name">
+				  <col span="1" class="meta-value">
+				</colgroup>
+				{{#if projectName}}
 				<tr>
-					<td class="muted">
-						{{i18n fiscalType null null 'capitalize'}} {{i18n 'date' }}
+					<td>{{i18n 'project'}}:</td>
+					<td class="muted">{{ projectName }}</td>
+				</tr>
+				{{/if}}
+				<tr>
+					<td>
+						{{i18n fiscalType null null 'capitalize'}} {{i18n 'number' }}:
 					</td>
-					<td class="muted">{{i18n 'valid-through' }}</td>
+					<td class="muted">{{ fullID }}</td>
 				</tr>
 				<tr>
-					<td id="invoice-date">{{ invoiceDate }}</td>
-					<td id="expiration-date">{{ expiryDate }}</td>
+					<td>{{i18n fiscalType null null 'capitalize'}} {{i18n 'date' }}:</td>
+					<td class="muted">{{ bookingDate }}</td>
+				</tr>
+				<tr>
+					<td>{{i18n 'valid-through' }}:</td>
+					<td class="muted">{{ expiryDate }}</td>
 				</tr>
 			</table>
+
 		</div>
 
-		<div id="invoice-body">
-			<p class="opening">
-				{{ i18n 'dear' }} {{ clientDisplay }}, {{ i18n 'opening-hereby' }} {{ i18n fiscalType }}
-				{{#if isQuotation }}
-				{{ i18n 'opening-proposed' }}
-				{{else}}
-				{{ i18n 'opening-delivered' }}
-				{{/if}}
-				{{ i18n 'service' invoiceItems 'length' 'lowercase' }}:
-			</p>
 
-			<table>
-				<colgroup data-colums="{{ tableColumns }}">
+		<div id="body">
+			{{#if hasServices }}
+			<table class="services {{#if hasServicesDiscounts}}hasDiscounts{{/if}}">
+				<colgroup>
 				  <col span="1" class="servicename">
-				  <col span="1" class="price">
-				  <col span="1" class="quantity">
-				  {{#if hasDiscounts}}
+				  <col span="1" class="hourlyrate">
+				  <col span="1" class="hours">
+				  {{#if hasServicesDiscounts}}
 				  <col span="1" class="discount">
 				  {{/if}}
 				  <col span="1" class="subtotal">
 				</colgroup>
 
 				<thead>
-					<tr><th colspan="{{ tableColumns }}" class="project-name">{{ projectName }}:</th></tr>
 					<tr class="table-meta">
 						<th>{{ i18n 'service' }}</th>
-						<th>{{ i18n 'price' }}</th>
-						<th>{{ i18n 'quantity' }}</th>
-						{{#if hasDiscounts }}
+						<th>{{ i18n 'hourlyrate' }}: {{currency hourlyRate}}</th>
+						<th>{{ i18n 'hours' }}</th>
+						{{#if hasServicesDiscounts }}
 						<th>{{ i18n 'discount' }}</th>
 						{{/if}}
 						<th>{{ i18n 'amount' }}</th>
@@ -108,8 +100,76 @@
 				</thead>
 
 				<tbody>
-				{{#if hasDiscounts }}
-				{{#each invoiceItems}}
+				{{#if hasServicesDiscounts }}
+				{{#each services }}
+					<tr class="item">
+						<td colspan="2">{{description}}</td>
+						<td>{{hours}}</td>
+						{{#if discount }}
+						<td>-{{ ../discountDisplay }}%</td>
+						{{ else }}
+						<td></td>
+						{{/if}}
+						<td>{{ currency subtotal }}</td>
+					</tr>
+				{{/each}}
+				{{ else }}
+				{{#each services }}
+					<tr class="item">
+						<td colspan="2">{{description}}</td>
+						<td>{{hours}}</td>
+						<td>{{ currency subtotal }}</td>
+					</tr>
+				{{/each}}
+				{{/if}}
+				</tbody>
+
+				<tfoot>
+					<tr>
+						<td colspan="{{ servicesTableFooterColspan }}">{{ i18n 'subtotal' }}</td>
+						<td class="subtotal">{{ currency servicesSubtotal }}</td>
+					</tr>
+					<tr>
+						<td colspan="{{ servicesTableFooterColspan }}">{{ VATrate }}% {{ i18n 'vat' }}</span>
+						</td>
+						<td class="vat">{{ currency VATservices }}</td>
+					</tr>
+					<tr>
+						<td colspan="{{ servicesTableFooterColspan }}">{{ i18n 'total' }}</td>
+						<td class="total">{{ currency servicesTotal }}</td>
+					</tr>
+				</tfoot>
+
+			</table>
+			{{/if}}
+
+			{{#if hasProducts }}
+			<table class="products {{#if hasProductsDiscounts}}hasDiscounts{{/if}}">
+				<colgroup>
+				  <col span="1" class="description">
+				  <col span="1" class="price">
+				  <col span="1" class="quantity">
+				  {{#if hasProductsDiscounts}}
+				  <col span="1" class="discount">
+				  {{/if}}
+				  <col span="1" class="subtotal">
+				</colgroup>
+
+				<thead>
+					<tr class="table-meta">
+						<th>{{ i18n 'product' }}</th>
+						<th>{{ i18n 'price' }}</th>
+						<th>{{ i18n 'quantity' }}</th>
+						{{#if hasProductsDiscounts }}
+						<th>{{ i18n 'discount' }}</th>
+						{{/if}}
+						<th>{{ i18n 'amount' }}</th>
+					</tr>
+				</thead>
+
+				<tbody>
+				{{#if hasProductsDiscounts }}
+				{{#each products}}
 					<tr class="item">
 						<td>{{ 					description}}</td>
 						<td>{{ currency price }}</td>
@@ -123,7 +183,7 @@
 					</tr>
 				{{/each}}
 				{{ else }}
-				{{#each invoiceItems}}
+				{{#each products}}
 					<tr class="item">
 						<td>{{ 					description}}</td>
 						<td>{{ currency price }}</td>
@@ -136,57 +196,81 @@
 
 				<tfoot>
 					<tr>
-						<td colspan="{{ tableFooterColspan }}">{{ i18n 'subtotal' }}</td>
-						<td class="subtotal">{{ currency invoiceSubtotal }}</td>
+						<td colspan="{{ productsTableFooterColspan }}">{{ i18n 'subtotal' }}</td>
+						<td class="subtotal">{{ currency productsSubtotal }}</td>
 					</tr>
 					<tr>
-						<td colspan="{{ tableFooterColspan }}">{{ VATrate }}% {{ i18n 'vat' }}</span>
+						<td colspan="{{ productsTableFooterColspan }}">{{ VATrate }}% {{ i18n 'vat' }}</span>
 						</td>
-						<td class="vat">{{ currency VAT }}</td>
+						<td class="vat">{{ currency VATproducts }}</td>
 					</tr>
 					<tr>
-						<td colspan="{{ tableFooterColspan }}">{{ i18n 'total' }}</td>
-						<td class="total">{{ currency invoiceTotal }}</td>
+						<td colspan="{{ productsTableFooterColspan }}">{{ i18n 'total' }}</td>
+						<td class="total">{{ currency productsTotal }}</td>
 					</tr>
 				</tfoot>
 			</table>
+			{{/if}}
 
 			<span id="closing">
 				{{#if isQuotation }}
-				<p class="muted">
-				{{ i18n 'closing-quotation' }} {{ i18n 'service' invoiceItems 'length' 'lowercase' }}.
-				</p>
-				<p class="muted">
-				{{ i18n 'closing-terms' }} <a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
-				</p>
+					<p class="muted">
+					{{ i18n 'closing-quotation' }} {{ i18n 'service' invoiceItems 'length' 'lowercase' }}.
+					</p>
+					<p class="muted">
+					{{ i18n 'closing-terms' }} <a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
+					</p>
 				{{else}}
-				<p class="muted">
-					{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'expires' }} {{ validityPeriod }}
-					{{ i18n 'days-after'}} {{i18n fiscalType }} {{i18n 'date' }}.
+					<p class="muted">
+						{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'expires' }} {{ validityPeriod }}
+						{{ i18n 'days-after'}} {{i18n fiscalType }} {{i18n 'date' }}.
 
-					{{ i18n 'closing-expiry-please' }} <strong>{{ expiryDate }}</strong>
-					{{ i18n 'closing-transfer' }} <strong>{{ currency invoiceTotal }}</strong>
-					{{ i18n 'closing-to-account' }} <strong>{{ origin.iban }}</strong>,
-					{{ i18n 'closing-denoting' }} {{i18n fiscalType }} {{i18n 'number' }} <strong>{{ fullID }}</strong>
-					{{ i18n 'closing-thanks'}}
-				</p>
+						{{ i18n 'closing-expiry-please' }} <strong>{{ expiryDate }}</strong>
+						{{ i18n 'closing-transfer' }} <strong>{{ currency total }}</strong>
+						{{ i18n 'closing-to-account' }} <strong>{{ origin.iban }}</strong>,
+						{{ i18n 'closing-denoting' }} {{i18n fiscalType }} {{i18n 'number' }} <strong>{{ fullID }}</strong>
+						{{ i18n 'closing-thanks'}}
+					</p>
 				{{/if}}
+
 				<p class="muted">
+					{{#if isInvoice}}
+						{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'terms' }}:
+						<a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
+					{{/if}}
 					{{ i18n 'closing-questions' }} {{ i18n fiscalType }}, {{ i18n 'closing-contact' }}
 					<a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a>.
 				</p>
 			</span>
 		</div>
 
-		{{#unless isQuotation}}
-		<footer class="muted">
-			<p>
-				{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'terms' }}:
-				<a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
-			</p>
+		<footer>
+			<div class="colorband">
+				<div class="paper layer1"></div>
+				<div class="paper layer2"></div>
+				<div class="paper layer3"></div>
+			</div>
+			<div id="company-info">
+				<p>
+					<strong class="company-fullname">{{ companyFull }}</strong><br>
+					<span class="street-address">{{ origin.address }}</span><br>
+					<span class="post-address">{{ origin.postalcode }}</span>,
+					<span class="place">{{ origin.town }}</span>,
+					<span class="country">{{ origin.country }}</span><br>
+					<a class="website" href="https://{{ origin.website }}">{{ origin.website }}</a><br>
+					<a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a>
+				</p>
+				<p id="accounts">
+					IBAN: 							<span class="iban">{{ origin.iban }}</span><br>
+					{{i18n 'bank' }}: 	<span id="bank-name">{{ origin.bank }}</span><br>
+					BIC/SWIFT: 					<span id="bic">{{ origin.bic }}</span><br>
+					{{i18n 'vat' }}:		<span id="vat-number">{{ origin.vat }}</span><br>
+					{{i18n 'coc' }}: 		<span id="kvk">{{ origin.kvk }}</span><br>
+				</p>
+			</div>
 		</footer>
-		{{/unless}}
 	</script>
+
 
 	<!-- Though technically this error template has Handlebars.js formatting,
 	it's only used by the template main.js script in case of errors during startup -->

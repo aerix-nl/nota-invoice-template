@@ -1,29 +1,29 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "http://aerix.nl/invoice-schema",
+  "id": "http://aerix.nl/fiscal-document-schema",
   "type": "object",
   "properties": {
     "meta": {
-      "id": "http://aerix.nl/invoice-schema/meta",
+      "id": "http://aerix.nl/fiscal-document-schema/meta",
       "type": "object",
       "properties": {
         "period": {
-          "id": "http://aerix.nl/invoice-schema/meta/period",
+          "id": "http://aerix.nl/fiscal-document-schema/meta/period",
           "type": "integer",
           "minimum": 0
         },
         "type": {
-          "id": "http://aerix.nl/invoice-schema/meta/type",
+          "id": "http://aerix.nl/fiscal-document-schema/meta/type",
           "type": "string",
           "pattern": "quotation|invoice"
         },
         "date": {
-          "id": "http://aerix.nl/invoice-schema/meta/date",
+          "id": "http://aerix.nl/fiscal-document-schema/meta/date",
           "type": "string",
           "pattern": "\\d{4}(?:-\\d?\\d){2}"
         },
         "id": {
-          "id": "http://aerix.nl/invoice-schema/meta/id",
+          "id": "http://aerix.nl/fiscal-document-schema/meta/id",
           "type": "integer",
           "minimum": 0
         }
@@ -34,60 +34,60 @@
       ]
     },
     "origin": {
-      "id": "http://aerix.nl/invoice-schema/origin",
+      "id": "http://aerix.nl/fiscal-document-schema/origin",
       "type": "object",
       "properties": {
         "company": {
-          "id": "http://aerix.nl/invoice-schema/origin/company",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/company",
           "type": "string"
         },
         "lawform": {
-          "id": "http://aerix.nl/invoice-schema/origin/lawform",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/lawform",
           "type": "string"
         },
         "address": {
-          "id": "http://aerix.nl/invoice-schema/origin/address",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/address",
           "type": "string"
         },
         "postalcode": {
-          "id": "http://aerix.nl/invoice-schema/origin/postalcode",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/postalcode",
           "type": "string",
           "pattern": "\\d{4}\\s?[A-z]{2}"
         },
         "town": {
-          "id": "http://aerix.nl/invoice-schema/origin/town",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/town",
           "type": "string"
         },
         "country": {
-          "id": "http://aerix.nl/invoice-schema/origin/country",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/country",
           "type": "string"
         },
         "email": {
-          "id": "http://aerix.nl/invoice-schema/origin/email",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/email",
           "type": "string"
         },
         "website": {
-          "id": "http://aerix.nl/invoice-schema/origin/website",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/website",
           "type": "string"
         },
         "iban": {
-          "id": "http://aerix.nl/invoice-schema/origin/iban",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/iban",
           "type": "string"
         },
         "bank": {
-          "id": "http://aerix.nl/invoice-schema/origin/bank",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/bank",
           "type": "string"
         },
         "bic": {
-          "id": "http://aerix.nl/invoice-schema/origin/bic",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/bic",
           "type": "string"
         },
         "kvk": {
-          "id": "http://aerix.nl/invoice-schema/origin/kvk",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/kvk",
           "type": "string"
         },
         "vat": {
-          "id": "http://aerix.nl/invoice-schema/origin/vat",
+          "id": "http://aerix.nl/fiscal-document-schema/origin/vat",
           "type": "string"
         }
       },
@@ -108,45 +108,51 @@
       ]
     },
     "validityPeriod": {
-      "id": "http://aerix.nl/invoice-schema/validityPeriod",
+      "id": "http://aerix.nl/fiscal-document-schema/validityPeriod",
       "type": "integer"
     },
     "vatPercentage": {
-      "id": "http://aerix.nl/invoice-schema/vatPercentage",
+      "id": "http://aerix.nl/fiscal-document-schema/vatPercentage",
       "type": "number",
       "minimum": 0,
       "maximum": 1
     },
     "currencySymbol": {
-      "id": "http://aerix.nl/invoice-schema/currencySymbol",
+      "id": "http://aerix.nl/fiscal-document-schema/currencySymbol",
       "type": "string"
     },
+    "hourlyRate": {
+      "id": "http://aerix.nl/fiscal-document-schema/hourlyRate",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 300
+    },
     "client": {
-      "id": "http://aerix.nl/invoice-schema/client",
+      "id": "http://aerix.nl/fiscal-document-schema/client",
       "type": "object",
       "properties": {
         "organization": {
-          "id": "http://aerix.nl/invoice-schema/client/organization",
+          "id": "http://aerix.nl/fiscal-document-schema/client/organization",
           "type": "string"
         },
         "contactPerson": {
-          "id": "http://aerix.nl/invoice-schema/client/contactPerson",
+          "id": "http://aerix.nl/fiscal-document-schema/client/contactPerson",
           "type": "string"
         },
         "address": {
-          "id": "http://aerix.nl/invoice-schema/client/address",
+          "id": "http://aerix.nl/fiscal-document-schema/client/address",
           "type": "string"
         },
         "postalcode": {
-          "id": "http://aerix.nl/invoice-schema/client/postalcode",
+          "id": "http://aerix.nl/fiscal-document-schema/client/postalcode",
           "type": "string"
         },
         "town": {
-          "id": "http://aerix.nl/invoice-schema/client/town",
+          "id": "http://aerix.nl/fiscal-document-schema/client/town",
           "type": "string"
         },
         "country": {
-          "id": "http://aerix.nl/invoice-schema/client/country",
+          "id": "http://aerix.nl/fiscal-document-schema/client/country",
           "type": "string"
         }
       },
@@ -155,45 +161,67 @@
       ]
     },
     "projectName": {
-      "id": "http://aerix.nl/invoice-schema/projectName",
+      "id": "http://aerix.nl/fiscal-document-schema/projectName",
       "type": "string"
     },
-    "invoiceItems": {
-      "id": "http://aerix.nl/invoice-schema/invoiceItems",
+    "products": {
+      "id": "http://aerix.nl/fiscal-document-schema/products",
       "type": "array",
       "items": {
-        "id": "http://aerix.nl/invoice-schema/invoiceItems/item",
+        "id": "http://aerix.nl/fiscal-document-schema/products/item",
         "type": "object",
         "properties": {
           "description": {
-            "id": "http://aerix.nl/invoice-schema/invoiceItems/regular/description",
-            "type": "string"
-          },
-          "quantity": {
-            "id": "http://aerix.nl/invoice-schema/invoiceItems/regular/quantity",
-            "type": "number",
-            "minimum": 1
+            "id": "http://aerix.nl/fiscal-document-schema/products/regular/description",
+            "type": "string",
+            "minimum": 2
           },
           "price": {
-            "id": "http://aerix.nl/invoice-schema/invoiceItems/regular/price",
+            "id": "http://aerix.nl/fiscal-document-schema/products/regular/price",
             "type": "number",
             "minimum": 0
-          },
-          "type": {
-            "id": "http://aerix.nl/invoice-schema/invoiceItems/regular/type",
-            "type": "string",
-            "pattern": "product|service"
           },
           "discount": {
-            "id": "http://aerix.nl/invoice-schema/invoiceItems/regular/discount",
+            "id": "http://aerix.nl/fiscal-document-schema/products/regular/discount",
             "type": "number",
-            "minimum": 0
+            "minimum": 0,
+            "maximum": 1
           }
         },
         "required": [
           "description",
           "quantity",
           "price"
+        ]
+      }
+    },
+    "services": {
+      "id": "http://aerix.nl/fiscal-document-schema/services",
+      "type": "array",
+      "items": {
+        "id": "http://aerix.nl/fiscal-document-schema/services/item",
+        "type": "object",
+        "properties": {
+          "description": {
+            "id": "http://aerix.nl/fiscal-document-schema/services/regular/description",
+            "type": "string",
+            "minimum": 2
+          },
+          "hours": {
+            "id": "http://aerix.nl/fiscal-document-schema/services/regular/hours",
+            "type": "number",
+            "minimum": 1
+          },
+          "discount": {
+            "id": "http://aerix.nl/fiscal-document-schema/services/regular/discount",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "description",
+          "hours"
         ]
       }
     }
@@ -204,8 +232,6 @@
     "validityPeriod",
     "vatPercentage",
     "currencySymbol",
-    "client",
-    "projectName",
-    "invoiceItems"
+    "client"
   ]
 }

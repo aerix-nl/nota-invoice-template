@@ -56,10 +56,10 @@ onDependenciesLoaded = ( ) ->
   Nota.trigger 'template:init'
 
   try
-    template = new TemplateController()
+    template = new TemplateController(onError)
   catch error
     onError(error)
-    Nota.logError "An error occured during template initialization.", error
+    Nota.logError error, "An error occured during template initialization."
 
   # Also listen for data being set
   Nota.on 'data:injected', template.render
@@ -70,10 +70,13 @@ onDependenciesLoaded = ( ) ->
   # If running outside PhantomJS we'll have to our data ourselves from the server
   Nota.getData template.render
 
-  return TemplateController
+  # For easy use in the global namespace
+  window.template = template
+  # For use in modules requiring this one
+  return template
 
 # Some vanillaJS error handling in case we can't load the modules (including jQuery)
-onError = (error, root)->
+onError = (error, contextMessage)->
   # Ensure we get the template from the body on the first error, and save it
   # in the root for all later erros
   if not window.errorTemplate?
@@ -88,13 +91,11 @@ onError = (error, root)->
   # Fill the list with error list items
   errorList = document.querySelectorAll("div.error-container ul")[0]
   li = errorListItem.cloneNode()
-  li.innerHTML = error
+  li.innerHTML = contextMessage + ' ' + error
   errorList.appendChild li
  
   if error.requireModules?[0] is "/nota/lib/client.js"
-    console.log 44
     manual = document.querySelectorAll("div.manual-container")[0]
-    console.log manual
     manual.style.display = 'block'
 
   # If Nota's .logError isn't available, continue to throw the error so it shows up in consoles
