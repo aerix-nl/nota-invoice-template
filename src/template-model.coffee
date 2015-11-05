@@ -156,7 +156,7 @@ define dependencies, ()->
       if @hasDiscounts('products') then 4 else 3
 
     servicesTableFooterColspan: ->
-      if @hasDiscounts('services') then 4 else 3
+      if @hasDiscounts('services') then 2 else 1
 
     discountDisplay: ->
       (@discount * 100)

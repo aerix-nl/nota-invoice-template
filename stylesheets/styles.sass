@@ -1,4 +1,6 @@
-@import '../bower_components/bootstrap/dist/css/bootstrap.css'
+@import 'bourbon'
+@import 'neat'
+@import '../bower_components/normalize-css/normalize.css'
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900);
 
 $primaryOrange: #E38A24
@@ -10,7 +12,7 @@ $tertiaryBlue: #1A2C33
 
 $textColor: $tertiaryBlue
 
-$fontStack: "Roboto", sans-serif
+$fontStack: "DINPro", "Roboto", sans-serif
 
 html
   background-color: lightgrey
@@ -18,6 +20,8 @@ html
 body
   position: relative
   font-family: $fontStack
+  font-size: 0.9em
+  @include outer-container
 
 .page
   background-color: white
@@ -44,9 +48,6 @@ h1
 
 h4
   color: $secondaryBlue !important
-  font-size: 1em
-  span.subtext
-    font-weight: normal
 
 // Override bootstrap
 .muted
@@ -55,51 +56,60 @@ h4
 @mixin muted
   color: mix($textColor, white) !important
 
-$logoHeight: 44mm
-img#logo
-  height: $logoHeight
-  margin-bottom: 6mm
-  margin-left: 6mm
+$priceInset: 6mm
+
+header, section.header-details
+  @include row
+  
+  img#logo, div.left
+    @include span-columns(5)
+
+  div.right
+    @include span-columns(7)
+    padding-left: $priceInset
+
+  img#logo
+    padding: 0 16mm 6mm 0
 
 h1#document-type
   letter-spacing: 1mm
-  margin-bottom: 15mm
 
-div.column
-  &.left
-    float: left
-  &.right
-    float: right
-    margin-top: $logoHeight - 1mm
+h1#price
+  padding: 3mm $priceInset
+  margin-left: -$priceInset
+  margin-right: -21mm
+  background-color: $secondaryBlue !important
+  color: white !important
 
 table.meta
-  width: 86mm
+  width: 100%
   colgroup
     col.meta-name
       width: 3.4cm
 
-h1.inverse
-  margin: 2mm -21mm 12mm 0px
-  padding: 3mm 8mm
-  background-color: $secondaryBlue !important
-  color: white !important
+  td.muted
+    text-align: right
+
 
 div#company-info
+  @include row
   p
+    @include span-columns(6)
     display: inline-block
-    margin-bottom: 0
+    margin: 0
   p#accounts
     @include muted
-    margin-left: 26%
+    @include span-columns(6)
 
  
-div#body
+section#body
   clear: both
-  padding-top: 1cm
+  padding-top: 6mm
 
   table
     width: 100%
     margin-bottom: 1cm
+    font-size: 1.1em
 
     colgroup
       col.subtotal
@@ -162,6 +172,10 @@ div#body
      
       col.subtotal
         width: 11%
+
+    thead tr th.hourlyrate, tfoot td.type
+      text-align: right
+      padding-right: 6mm
    
     tr.table-meta
       height: 2em
@@ -224,6 +238,9 @@ $width: 28em
   background-color: $secondaryOrange !important
   width: $width
   box-shadow: none
+
+footer
+  @include muted
 
 section.messages
   margin: 4em -21mm 0 -21mm

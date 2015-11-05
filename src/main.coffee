@@ -40,40 +40,52 @@ dependencies = [
   'template-controller'
 ]
 
+
+
+
+
 # This function will be executed when all dependencies have successfully
 # loaded (they are passed in as arguments).
 onDependenciesLoaded = ( ) ->
   # Unpack all the dependencie we receive in the arguments
   [Nota, TemplateController] = arguments
     
-  # We can disable module/script load error catching now. From here on we use our own
-  # (Nota.logError) which works with the limitations of PhantomJS and gets the error objects into
-  # the consoles (requirejs.onError catches ALL errors and prevents them from reaching the console,
-  # which is really annoying when you can use that info in Node.js backend for logging).
+  # We can disable module/script load error catching now. From here on we use
+  # our own (Nota.logError) which works with the limitations of PhantomJS and
+  # gets the error objects into the consoles (requirejs.onError catches ALL
+  # errors and prevents them from reaching the console, which is really
+  # annoying when you can use that info in Node.js backend for logging).
+  # Basics of good design states that errors should be always be loud and
+  # visible, to lower the discovery theshold. RequireJS's error handling goes
+  # against that practice in this case.
   requirejs.onError = (err)-> throw err
 
   # Signal begin of setup
   Nota.trigger 'template:init'
 
   try
-    template = new TemplateController(onError)
+    templateController = new TemplateController(onError)
   catch error
     onError(error)
     Nota.logError error, "An error occured during template initialization."
 
   # Also listen for data being set
-  Nota.on 'data:injected', template.render
+  Nota.on 'data:injected', templateController.render
 
   # Signal that we're done with setup and that we're ready to receive data
   Nota.trigger 'template:loaded'
 
   # If running outside PhantomJS we'll have to our data ourselves from the server
-  Nota.getData template.render
+  Nota.getData templateController.render
 
   # For easy use in the global namespace
-  window.template = template
+  window.template = templateController
   # For use in modules requiring this one
-  return template
+  return templateController
+
+
+
+
 
 # Some vanillaJS error handling in case we can't load the modules (including jQuery)
 onError = (error, contextMessage)->
@@ -100,6 +112,10 @@ onError = (error, contextMessage)->
 
   # If Nota's .logError isn't available, continue to throw the error so it shows up in consoles
   if error.requireModules? then throw error
+
+
+
+
 
 # For catching script/module load errors
 requirejs.onError = onError

@@ -40,12 +40,5 @@
       "hours": 10,
       "discount": 0.1
     }
-  ],
-  "products": [
-    {
-      "description": "Product 1 description",
-      "quantity": 12,
-      "price": 42
-    }
   ]
 }

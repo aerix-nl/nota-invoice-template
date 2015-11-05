@@ -24,71 +24,90 @@
             throw new Error(arguments);
           }
         });
-        Handlebars.registerHelper('i18n', function(i18n_key, count, attr, caselevel) {
-          var value;
-          if ("function" === typeof i18n_key) {
-            i18n_key = i18n_key();
-          }
-          if ("number" === typeof count) {
-            value = i18n.t(i18n_key, {
-              count: count
-            });
-          } else if ("number" === typeof (count != null ? count[attr] : void 0)) {
-            value = i18n.t(i18n_key, {
-              count: count[attr]
-            });
-          } else {
-            value = i18n.t(i18n_key);
-          }
-          switch (caselevel) {
-            case 'lowercase':
-              return value.toLowerCase();
-            case 'uppercase':
-              return value.toUpperCase();
-            case 'capitalize':
-              return s.capitalize(value);
-            default:
-              return value;
-          }
-        });
         if (!Nota.phantomRuntime) {
           require(['css-regions'], function(cssRegions) {
             return console.log("TODO: pagination and page numbers in browser preview");
           });
         }
-        this.template = Handlebars.compile($('script#template-main').html());
+        this.templateMain = Handlebars.compile($('script#template-main').html());
+        this.templatePartials = {
+          'footer': $('script#template-footer').html()
+        };
       }
 
+      TemplateController.prototype.translate = function(i18n_key, count, attr, caselevel) {
+        var value;
+        if ("function" === typeof i18n_key) {
+          i18n_key = i18n_key();
+        }
+        if ("number" === typeof count) {
+          value = i18n.t(i18n_key, {
+            count: count
+          });
+        } else if ("number" === typeof (count != null ? count[attr] : void 0)) {
+          value = i18n.t(i18n_key, {
+            count: count[attr]
+          });
+        } else {
+          value = i18n.t(i18n_key);
+        }
+        switch (caselevel) {
+          case 'lowercase':
+            return value.toLowerCase();
+          case 'uppercase':
+            return value.toUpperCase();
+          case 'capitalize':
+            return s.capitalize(value);
+          default:
+            return value;
+        }
+      };
+
       TemplateController.prototype.render = function(data) {
-        var contextMessage, error, multipage;
+        var contextMessage, errMsg, error;
         Nota.trigger('template:render:start');
+        errMsg = "An error ocurred during rendering.";
         try {
           this.model = new TemplateModel(data);
           this.model.validate(data);
         } catch (_error) {
           error = _error;
-          contextMessage = "An error ocurred during rendering. The provided data to render is not a valid model for this template.";
+          contextMessage = errMsg + " The provided data to render is not a valid model for this template.";
           this.renderError(error, contextMessage);
           Nota.logError(error, contextMessage);
         }
+        $('head title').html(this.translate(this.model.fiscalType(), null, null, 'capitalize') + ' ' + this.model.fullID());
         i18n.setLng(this.model.language());
+        Handlebars.registerHelper('i18n', this.translate);
         Handlebars.registerHelper('currency', this.model.currency);
-        Handlebars.registerHelper('decapitalize', this.model.decapitalize);
         try {
-          $('body').html(this.template(this.model));
+          $('body').html(this.templateMain(this.model));
         } catch (_error) {
           error = _error;
-          contextMessage = "An error ocurred during rendering. Templating engine Handlebars.js encounted an error with the given data.";
+          contextMessage = errMsg + " Templating engine Handlebars.js encounted an error with the given data.";
           this.renderError(error, contextMessage);
           Nota.logError(error, contextMessage);
         }
-        Nota.setDocument('meta', this.model.documentMeta());
-        multipage = ($('body').height() / 3.187864111498258) > 287;
-        if (multipage) {
-          Nota.setDocument('footer', {
-            height: "1cm",
-            contents: "<span style=\"float:right; font-family: Roboto, sans-serif; color:#8D9699 !important;\">\n  " + (i18n.t('page')) + " {{pageNum}} " + (i18n.t('of-page-num')) + " {{numPages}}\n</span>"
-          });
+        try {
+          Nota.setDocument('meta', this.model.documentMeta());
+        } catch (_error) {
+          error = _error;
+          contextMessage = errMsg + " Failed to set the document meta data in the Nota capture client.";
+          this.renderError(error, contextMessage);
+          Nota.logError(error, contextMessage);
+        }
+        try {
+          if (Nota.documentIsMultipage()) {
+            Nota.setDocument('footer', {
+              height: "1cm",
+              contents: this.templatePartials.footer
+            });
+          }
+        } catch (_error) {
+          error = _error;
+          contextMessage = errMsg + " Failed to set the document footer in the Nota capture client.";
+          this.renderError(error, contextMessage);
+          Nota.logError(error, contextMessage);
         }
         return Nota.trigger('template:render:done');
       };

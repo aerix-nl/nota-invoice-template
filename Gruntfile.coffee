@@ -17,6 +17,7 @@ module.exports = ( grunt ) ->
       source:
         options:
           sourceMap: true
+          includePaths: require('node-neat').includePaths
         files: [
           expand: true
           cwd: 'stylesheets'

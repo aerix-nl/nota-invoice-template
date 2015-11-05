@@ -1,11 +1,27 @@
-@import url(../bower_components/bootstrap/dist/css/bootstrap.css);
+@import url(../bower_components/normalize-css/normalize.css);
 @import url(https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900);
+html {
+  box-sizing: border-box; }
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit; }
+
 html {
   background-color: lightgrey; }
 
 body {
   position: relative;
-  font-family: "Roboto", sans-serif; }
+  font-family: "DINPro", "Roboto", sans-serif;
+  font-size: 0.9em;
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto; }
+  body::after {
+    clear: both;
+    content: "";
+    display: table; }
 
 .page {
   background-color: white;
@@ -28,115 +44,146 @@ h1 {
   line-height: 1em; }
 
 h4 {
-  color: #15678A !important;
-  font-size: 1em; }
-  h4 span.subtext {
-    font-weight: normal; }
+  color: #15678A !important; }
 
 .muted {
   color: #8d9699 !important; }
 
-img#logo {
-  height: 44mm;
-  margin-bottom: 6mm;
-  margin-left: 6mm; }
+header, section.header-details {
+  display: block; }
+  header::after, section.header-details::after {
+    clear: both;
+    content: "";
+    display: table; }
+  header img#logo, header div.left, section.header-details img#logo, section.header-details div.left {
+    float: left;
+    display: block;
+    margin-right: 2.3576515979%;
+    width: 40.2913699012%; }
+    header img#logo:last-child, header div.left:last-child, section.header-details img#logo:last-child, section.header-details div.left:last-child {
+      margin-right: 0; }
+  header div.right, section.header-details div.right {
+    float: left;
+    display: block;
+    margin-right: 2.3576515979%;
+    width: 57.3509785009%;
+    padding-left: 6mm; }
+    header div.right:last-child, section.header-details div.right:last-child {
+      margin-right: 0; }
+  header img#logo, section.header-details img#logo {
+    padding: 0 16mm 6mm 0; }
 
 h1#document-type {
-  letter-spacing: 1mm;
-  margin-bottom: 15mm; }
+  letter-spacing: 1mm; }
 
-div.column.left {
-  float: left; }
-
-div.column.right {
-  float: right;
-  margin-top: 43mm; }
-
-table.meta {
-  width: 86mm; }
-  table.meta colgroup col.meta-name {
-    width: 3.4cm; }
-
-h1.inverse {
-  margin: 2mm -21mm 12mm 0px;
-  padding: 3mm 8mm;
+h1#price {
+  padding: 3mm 6mm;
+  margin-left: -6mm;
+  margin-right: -21mm;
   background-color: #15678A !important;
   color: white !important; }
 
-div#company-info p {
-  display: inline-block;
-  margin-bottom: 0; }
+table.meta {
+  width: 100%; }
+  table.meta colgroup col.meta-name {
+    width: 3.4cm; }
+  table.meta td.muted {
+    text-align: right; }
 
-div#company-info p#accounts {
-  color: #8d9699 !important;
-  margin-left: 26%; }
+div#company-info {
+  display: block; }
+  div#company-info::after {
+    clear: both;
+    content: "";
+    display: table; }
+  div#company-info p {
+    float: left;
+    display: block;
+    margin-right: 2.3576515979%;
+    width: 48.821174201%;
+    display: inline-block;
+    margin: 0; }
+    div#company-info p:last-child {
+      margin-right: 0; }
+  div#company-info p#accounts {
+    color: #8d9699 !important;
+    float: left;
+    display: block;
+    margin-right: 2.3576515979%;
+    width: 48.821174201%; }
+    div#company-info p#accounts:last-child {
+      margin-right: 0; }
 
-div#body {
+section#body {
   clear: both;
-  padding-top: 1cm; }
-  div#body table {
+  padding-top: 6mm; }
+  section#body table {
     width: 100%;
-    margin-bottom: 1cm; }
-    div#body table colgroup col.subtotal {
+    margin-bottom: 1cm;
+    font-size: 1.1em; }
+    section#body table colgroup col.subtotal {
       text-align: right; }
-    div#body table.services col.servicename {
+    section#body table.services col.servicename {
       width: 50%; }
-    div#body table.services col.hourlyrate {
+    section#body table.services col.hourlyrate {
       width: 30%; }
-    div#body table.services col.hours {
+    section#body table.services col.hours {
       width: 10%; }
-    div#body table.services col.subtotal {
+    section#body table.services col.subtotal {
       width: 10%; }
-    div#body table.services.hasDiscounts colgroup col.servicename {
+    section#body table.services.hasDiscounts colgroup col.servicename {
       width: 40%; }
-    div#body table.services.hasDiscounts colgroup col.hourlyrate {
+    section#body table.services.hasDiscounts colgroup col.hourlyrate {
       width: 30%; }
-    div#body table.services.hasDiscounts colgroup col.hours {
+    section#body table.services.hasDiscounts colgroup col.hours {
       width: 11%; }
-    div#body table.services.hasDiscounts colgroup col.discount {
+    section#body table.services.hasDiscounts colgroup col.discount {
       width: 7%; }
-    div#body table.services.hasDiscounts colgroup col.subtotal {
+    section#body table.services.hasDiscounts colgroup col.subtotal {
       width: 11%; }
-    div#body table.products colgroup col.description {
+    section#body table.products colgroup col.description {
       width: 70%; }
-    div#body table.products colgroup col.price {
+    section#body table.products colgroup col.price {
       width: 11%; }
-    div#body table.products colgroup col.quantity {
+    section#body table.products colgroup col.quantity {
       width: 8%; }
-    div#body table.products colgroup col.subtotal {
+    section#body table.products colgroup col.subtotal {
       width: 11%; }
-    div#body table.products.hasDiscounts colgroup col.description {
+    section#body table.products.hasDiscounts colgroup col.description {
       width: 60%; }
-    div#body table.products.hasDiscounts colgroup col.price {
+    section#body table.products.hasDiscounts colgroup col.price {
       width: 11%; }
-    div#body table.products.hasDiscounts colgroup col.quantity {
+    section#body table.products.hasDiscounts colgroup col.quantity {
       width: 11%; }
-    div#body table.products.hasDiscounts colgroup col.discount {
+    section#body table.products.hasDiscounts colgroup col.discount {
       width: 7%; }
-    div#body table.products.hasDiscounts colgroup col.subtotal {
+    section#body table.products.hasDiscounts colgroup col.subtotal {
       width: 11%; }
-    div#body table tr.table-meta {
+    section#body table thead tr th.hourlyrate, section#body table tfoot td.type {
+      text-align: right;
+      padding-right: 6mm; }
+    section#body table tr.table-meta {
       height: 2em;
       border-top: 2px solid #1A2C33 !important;
       border-bottom: 1px solid rgba(26, 44, 51, 0.5); }
-      div#body table tr.table-meta th {
+      section#body table tr.table-meta th {
         text-align: left; }
-      div#body table tr.table-meta th:last-child {
+      section#body table tr.table-meta th:last-child {
         text-align: right; }
-    div#body table tr td:last-child {
+    section#body table tr td:last-child {
       text-align: right; }
-    div#body table tbody tr:first-child {
+    section#body table tbody tr:first-child {
       height: 2em;
       vertical-align: bottom; }
-    div#body table tbody tr:last-child {
+    section#body table tbody tr:last-child {
       height: 2em;
       vertical-align: top; }
-    div#body table tbody tr:first-child:last-child {
+    section#body table tbody tr:first-child:last-child {
       vertical-align: middle; }
-    div#body table tfoot {
+    section#body table tfoot {
       display: table-row-group;
       border-top: 1px solid rgba(26, 44, 51, 0.5); }
-      div#body table tfoot tr:first-child {
+      section#body table tfoot tr:first-child {
         height: 2em;
         vertical-align: bottom; }
 
@@ -168,6 +215,9 @@ div.colorband {
   background-color: #945205 !important;
   width: 28em;
   box-shadow: none; }
+
+footer {
+  color: #8d9699 !important; }
 
 section.messages {
   margin: 4em -21mm 0 -21mm; }

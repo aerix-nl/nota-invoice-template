@@ -28,27 +28,6 @@ define dependencies, ()->
         missingKeyHandler: (lng, ns, key, defaultValue, lngs) ->
           throw new Error arguments
       }
-
-      Handlebars.registerHelper 'i18n', (i18n_key, count, attr, caselevel)->
-
-        # TODO: Fugly hack to get Handlebars to evaluate a function when passed to
-        # a helper as the value
-        if "function" is typeof i18n_key then i18n_key = i18n_key()
-
-        # Hack to achieve pluralization with the helper
-        if "number" is typeof count
-          value = i18n.t(i18n_key, count: count)
-        else if "number" is typeof count?[attr]
-          value = i18n.t(i18n_key, count: count[attr])
-        else
-          value = i18n.t(i18n_key)
-
-        # Also implement simple capitalization while we're at it
-        switch caselevel
-          when 'lowercase' then value.toLowerCase()
-          when 'uppercase' then value.toUpperCase()
-          when 'capitalize' then s.capitalize(value)
-          else value
           
       # If we're not running in PhantomJS, emulate pagination in the browser
       # using CSS Regions as pages (actually, using the polyfill untill native
@@ -60,17 +39,37 @@ define dependencies, ()->
           console.log "TODO: pagination and page numbers in browser preview"
 
       # Get and compile template once to optimize for rendering iterations later
-      @template = Handlebars.compile $('script#template-main').html()
+      @templateMain = Handlebars.compile $('script#template-main').html()
 
-      # @templatePartials = {
-      #   'tableHeader': Handlebars.compile $('script#table-header').html()
-      # }
+      @templatePartials = {
+        'footer': $('script#template-footer').html()
+      }
 
+
+    translate: (i18n_key, count, attr, caselevel)->
+      # TODO: Fugly hack to get Handlebars to evaluate a function when passed to
+      # a helper as the value
+      if "function" is typeof i18n_key then i18n_key = i18n_key()
+
+      # Hack to achieve pluralization with the helper
+      if "number" is typeof count
+        value = i18n.t(i18n_key, count: count)
+      else if "number" is typeof count?[attr]
+        value = i18n.t(i18n_key, count: count[attr])
+      else
+        value = i18n.t(i18n_key)
+
+      # Also implement simple capitalization while we're at it
+      switch caselevel
+        when 'lowercase' then value.toLowerCase()
+        when 'uppercase' then value.toUpperCase()
+        when 'capitalize' then s.capitalize(value)
+        else value
 
     render: (data)=>
       # Signal that we've started rendering
       Nota.trigger 'template:render:start'
-
+      errMsg = "An error ocurred during rendering."
 
       try
         # TemplateModel provides helpers, formatters and model validation
@@ -78,44 +77,53 @@ define dependencies, ()->
         @model.validate(data)
       catch error
         # Supplement error message with contextual information and forward it
-        contextMessage = "An error ocurred during rendering. The provided data
+        contextMessage = "#{errMsg} The provided data
         to render is not a valid model for this template."
         @renderError(error, contextMessage)
         Nota.logError(error, contextMessage)
 
+      $('head title').html @translate(@model.fiscalType(), null, null, 'capitalize') + ' ' + @model.fullID()
+
       i18n.setLng @model.language()
 
+      Handlebars.registerHelper 'i18n', @translate
       Handlebars.registerHelper 'currency', @model.currency
-      Handlebars.registerHelper 'decapitalize', @model.decapitalize
       
       try
         # The acutal rendering call. Resulting HTML is placed into body DOM
-        $('body').html @template(@model)
+        $('body').html @templateMain(@model)
       catch error
         # Supplement error message with contextual information and forward it
-        contextMessage = "An error ocurred during rendering. Templating engine
+        contextMessage = "#{errMsg} Templating engine
         Handlebars.js encounted an error with the given data."
         @renderError(error, contextMessage)
         Nota.logError(error, contextMessage)
 
 
-      # Provide Nota client with meta data from. This is fetched by PhantomJS
-      # for e.g. providing the proposed filename of the PDF. See the Nota client
-      # API for documentation.
-      Nota.setDocument 'meta', @model.documentMeta()
+      try
+        # Provide Nota client with meta data from. This is fetched by PhantomJS
+        # for e.g. providing the proposed filename of the PDF. See the Nota client
+        # API for documentation.
+        Nota.setDocument 'meta', @model.documentMeta()
+      catch error
+        # Supplement error message with contextual information and forward it
+        contextMessage = "#{errMsg} Failed to set the document meta data in the Nota capture client."
+        @renderError(error, contextMessage)
+        Nota.logError(error, contextMessage)
 
-      # Set footer to generate page numbers, but only if we're so tall that we know we'll get
-      # multiple pages as output (body is taller than one document page (287mm, see stylehseet for
-      # why it's not the ISO216 A4 height) in height).
-      multipage = ($('body').height() / 3.187864111498258) > 287 # 1mm is 3.187864111498258px
-      if multipage then Nota.setDocument 'footer', {
-        height: "1cm"
-        contents: """
-          <span style="float:right; font-family: Roboto, sans-serif; color:#8D9699 !important;">
-            #{i18n.t('page')} {{pageNum}} #{i18n.t('of-page-num')} {{numPages}}
-          </span>
-          """
-      }
+      try
+
+        # Set footer to generate page numbers, but only if we're so tall that we know we'll get
+        # multiple pages as output 
+        if Nota.documentIsMultipage() then Nota.setDocument 'footer', {
+          height: "1cm"
+          contents: @templatePartials.footer
+        }
+      catch error
+        # Supplement error message with contextual information and forward it
+        contextMessage = "#{errMsg} Failed to set the document footer in the Nota capture client."
+        @renderError(error, contextMessage)
+        Nota.logError(error, contextMessage)
 
       # Signal that we're done with rendering and that capture can begin
       Nota.trigger 'template:render:done'

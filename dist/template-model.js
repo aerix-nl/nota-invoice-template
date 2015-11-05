@@ -236,9 +236,9 @@
 
       TemplateModel.prototype.servicesTableFooterColspan = function() {
         if (this.hasDiscounts('services')) {
-          return 4;
+          return 2;
         } else {
-          return 3;
+          return 1;
         }
       };
 

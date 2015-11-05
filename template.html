@@ -9,72 +9,68 @@
 	<link href="images/aerix-favicon.png" rel="icon" type="image/png">
 
 	<script src='bower_components/requirejs/require.js' data-main='dist/main'></script>
-	<!-- Please read the Nota README.md on how to turn this into a PDF or preview it -->
-</head>
-<body class="page">
-	
-	<!-- The Handlebars.js template is rendered and reinserted here by the main.js script -->
+	<!-- Please read the README.md on how to turn this into a PDF or preview it -->
+
+	<!-- Beginning of template. Handlebars.js syntax -->
 	<script id="template-main" type="text/x-handlebars-template">
+		<header>
+		  <img id="logo" src="images/aerix-logo-round.svg" alt="Aerix company logo" />
+		  <div class="right">
+		    <h1 id="document-type">{{i18n fiscalType null null 'uppercase'}}.</h1>
+		    <h1 id="price">{{ currency subtotal }}</h1>
+		  </div>
+		</header>
+		<section class="header-details">
+		  <div class="left">
+		    <h4>{{i18n 'to'}}</h4>
+		    <p id="client-block">
+		      {{#if client.organization}}
+		      <strong>{{ client.organization }}</strong><br>
+		      {{/if}}{{#if client.contactPerson}}
+		      <span id="contact-person">{{ client.contactPerson }}</span><br>
+		      {{/if}}{{#if client.address}}
+		      <span id="address">{{ client.address }}</span><br>
+		      {{/if}}{{#if client.postalcode}}
+		      <span id="postal-code">{{ client.postalcode }}</span>
+		      {{/if}}{{#if client.town}}
+		      <span id="place">, {{ client.town }}</span>
+		      {{/if}}{{#if isInternational}}
+		      , <span id="country">{{ client.country }}</span>
+		      {{/if}}
+		    </p>
+		  </div>
+		  <div class="right">
+		    <h4>{{i18n 'details'}}</h4>
+		    <table class="meta">
+		      <colgroup>
+		        <col span="1" class="meta-name">
+		        <col span="1" class="meta-value">
+		      </colgroup>
+		      {{#if projectName}}
+		      <tr>
+		        <td>{{i18n 'project'}}:</td>
+		        <td class="muted">{{ projectName }}</td>
+		      </tr>
+		      {{/if}}
+		      <tr>
+		        <td>
+		          {{i18n fiscalType null null 'capitalize'}} {{i18n 'number' }}:
+		        </td>
+		        <td class="muted">{{ fullID }}</td>
+		      </tr>
+		      <tr>
+		        <td>{{i18n fiscalType null null 'capitalize'}} {{i18n 'date' }}:</td>
+		        <td class="muted">{{ bookingDate }}</td>
+		      </tr>
+		      <tr>
+		        <td>{{i18n 'valid-through' }}:</td>
+		        <td class="muted">{{ expiryDate }}</td>
+		      </tr>
+		    </table>
+		  </div>
+		</section>
 
-		<div class="column left">
-			<img id="logo" src="images/aerix-logo-round.svg" alt="Aerix company logo" />
-			<h1 id="document-type">{{i18n fiscalType null null 'uppercase'}}.</h1>
-			
-			<h4>{{i18n 'to'}}</h4>
-			<p id="client-block">
-				{{#if client.organization}}
-				<strong>{{ client.organization }}</strong><br>
-				{{/if}}{{#if client.contactPerson}}
-				<span id="contact-person">{{ client.contactPerson }}</span><br>
-				{{/if}}{{#if client.address}}
-				<span id="address">{{ client.address }}</span><br>
-				{{/if}}{{#if client.postalcode}}
-				<span id="postal-code">{{ client.postalcode }}</span>
-				{{/if}}{{#if client.town}}
-				<span id="place">, {{ client.town }}</span>
-				{{/if}}{{#if isInternational}}
-				, <span id="country">{{ client.country }}</span>
-				{{/if}}
-			</p>
-
-		</div>
-
-		<div class="column right">
-			<h4>{{i18n fiscalType null null 'capitalize'}} {{i18n 'total' null null 'lowercase'}}</h4>
-			<h1 class="inverse">{{ currency subtotal }}</h1>
-
-			<h4>{{i18n 'details'}}</h4>
-			<table class="meta">
-				<colgroup>
-				  <col span="1" class="meta-name">
-				  <col span="1" class="meta-value">
-				</colgroup>
-				{{#if projectName}}
-				<tr>
-					<td>{{i18n 'project'}}:</td>
-					<td class="muted">{{ projectName }}</td>
-				</tr>
-				{{/if}}
-				<tr>
-					<td>
-						{{i18n fiscalType null null 'capitalize'}} {{i18n 'number' }}:
-					</td>
-					<td class="muted">{{ fullID }}</td>
-				</tr>
-				<tr>
-					<td>{{i18n fiscalType null null 'capitalize'}} {{i18n 'date' }}:</td>
-					<td class="muted">{{ bookingDate }}</td>
-				</tr>
-				<tr>
-					<td>{{i18n 'valid-through' }}:</td>
-					<td class="muted">{{ expiryDate }}</td>
-				</tr>
-			</table>
-
-		</div>
-
-
-		<div id="body">
+		<section id="body">
 			{{#if hasServices }}
 			<table class="services {{#if hasServicesDiscounts}}hasDiscounts{{/if}}">
 				<colgroup>
@@ -90,7 +86,7 @@
 				<thead>
 					<tr class="table-meta">
 						<th>{{ i18n 'service' }}</th>
-						<th>{{ i18n 'hourlyrate' }}: {{currency hourlyRate}}</th>
+						<th class="hourlyrate">{{ i18n 'hourlyrate' }}: {{currency hourlyRate}}</th>
 						<th>{{ i18n 'hours' }}</th>
 						{{#if hasServicesDiscounts }}
 						<th>{{ i18n 'discount' }}</th>
@@ -126,16 +122,24 @@
 
 				<tfoot>
 					<tr>
-						<td colspan="{{ servicesTableFooterColspan }}">{{ i18n 'subtotal' }}</td>
+						{{#if hasServicesDiscounts }}
+						<td></td>
+						{{/if}}
+						<td class="type"><strong>{{ i18n 'service' services 'length' }}</strong></td>
+						<td colspan="2">{{ i18n 'subtotal' }}</td>
 						<td class="subtotal">{{ currency servicesSubtotal }}</td>
 					</tr>
 					<tr>
-						<td colspan="{{ servicesTableFooterColspan }}">{{ VATrate }}% {{ i18n 'vat' }}</span>
+						<td {{#if hasServicesDiscounts }} colspan="2" {{/if}}></td>
+						<td colspan="2">{{ VATrate }}% {{ i18n 'vat' }}</span>
 						</td>
 						<td class="vat">{{ currency VATservices }}</td>
 					</tr>
 					<tr>
-						<td colspan="{{ servicesTableFooterColspan }}">{{ i18n 'total' }}</td>
+						<td {{#if hasServicesDiscounts }} colspan="2" {{/if}}></td>
+						<td colspan="2">
+							{{ i18n 'total' }}
+						</td>
 						<td class="total">{{ currency servicesTotal }}</td>
 					</tr>
 				</tfoot>
@@ -196,16 +200,22 @@
 
 				<tfoot>
 					<tr>
-						<td colspan="{{ productsTableFooterColspan }}">{{ i18n 'subtotal' }}</td>
+						{{#if hasProductsDiscounts }}
+						<td></td>
+						{{/if}}
+						<td class="type"><strong>{{ i18n 'product' products 'length' }}</strong></td>
+						<td colspan="2">{{ i18n 'subtotal' }}</td>
 						<td class="subtotal">{{ currency productsSubtotal }}</td>
 					</tr>
 					<tr>
-						<td colspan="{{ productsTableFooterColspan }}">{{ VATrate }}% {{ i18n 'vat' }}</span>
+						<td {{#if hasProductsDiscounts }} colspan="2" {{/if}}></td>
+						<td colspan="2">{{ VATrate }}% {{ i18n 'vat' }}
 						</td>
 						<td class="vat">{{ currency VATproducts }}</td>
 					</tr>
 					<tr>
-						<td colspan="{{ productsTableFooterColspan }}">{{ i18n 'total' }}</td>
+						<td {{#if hasProductsDiscounts }} colspan="2" {{/if}}></td>
+						<td colspan="2">{{ i18n 'total' }}</td>
 						<td class="total">{{ currency productsTotal }}</td>
 					</tr>
 				</tfoot>
@@ -242,7 +252,7 @@
 					<a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a>.
 				</p>
 			</span>
-		</div>
+		</section>
 
 		<footer>
 			<div class="colorband">
@@ -271,6 +281,14 @@
 		</footer>
 	</script>
 
+	<!-- When capturing this template to PDF, it's possible that it'll cover
+	multiple pages if the table runs long with a lot of services/products, in
+	which case a footer with page numbers is inserted -->
+	<script id="template-footer" type="text/x-handlebars-template">
+		<footer style="float:right; font-family: 'DINPro', Roboto, sans-serif; color:#8D9699 !important;">
+		  {{ i18n 'page' }} {{pageNum}} {{ i18n 'of-page-num'}} {{numPages}}
+		</footer>
+	</script>
 
 	<!-- Though technically this error template has Handlebars.js formatting,
 	it's only used by the template main.js script in case of errors during startup -->
@@ -303,5 +321,11 @@
 			</div>
 		<section>
 	</script>
+
+
+</head>
+<body class="page">
+	<!-- The script#template-main Handlebars.js template is rendered and
+	reinserted here by the dist/template-controller.js script -->
 </body>
 </html>

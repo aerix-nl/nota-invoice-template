@@ -22,11 +22,13 @@ An example invoice template that demonstrates procedurally generated documents b
 * And many more ...
 
 ## Tech used
-* Handlebars.js
-* i18next.js
-* Moment.js
+* [Handlebars.js](https://github.com/wycats/handlebars.js/)
+* [i18next.js](https://github.com/i18next/i18next)
+* [Moment.js](https://github.com/moment/moment)
+* [TV4.js](https://github.com/geraintluff/tv4)
 * jQuery
 * Sass
+* Bourbon
 * CoffeeScript
 * RequireJS
 * Grunt
@@ -40,3 +42,16 @@ In the Nota CLI folder, run `./nota --template=example-invoice --preview` for a 
 
 #### Render to PDF with your own data
 In the Nota CLI directory, run `./nota --template=example-invoice --data=<path/to/data.json`. The output PDF will be located in the same directory. Specify the location with the flag `--output=<path/to/output.pdf>`, and try the other options available with `./nota --help`.
+
+## Development 
+
+#### Requirements
+You'll need
+* NodeJS
+* NPM
+* Bower
+* Grunt
+* Bourbon
+
+#### Compiling assets
+Run `grunt` in the template directory for automagically compiling SASS and CoffeeScript.

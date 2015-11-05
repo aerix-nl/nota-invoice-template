@@ -36,24 +36,24 @@
   dependencies = ['/nota/lib/client.js', 'template-controller'];
 
   onDependenciesLoaded = function() {
-    var Nota, TemplateController, error, template;
+    var Nota, TemplateController, error, templateController;
     Nota = arguments[0], TemplateController = arguments[1];
     requirejs.onError = function(err) {
       throw err;
     };
     Nota.trigger('template:init');
     try {
-      template = new TemplateController(onError);
+      templateController = new TemplateController(onError);
     } catch (_error) {
       error = _error;
       onError(error);
       Nota.logError(error, "An error occured during template initialization.");
     }
-    Nota.on('data:injected', template.render);
+    Nota.on('data:injected', templateController.render);
     Nota.trigger('template:loaded');
-    Nota.getData(template.render);
-    window.template = template;
-    return template;
+    Nota.getData(templateController.render);
+    window.template = templateController;
+    return templateController;
   };
 
   onError = function(error, contextMessage) {
