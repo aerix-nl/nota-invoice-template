@@ -1,0 +1,41 @@
+@import 'bourbon'
+@import 'neat'
+@import 'variables'
+@import 'base'
+
+div.colorband
+  background-color: $secondaryBlue !important
+  color: white !important
+  margin: 8mm -21mm
+  padding: 1mm 21mm
+  clear: both
+  position: relative
+  overflow: hidden
+
+.paper
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  box-shadow: 0 0 20px 0px black
+
+$width: 9cm
+.layer1
+  background-color: $primaryBlue !important
+  width: $width + 4
+.layer2
+  background-color: $primaryOrange !important
+  width: $width + 2
+.layer3
+  background-color: $secondaryOrange !important
+  width: $width
+  box-shadow: none
+
+div#company-info
+  @include row
+  p
+    @include span-columns(5)
+  p#accounts
+    @include muted
+    @include span-columns(7)
+    padding-left: $priceInset

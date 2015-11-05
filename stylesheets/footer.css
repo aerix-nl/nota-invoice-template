@@ -1,0 +1,110 @@
+html {
+  box-sizing: border-box; }
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit; }
+
+html {
+  box-sizing: border-box; }
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit; }
+
+html {
+  background-color: lightgrey; }
+
+body {
+  position: relative;
+  font-family: "DINPro", "Roboto", sans-serif;
+  font-size: 0.9em;
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto; }
+  body::after {
+    clear: both;
+    content: "";
+    display: table; }
+
+.page {
+  background-color: white;
+  color: #1A2C33 !important;
+  min-height: 287mm;
+  padding-left: 21mm;
+  padding-right: 21mm;
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
+  box-sizing: border-box; }
+
+a, .hyperlink {
+  color: #259CCF !important; }
+  a:hover, .hyperlink:hover {
+    color: #15678A !important; }
+
+h1 {
+  color: #15678A !important;
+  font-size: 3.4em;
+  font-weight: 200;
+  line-height: 1em; }
+
+h4 {
+  color: #15678A !important; }
+
+.muted {
+  color: #8d9699 !important; }
+
+div.colorband {
+  background-color: #15678A !important;
+  color: white !important;
+  margin: 8mm -21mm;
+  padding: 1mm 21mm;
+  clear: both;
+  position: relative;
+  overflow: hidden; }
+
+.paper {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  box-shadow: 0 0 20px 0px black; }
+
+.layer1 {
+  background-color: #259CCF !important;
+  width: 13cm; }
+
+.layer2 {
+  background-color: #E38A24 !important;
+  width: 11cm; }
+
+.layer3 {
+  background-color: #945205 !important;
+  width: 9cm;
+  box-shadow: none; }
+
+div#company-info {
+  display: block; }
+  div#company-info::after {
+    clear: both;
+    content: "";
+    display: table; }
+  div#company-info p {
+    float: left;
+    display: block;
+    margin-right: 2.3576515979%;
+    width: 40.2913699012%; }
+    div#company-info p:last-child {
+      margin-right: 0; }
+  div#company-info p#accounts {
+    color: #8d9699 !important;
+    float: left;
+    display: block;
+    margin-right: 2.3576515979%;
+    width: 57.3509785009%;
+    padding-left: 6mm; }
+    div#company-info p#accounts:last-child {
+      margin-right: 0; }
+
+/*# sourceMappingURL=footer.css.map */

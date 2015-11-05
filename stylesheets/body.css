@@ -1,0 +1,127 @@
+html {
+  box-sizing: border-box; }
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit; }
+
+html {
+  background-color: lightgrey; }
+
+body {
+  position: relative;
+  font-family: "DINPro", "Roboto", sans-serif;
+  font-size: 0.9em;
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto; }
+  body::after {
+    clear: both;
+    content: "";
+    display: table; }
+
+.page {
+  background-color: white;
+  color: #1A2C33 !important;
+  min-height: 287mm;
+  padding-left: 21mm;
+  padding-right: 21mm;
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
+  box-sizing: border-box; }
+
+a, .hyperlink {
+  color: #259CCF !important; }
+  a:hover, .hyperlink:hover {
+    color: #15678A !important; }
+
+h1 {
+  color: #15678A !important;
+  font-size: 3.4em;
+  font-weight: 200;
+  line-height: 1em; }
+
+h4 {
+  color: #15678A !important; }
+
+.muted {
+  color: #8d9699 !important; }
+
+section#body {
+  clear: both;
+  padding-top: 6mm; }
+  section#body table {
+    width: 100%;
+    margin-bottom: 1cm; }
+    section#body table colgroup col.subtotal {
+      text-align: right; }
+    section#body table.services col.servicename {
+      width: 50%; }
+    section#body table.services col.hourlyrate {
+      width: 30%; }
+    section#body table.services col.hours {
+      width: 10%; }
+    section#body table.services col.subtotal {
+      width: 10%; }
+    section#body table.services.hasDiscounts colgroup col.servicename {
+      width: 40%; }
+    section#body table.services.hasDiscounts colgroup col.hourlyrate {
+      width: 30%; }
+    section#body table.services.hasDiscounts colgroup col.hours {
+      width: 11%; }
+    section#body table.services.hasDiscounts colgroup col.discount {
+      width: 7%; }
+    section#body table.services.hasDiscounts colgroup col.subtotal {
+      width: 11%; }
+    section#body table.products colgroup col.description {
+      width: 70%; }
+    section#body table.products colgroup col.price {
+      width: 11%; }
+    section#body table.products colgroup col.quantity {
+      width: 8%; }
+    section#body table.products colgroup col.subtotal {
+      width: 11%; }
+    section#body table.products.hasDiscounts colgroup col.description {
+      width: 60%; }
+    section#body table.products.hasDiscounts colgroup col.price {
+      width: 11%; }
+    section#body table.products.hasDiscounts colgroup col.quantity {
+      width: 11%; }
+    section#body table.products.hasDiscounts colgroup col.discount {
+      width: 7%; }
+    section#body table.products.hasDiscounts colgroup col.subtotal {
+      width: 11%; }
+    section#body table thead tr th.hourlyrate, section#body table tfoot td.type {
+      text-align: right;
+      padding-right: 6mm; }
+    section#body table tr.table-meta {
+      height: 2em;
+      border-top: 2px solid #1A2C33 !important;
+      border-bottom: 1px solid rgba(26, 44, 51, 0.5); }
+      section#body table tr.table-meta th {
+        text-align: left; }
+      section#body table tr.table-meta th:last-child {
+        text-align: right; }
+    section#body table tr td:last-child {
+      text-align: right; }
+    section#body table tbody tr:first-child {
+      height: 2em;
+      vertical-align: bottom; }
+    section#body table tbody tr:last-child {
+      height: 2em;
+      vertical-align: top; }
+    section#body table tbody tr:first-child:last-child {
+      vertical-align: middle; }
+    section#body table tfoot {
+      display: table-row-group;
+      border-top: 1px solid rgba(26, 44, 51, 0.5); }
+      section#body table tfoot tr:first-child {
+        height: 2em;
+        vertical-align: bottom; }
+
+span#closing p {
+  color: #8d9699 !important; }
+  span#closing p strong {
+    color: #8d9699 !important; }
+
+/*# sourceMappingURL=body.css.map */

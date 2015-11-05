@@ -5,7 +5,7 @@
 	<title>Aerix invoice template</title>
 
   <link href="stylesheets/styles.css" rel="stylesheet" type="text/css" media="all">
-	<link href="stylesheets/preview.css" rel="stylesheet" type="text/css" media="screen">
+	<link href="stylesheets/browser.css" rel="stylesheet" type="text/css" media="screen">
 	<link href="images/aerix-favicon.png" rel="icon" type="image/png">
 
 	<script src='bower_components/requirejs/require.js' data-main='dist/main'></script>
@@ -224,14 +224,14 @@
 
 			<span id="closing">
 				{{#if isQuotation }}
-					<p class="muted">
+					<p>
 					{{ i18n 'closing-quotation' }} {{ i18n 'service' invoiceItems 'length' 'lowercase' }}.
 					</p>
-					<p class="muted">
+					<p>
 					{{ i18n 'closing-terms' }} <a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
 					</p>
 				{{else}}
-					<p class="muted">
+					<p>
 						{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'expires' }} {{ validityPeriod }}
 						{{ i18n 'days-after'}} {{i18n fiscalType }} {{i18n 'date' }}.
 
@@ -243,7 +243,7 @@
 					</p>
 				{{/if}}
 
-				<p class="muted">
+				<p>
 					{{#if isInvoice}}
 						{{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'terms' }}:
 						<a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.

@@ -1,0 +1,50 @@
+html {
+  box-sizing: border-box; }
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit; }
+
+header, section.header-details {
+  display: block; }
+  header::after, section.header-details::after {
+    clear: both;
+    content: "";
+    display: table; }
+  header img#logo, header div.left, section.header-details img#logo, section.header-details div.left {
+    float: left;
+    display: block;
+    margin-right: 2.3576515979%;
+    width: 40.2913699012%; }
+    header img#logo:last-child, header div.left:last-child, section.header-details img#logo:last-child, section.header-details div.left:last-child {
+      margin-right: 0; }
+  header div.right, section.header-details div.right {
+    float: left;
+    display: block;
+    margin-right: 2.3576515979%;
+    width: 57.3509785009%;
+    padding-left: 6mm; }
+    header div.right:last-child, section.header-details div.right:last-child {
+      margin-right: 0; }
+  header img#logo, section.header-details img#logo {
+    padding: 0 12mm 6mm 0; }
+
+h1#document-type {
+  letter-spacing: 1mm; }
+
+h1#price {
+  padding: 3mm 6mm;
+  margin-left: -6mm;
+  margin-right: -21mm;
+  background-color: #15678A !important;
+  color: white !important; }
+
+table.meta {
+  width: 100%; }
+  table.meta colgroup col.meta-name {
+    width: 3.4cm; }
+  table.meta td.muted {
+    text-align: right; }
+
+/*# sourceMappingURL=header.css.map */

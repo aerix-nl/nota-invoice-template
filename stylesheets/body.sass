@@ -1,0 +1,116 @@
+@import 'variables'
+@import 'base'
+
+section#body
+  clear: both
+  padding-top: 6mm
+
+  table
+    width: 100%
+    margin-bottom: 1cm
+
+    colgroup
+      col.subtotal
+        text-align: right
+
+    &.services
+      col.servicename
+        width: 50%
+     
+      col.hourlyrate
+        width: 30%
+     
+      col.hours
+        width: 10%
+     
+      col.subtotal
+        width: 10%
+
+    &.services.hasDiscounts colgroup
+      col.servicename
+        width: 40%
+     
+      col.hourlyrate
+        width: 30%
+     
+      col.hours
+        width: 11%
+
+      col.discount
+        width: 7%
+     
+      col.subtotal
+        width: 11%
+
+    &.products colgroup
+      col.description
+        width: 70%
+     
+      col.price
+        width: 11%
+     
+      col.quantity
+        width: 8%
+     
+      col.subtotal
+        width: 11%
+
+    &.products.hasDiscounts colgroup
+      col.description
+        width: 60%
+     
+      col.price
+        width: 11%
+     
+      col.quantity
+        width: 11%
+
+      col.discount
+        width: 7%
+     
+      col.subtotal
+        width: 11%
+
+    thead tr th.hourlyrate, tfoot td.type
+      text-align: right
+      padding-right: 6mm
+   
+    tr.table-meta
+      height: 2em
+      border-top: 2px solid $textColor !important
+      border-bottom: 1px solid transparentize($textColor, 0.5)
+      th
+        text-align: left
+     
+      th:last-child
+        text-align: right
+     
+   
+    tr td:last-child
+      text-align: right
+   
+    tbody tr:first-child
+      height: 2em
+      vertical-align: bottom
+   
+    tbody tr:last-child
+      height: 2em
+      vertical-align: top
+   
+    // Case for then there is only one row
+    tbody tr:first-child:last-child
+      vertical-align: middle
+   
+    tfoot
+      display: table-row-group
+      border-top: 1px solid transparentize($textColor, 0.5)
+      tr:first-child
+        height: 2em
+        vertical-align: bottom
+
+span#closing
+  p
+    @include muted
+
+    strong
+      @include muted
