@@ -6,7 +6,7 @@
 div.colorband
   background-color: $secondaryBlue !important
   color: white !important
-  margin: 8mm -21mm
+  margin: 6mm -21mm
   padding: 1mm 21mm
   clear: both
   position: relative
@@ -33,9 +33,12 @@ $width: 9cm
 
 div#company-info
   @include row
-  p
+  table
     @include span-columns(5)
-  p#accounts
+  table#accounts
     @include muted
     @include span-columns(7)
     padding-left: $priceInset
+
+    td
+      padding-right: $priceInset

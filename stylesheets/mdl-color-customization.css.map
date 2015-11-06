@@ -1,0 +1,11 @@
+{
+	"version": 3,
+	"file": "mdl-color-customization.css",
+	"sources": [
+		"mdl-color-customization.sass",
+		"../bower_components/material-design-lite/src/_color-definitions.scss"
+	],
+	"sourcesContent": [],
+	"mappings": "ACAA;;;;;;;;;;;;;;GAcG;AAEH,4CAA4C;AAikB5C,iBAAiB",
+	"names": []
+}

@@ -9,15 +9,15 @@ dependencies = [
   'css-regions'
   'underscore'
   'underscore.string'
+  'material-design-lite'
 ]
 define dependencies, ()->
   # Unpack the loaded dependencies we receive as arguments
-  [TemplateModel, $, Handlebars, s, i18n, nlMap, enMap, cssRegions, _, s] = arguments
+  [TemplateModel, $, Handlebars, s, i18n, nlMap, enMap, cssRegions, _, s, mdl] = arguments
 
   class TemplateController
 
     constructor: (@renderError)->
-
       # Set up internationalisation with support for translations in English and Dutch
       i18n.init {
         resStore:
@@ -46,6 +46,10 @@ define dependencies, ()->
       }
 
 
+
+
+
+
     translate: (i18n_key, count, attr, caselevel)->
       # TODO: Fugly hack to get Handlebars to evaluate a function when passed to
       # a helper as the value
@@ -66,6 +70,10 @@ define dependencies, ()->
         when 'capitalize' then s.capitalize(value)
         else value
 
+
+
+
+
     render: (data)=>
       # Signal that we've started rendering
       Nota.trigger 'template:render:start'
@@ -82,8 +90,6 @@ define dependencies, ()->
         @renderError(error, contextMessage)
         Nota.logError(error, contextMessage)
 
-      $('head title').html @translate(@model.fiscalType(), null, null, 'capitalize') + ' ' + @model.fullID()
-
       i18n.setLng @model.language()
 
       Handlebars.registerHelper 'i18n', @translate
@@ -92,6 +98,12 @@ define dependencies, ()->
       try
         # The acutal rendering call. Resulting HTML is placed into body DOM
         $('body').html @templateMain(@model)
+
+        type = @translate(@model.fiscalType(), null, null, 'capitalize')
+        id = @model.fullID()
+        project = @model.projectName
+        title = if project? then "#{type} #{id} - #{project}" else "#{type} #{id}"
+        $('head title').html title
       catch error
         # Supplement error message with contextual information and forward it
         contextMessage = "#{errMsg} Templating engine
@@ -99,7 +111,19 @@ define dependencies, ()->
         @renderError(error, contextMessage)
         Nota.logError(error, contextMessage)
 
-
+      try
+        # Hook up some Material Design Lite components that are part of the template
+        if not Nota.phantomRuntime
+          $showClosing = $('span#show-closing button')
+          componentHandler.upgradeElement $showClosing[0]
+          $showClosing.click (e)->
+            $('span#closing').slideToggle()
+      catch error
+        # Supplement error message with contextual information and forward it
+        contextMessage = "#{errMsg} Initializing Material Design Lite components failed."
+        @renderError(error, contextMessage)
+        Nota.logError(error, contextMessage)
+      
       try
         # Provide Nota client with meta data from. This is fetched by PhantomJS
         # for e.g. providing the proposed filename of the PDF. See the Nota client
@@ -112,7 +136,6 @@ define dependencies, ()->
         Nota.logError(error, contextMessage)
 
       try
-
         # Set footer to generate page numbers, but only if we're so tall that we know we'll get
         # multiple pages as output 
         if Nota.documentIsMultipage() then Nota.setDocument 'footer', {

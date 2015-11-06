@@ -7,7 +7,7 @@ section#body
 
   table
     width: 100%
-    margin-bottom: 1cm
+    margin-bottom: 6mm
 
     colgroup
       col.subtotal
@@ -28,10 +28,10 @@ section#body
 
     &.services.hasDiscounts colgroup
       col.servicename
-        width: 40%
+        width: 35%
      
       col.hourlyrate
-        width: 30%
+        width: 35%
      
       col.hours
         width: 11%
@@ -40,7 +40,7 @@ section#body
         width: 7%
      
       col.subtotal
-        width: 11%
+        width: 12%
 
     &.products colgroup
       col.description
@@ -107,6 +107,12 @@ section#body
       tr:first-child
         height: 2em
         vertical-align: bottom
+
+span#show-closing
+  @include row
+  display: none
+  text-align: center
+  margin: 1cm 0
 
 span#closing
   p

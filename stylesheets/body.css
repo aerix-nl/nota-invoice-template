@@ -6,13 +6,10 @@ html {
 *::before {
   box-sizing: inherit; }
 
-html {
-  background-color: lightgrey; }
-
 body {
   position: relative;
   font-family: "DINPro", "Roboto", sans-serif;
-  font-size: 0.9em;
+  font-size: 14px;
   max-width: 68em;
   margin-left: auto;
   margin-right: auto; }
@@ -22,12 +19,11 @@ body {
     display: table; }
 
 .page {
-  background-color: white;
   color: #1A2C33 !important;
-  min-height: 287mm;
+  background-color: white;
+  min-height: 250mm;
   padding-left: 21mm;
   padding-right: 21mm;
-  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
   box-sizing: border-box; }
 
 a, .hyperlink {
@@ -36,12 +32,14 @@ a, .hyperlink {
     color: #15678A !important; }
 
 h1 {
-  color: #15678A !important;
-  font-size: 3.4em;
   font-weight: 200;
-  line-height: 1em; }
+  font-size: 3em;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  margin-top: 24px;
+  margin-bottom: 24px; }
 
-h4 {
+h1, h2, h3, h4, h5 {
   color: #15678A !important; }
 
 .muted {
@@ -52,7 +50,7 @@ section#body {
   padding-top: 6mm; }
   section#body table {
     width: 100%;
-    margin-bottom: 1cm; }
+    margin-bottom: 6mm; }
     section#body table colgroup col.subtotal {
       text-align: right; }
     section#body table.services col.servicename {
@@ -64,15 +62,15 @@ section#body {
     section#body table.services col.subtotal {
       width: 10%; }
     section#body table.services.hasDiscounts colgroup col.servicename {
-      width: 40%; }
+      width: 35%; }
     section#body table.services.hasDiscounts colgroup col.hourlyrate {
-      width: 30%; }
+      width: 35%; }
     section#body table.services.hasDiscounts colgroup col.hours {
       width: 11%; }
     section#body table.services.hasDiscounts colgroup col.discount {
       width: 7%; }
     section#body table.services.hasDiscounts colgroup col.subtotal {
-      width: 11%; }
+      width: 12%; }
     section#body table.products colgroup col.description {
       width: 70%; }
     section#body table.products colgroup col.price {
@@ -118,6 +116,16 @@ section#body {
       section#body table tfoot tr:first-child {
         height: 2em;
         vertical-align: bottom; }
+
+span#show-closing {
+  display: block;
+  display: none;
+  text-align: center;
+  margin: 1cm 0; }
+  span#show-closing::after {
+    clear: both;
+    content: "";
+    display: table; }
 
 span#closing p {
   color: #8d9699 !important; }

@@ -4,8 +4,8 @@
 	<meta charset="utf-8">
 	<title>Aerix invoice template</title>
 
-  <link href="stylesheets/styles.css" rel="stylesheet" type="text/css" media="all">
 	<link href="stylesheets/browser.css" rel="stylesheet" type="text/css" media="screen">
+  <link href="stylesheets/styles.css" rel="stylesheet" type="text/css" media="all">
 	<link href="images/aerix-favicon.png" rel="icon" type="image/png">
 
 	<script src='bower_components/requirejs/require.js' data-main='dist/main'></script>
@@ -22,25 +22,26 @@
 		</header>
 		<section class="header-details">
 		  <div class="left">
-		    <h4>{{i18n 'to'}}</h4>
-		    <p id="client-block">
+		    <p class="muted">{{i18n 'to'}}</p>
+		    <table id="client-block">
 		      {{#if client.organization}}
-		      <strong>{{ client.organization }}</strong><br>
+		      <tr><td><strong>{{ client.organization }}</strong></td></tr>
 		      {{/if}}{{#if client.contactPerson}}
-		      <span id="contact-person">{{ client.contactPerson }}</span><br>
+		      <tr><td>{{ client.contactPerson }}</td></tr>
 		      {{/if}}{{#if client.address}}
-		      <span id="address">{{ client.address }}</span><br>
+		      <tr><td>{{ client.address }}</td></tr>
 		      {{/if}}{{#if client.postalcode}}
-		      <span id="postal-code">{{ client.postalcode }}</span>
+		      <tr><td>{{ client.postalcode }}
 		      {{/if}}{{#if client.town}}
-		      <span id="place">, {{ client.town }}</span>
+		      , {{ client.town }}
 		      {{/if}}{{#if isInternational}}
-		      , <span id="country">{{ client.country }}</span>
+		      , {{ client.country }}
 		      {{/if}}
-		    </p>
+		      </td></tr>
+		    </table>
 		  </div>
 		  <div class="right">
-		    <h4>{{i18n 'details'}}</h4>
+		    <p class="muted">{{i18n 'details'}}</p>
 		    <table class="meta">
 		      <colgroup>
 		        <col span="1" class="meta-name">
@@ -48,7 +49,7 @@
 		      </colgroup>
 		      {{#if projectName}}
 		      <tr>
-		        <td>{{i18n 'project'}}:</td>
+		        <td for="project">{{i18n 'project'}}:</td>
 		        <td class="muted">{{ projectName }}</td>
 		      </tr>
 		      {{/if}}
@@ -122,7 +123,7 @@
 
 				<tfoot>
 					<tr>
-						{{#if hasServicesDiscounts }}
+						{{#if hasServicesDiscounts}}
 						<td></td>
 						{{/if}}
 						<td class="type"><strong>{{ i18n 'service' services 'length' }}</strong></td>
@@ -222,6 +223,12 @@
 			</table>
 			{{/if}}
 
+			<span id="show-closing">
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+				  {{ i18n 'notes' }}
+				</button>
+			</span>
+
 			<span id="closing">
 				{{#if isQuotation }}
 					<p>
@@ -261,22 +268,20 @@
 				<div class="paper layer3"></div>
 			</div>
 			<div id="company-info">
-				<p>
-					<strong class="company-fullname">{{ companyFull }}</strong><br>
-					<span class="street-address">{{ origin.address }}</span><br>
-					<span class="post-address">{{ origin.postalcode }}</span>,
-					<span class="place">{{ origin.town }}</span>,
-					<span class="country">{{ origin.country }}</span><br>
-					<a class="website" href="https://{{ origin.website }}">{{ origin.website }}</a><br>
-					<a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a>
-				</p>
-				<p id="accounts">
-					IBAN: 							<span class="iban">{{ origin.iban }}</span><br>
-					{{i18n 'bank' }}: 	<span id="bank-name">{{ origin.bank }}</span><br>
-					BIC/SWIFT: 					<span id="bic">{{ origin.bic }}</span><br>
-					{{i18n 'vat' }}:		<span id="vat-number">{{ origin.vat }}</span><br>
-					{{i18n 'coc' }}: 		<span id="kvk">{{ origin.kvk }}</span><br>
-				</p>
+				<table>
+					<tr><td><strong>{{ companyFull }}</strong></td></tr>
+					<tr><td>{{ origin.address }}</span></td></tr>
+					<tr><td>{{ origin.postalcode }}, {{ origin.town }}, {{ origin.country }}</td></tr>
+					<tr><td><a class="website" href="https://{{ origin.website }}">{{ origin.website }}</a></td></tr>
+					<tr><td><a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a></td></tr>
+				</table>
+				<table id="accounts">
+					<tr><td>IBAN: 							</td><td>{{ origin.iban }}</td></tr>
+					<tr><td>{{i18n 'bank' }}: 	</td><td>{{ origin.bank }}</td></tr>
+					<tr><td>BIC/SWIFT: 					</td><td>{{ origin.bic }}</td></tr>
+					<tr><td>{{i18n 'vat' }}:		</td><td>{{ origin.vat }}</td></tr>
+					<tr><td>{{i18n 'coc' }}: 		</td><td>{{ origin.kvk }}</td></tr>
+				</table>
 			</div>
 		</footer>
 	</script>

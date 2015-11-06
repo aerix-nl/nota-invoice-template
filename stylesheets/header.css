@@ -28,7 +28,7 @@ header, section.header-details {
     header div.right:last-child, section.header-details div.right:last-child {
       margin-right: 0; }
   header img#logo, section.header-details img#logo {
-    padding: 0 12mm 6mm 0; }
+    padding: 0 12mm 0 0; }
 
 h1#document-type {
   letter-spacing: 1mm; }
@@ -46,5 +46,7 @@ table.meta {
     width: 3.4cm; }
   table.meta td.muted {
     text-align: right; }
+  table.meta td[for="project"] {
+    vertical-align: top; }
 
 /*# sourceMappingURL=header.css.map */

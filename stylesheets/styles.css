@@ -1,5 +1,4 @@
-@import url(../bower_components/normalize-css/normalize.css);
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900);
+@import url(../bower_components/normalize.css/normalize.css);
 html {
   box-sizing: border-box; }
 
@@ -7,22 +6,11 @@ html {
 *::after,
 *::before {
   box-sizing: inherit; }
-
-html {
-  box-sizing: border-box; }
-
-*,
-*::after,
-*::before {
-  box-sizing: inherit; }
-
-html {
-  background-color: lightgrey; }
 
 body {
   position: relative;
   font-family: "DINPro", "Roboto", sans-serif;
-  font-size: 0.9em;
+  font-size: 14px;
   max-width: 68em;
   margin-left: auto;
   margin-right: auto; }
@@ -32,12 +20,11 @@ body {
     display: table; }
 
 .page {
-  background-color: white;
   color: #1A2C33 !important;
-  min-height: 287mm;
+  background-color: white;
+  min-height: 250mm;
   padding-left: 21mm;
   padding-right: 21mm;
-  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
   box-sizing: border-box; }
 
 a, .hyperlink {
@@ -46,12 +33,14 @@ a, .hyperlink {
     color: #15678A !important; }
 
 h1 {
-  color: #15678A !important;
-  font-size: 3.4em;
   font-weight: 200;
-  line-height: 1em; }
+  font-size: 3em;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  margin-top: 24px;
+  margin-bottom: 24px; }
 
-h4 {
+h1, h2, h3, h4, h5 {
   color: #15678A !important; }
 
 .muted {
@@ -87,7 +76,7 @@ header, section.header-details {
     header div.right:last-child, section.header-details div.right:last-child {
       margin-right: 0; }
   header img#logo, section.header-details img#logo {
-    padding: 0 12mm 6mm 0; }
+    padding: 0 12mm 0 0; }
 
 h1#document-type {
   letter-spacing: 1mm; }
@@ -105,6 +94,8 @@ table.meta {
     width: 3.4cm; }
   table.meta td.muted {
     text-align: right; }
+  table.meta td[for="project"] {
+    vertical-align: top; }
 
 html {
   box-sizing: border-box; }
@@ -114,13 +105,10 @@ html {
 *::before {
   box-sizing: inherit; }
 
-html {
-  background-color: lightgrey; }
-
 body {
   position: relative;
   font-family: "DINPro", "Roboto", sans-serif;
-  font-size: 0.9em;
+  font-size: 14px;
   max-width: 68em;
   margin-left: auto;
   margin-right: auto; }
@@ -130,12 +118,11 @@ body {
     display: table; }
 
 .page {
-  background-color: white;
   color: #1A2C33 !important;
-  min-height: 287mm;
+  background-color: white;
+  min-height: 250mm;
   padding-left: 21mm;
   padding-right: 21mm;
-  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
   box-sizing: border-box; }
 
 a, .hyperlink {
@@ -144,12 +131,14 @@ a, .hyperlink {
     color: #15678A !important; }
 
 h1 {
-  color: #15678A !important;
-  font-size: 3.4em;
   font-weight: 200;
-  line-height: 1em; }
+  font-size: 3em;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  margin-top: 24px;
+  margin-bottom: 24px; }
 
-h4 {
+h1, h2, h3, h4, h5 {
   color: #15678A !important; }
 
 .muted {
@@ -160,7 +149,7 @@ section#body {
   padding-top: 6mm; }
   section#body table {
     width: 100%;
-    margin-bottom: 1cm; }
+    margin-bottom: 6mm; }
     section#body table colgroup col.subtotal {
       text-align: right; }
     section#body table.services col.servicename {
@@ -172,15 +161,15 @@ section#body {
     section#body table.services col.subtotal {
       width: 10%; }
     section#body table.services.hasDiscounts colgroup col.servicename {
-      width: 40%; }
+      width: 35%; }
     section#body table.services.hasDiscounts colgroup col.hourlyrate {
-      width: 30%; }
+      width: 35%; }
     section#body table.services.hasDiscounts colgroup col.hours {
       width: 11%; }
     section#body table.services.hasDiscounts colgroup col.discount {
       width: 7%; }
     section#body table.services.hasDiscounts colgroup col.subtotal {
-      width: 11%; }
+      width: 12%; }
     section#body table.products colgroup col.description {
       width: 70%; }
     section#body table.products colgroup col.price {
@@ -227,6 +216,16 @@ section#body {
         height: 2em;
         vertical-align: bottom; }
 
+span#show-closing {
+  display: block;
+  display: none;
+  text-align: center;
+  margin: 1cm 0; }
+  span#show-closing::after {
+    clear: both;
+    content: "";
+    display: table; }
+
 span#closing p {
   color: #8d9699 !important; }
   span#closing p strong {
@@ -248,13 +247,10 @@ html {
 *::before {
   box-sizing: inherit; }
 
-html {
-  background-color: lightgrey; }
-
 body {
   position: relative;
   font-family: "DINPro", "Roboto", sans-serif;
-  font-size: 0.9em;
+  font-size: 14px;
   max-width: 68em;
   margin-left: auto;
   margin-right: auto; }
@@ -264,12 +260,11 @@ body {
     display: table; }
 
 .page {
-  background-color: white;
   color: #1A2C33 !important;
-  min-height: 287mm;
+  background-color: white;
+  min-height: 250mm;
   padding-left: 21mm;
   padding-right: 21mm;
-  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
   box-sizing: border-box; }
 
 a, .hyperlink {
@@ -278,12 +273,14 @@ a, .hyperlink {
     color: #15678A !important; }
 
 h1 {
-  color: #15678A !important;
-  font-size: 3.4em;
   font-weight: 200;
-  line-height: 1em; }
+  font-size: 3em;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  margin-top: 24px;
+  margin-bottom: 24px; }
 
-h4 {
+h1, h2, h3, h4, h5 {
   color: #15678A !important; }
 
 .muted {
@@ -292,7 +289,7 @@ h4 {
 div.colorband {
   background-color: #15678A !important;
   color: white !important;
-  margin: 8mm -21mm;
+  margin: 6mm -21mm;
   padding: 1mm 21mm;
   clear: both;
   position: relative;
@@ -324,22 +321,24 @@ div#company-info {
     clear: both;
     content: "";
     display: table; }
-  div#company-info p {
+  div#company-info table {
     float: left;
     display: block;
     margin-right: 2.3576515979%;
     width: 40.2913699012%; }
-    div#company-info p:last-child {
+    div#company-info table:last-child {
       margin-right: 0; }
-  div#company-info p#accounts {
+  div#company-info table#accounts {
     color: #8d9699 !important;
     float: left;
     display: block;
     margin-right: 2.3576515979%;
     width: 57.3509785009%;
     padding-left: 6mm; }
-    div#company-info p#accounts:last-child {
+    div#company-info table#accounts:last-child {
       margin-right: 0; }
+    div#company-info table#accounts td {
+      padding-right: 6mm; }
 
 section.messages {
   margin: 4em -21mm 0 -21mm; }

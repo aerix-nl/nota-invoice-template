@@ -1,13 +1,31 @@
+@import 'mdl-variable-customization'
+@import '../bower_components/material-design-lite/src/material-design-lite.scss'
+@import '../bower_components/material-icons/css/material-icons.css'
+
 html
   background-color: lightgrey
 
 body
-  background-color: white
   width: 210mm
-  min-height: 297mm
   box-shadow: 0 0 30px 0 transparentize(black, 0.5)
   box-sizing: border-box
   position: relative
-  margin: 35px auto
+  margin: 2cm auto 1cm
   padding-top: 15mm
   padding-bottom: 15mm
+
+  header
+    margin-bottom: 2cm
+
+  section#body
+    margin-bottom: 2cm
+
+    span#show-closing
+      display: inherit
+
+    span#closing
+      display: none
+
+  footer div.colorband
+    margin-top: 1cm
+    margin-bottom: 1cm

@@ -17,6 +17,7 @@
       'underscore': 'underscore/underscore',
       'underscore.string': 'underscore.string/lib/underscore.string',
       'handlebars': 'handlebars/handlebars.amd',
+      'material-design-lite': 'material-design-lite/material.min',
       'moment': 'momentjs/moment',
       'moment_nl': 'momentjs/locale/nl',
       'i18next': 'i18next/i18next.amd.withJQuery',

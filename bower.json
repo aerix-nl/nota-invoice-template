@@ -17,6 +17,8 @@
     "tv4": "~1.2.7",
     "underscore": "~1.8.2",
     "underscore.string": "2.3.3",
-    "normalize.css": "~3.0.3"
+    "normalize.css": "~3.0.3",
+    "material-design-lite": "~1.0.6",
+    "material-icons": "~0.1.0"
   }
 }
