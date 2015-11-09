@@ -1,5 +1,10 @@
+@import 'paper-size'
+
 section.messages
-  margin: 4em -21mm 0 -21mm
+  margin-top: 4em
+  margin-right: - map-get(map-get(nth($paper-size, 1), margin), right)
+  margin-bottom: 0
+  margin-left: - map-get(map-get(nth($paper-size, 1), margin), left)
 
 div.error-container, div.manual-container
   padding: 4em

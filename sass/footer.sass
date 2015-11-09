@@ -2,12 +2,17 @@
 @import 'neat'
 @import 'variables'
 @import 'base'
+@import 'paper-size'
 
 div.colorband
   background-color: $secondaryBlue !important
   color: white !important
-  margin: 6mm -21mm
-  padding: 1mm 21mm
+  margin: 6mm
+  margin-left:  - map-get(map-get(nth($paper-size, 1), margin), left)
+  margin-right: - map-get(map-get(nth($paper-size, 1), margin), right)
+  padding: 1mm
+  padding-left:  - map-get(map-get(nth($paper-size, 1), margin), left)
+  padding-right: - map-get(map-get(nth($paper-size, 1), margin), right)
   clear: both
   position: relative
   overflow: hidden

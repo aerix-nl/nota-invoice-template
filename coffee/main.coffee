@@ -76,7 +76,8 @@ onDependenciesLoaded = ( ) ->
   # Signal that we're done with setup and that we're ready to receive data
   Nota.trigger 'template:loaded'
 
-  # If running outside PhantomJS we'll have to our data ourselves from the server
+  # If running outside PhantomJS we'll have to our data ourselves from the
+  # server
   Nota.getData templateController.render
 
   # For easy use in the global namespace
@@ -88,7 +89,8 @@ onDependenciesLoaded = ( ) ->
 
 
 
-# Some vanillaJS error handling in case we can't load the modules (including jQuery)
+# Some vanillaJS error handling in case we can't load the modules (and can't
+# use tools like jQuery either).
 onError = (error, contextMessage)->
   # Ensure we get the template from the body on the first error, and save it
   # in the root for all later erros
@@ -111,7 +113,8 @@ onError = (error, contextMessage)->
     manual = document.querySelectorAll("div.manual-container")[0]
     manual.style.display = 'block'
 
-  # If Nota's .logError isn't available, continue to throw the error so it shows up in consoles
+  # If Nota's .logError isn't available, continue to throw the error so it
+  # shows up in consoles.
   if error.requireModules? then throw error
 
 

@@ -7,8 +7,10 @@ jsonSass        = require 'json-sass'
 
 coffeeSrc = './coffee/**/*.coffee'
 sassSrc = './sass/**/*.sass'
-scssSrc = './sass/**/*.scss'
 notaSrc = './nota.json'
+
+sassIncludes = [].concat(require('node-neat').includePaths,
+  ['bower_components/material-design-lite/src/'])
 
 gulp.task 'coffee', ->
   gulp.src coffeeSrc
@@ -17,9 +19,9 @@ gulp.task 'coffee', ->
   .pipe plugins.sourcemaps.write()
   .pipe gulp.dest './dist/js/'
 
-gulp.task 'sass', ->
+gulp.task 'sass', ['json-sass'], ->
   options =
-    includePaths: require('node-neat').includePaths
+    includePaths: sassIncludes
 
   gulp.src sassSrc
   .pipe plugins.sourcemaps.init()
@@ -38,10 +40,9 @@ gulp.task 'json-sass', ->
 gulp.task 'watch', ->
   gulp.watch coffeeSrc, ['coffee']
   gulp.watch sassSrc,   ['sass']
-  gulp.watch scssSrc,   ['sass']
-  gulp.watch notaSrc,   ['json-sass']
+  gulp.watch notaSrc,   ['sass']
 
-gulp.task 'build', ['coffee', 'json-sass', 'sass', 'watch']
+gulp.task 'build', ['coffee', 'sass', 'watch']
 
 gulp.task 'release', ['clean']
 

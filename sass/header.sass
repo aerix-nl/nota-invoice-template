@@ -1,6 +1,7 @@
 @import 'bourbon'
 @import 'neat'
 @import 'variables'
+@import 'paper-size'
 
 header, section.header-details
   @include row
@@ -21,7 +22,7 @@ h1#document-type
 h1#price
   padding: 3mm $priceInset
   margin-left: -$priceInset
-  margin-right: -21mm
+  margin-right: - map-get(map-get(nth($paper-size, 1), margin), right)
   background-color: $secondaryBlue !important
   color: white !important
 
