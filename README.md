@@ -50,7 +50,7 @@ You'll need
 * NodeJS
 * NPM
 * Bower
-* Grunt
+* Gulp
 * Bourbon
 
 #### Compiling assets

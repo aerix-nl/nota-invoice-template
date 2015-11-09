@@ -1,6 +1,7 @@
+@import 'paper-size'
 @import 'mdl-variable-customization'
-@import '../bower_components/material-design-lite/src/material-design-lite.scss'
-@import '../bower_components/material-icons/css/material-icons.css'
+// @import '/bower_components/material-design-lite/src/material-design-lite'
+@import '/bower_components/material-icons/css/material-icons.css'
 
 html
   background-color: lightgrey
@@ -11,8 +12,8 @@ body
   box-sizing: border-box
   position: relative
   margin: 2cm auto 1cm
-  padding-top: 15mm
-  padding-bottom: 15mm
+  padding-top:    map-get(map-get(nth($paper-size, 1), margin), top)
+  padding-bottom: map-get(map-get(nth($paper-size, 1), margin), bottom)
 
   header
     margin-bottom: 2cm

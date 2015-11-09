@@ -7,9 +7,11 @@
     "orientation": "portrait",
     "margin": {
       "top": "15mm",
-      "left": "0",
-      "right": "0",
-      "bottom": "15mm"
+      "left": "21mm",
+      "right": "21mm",
+      "bottom": "15mm",
+      "deferHorizontal": true,
+      "deferVertical": false
     },
     "border": "0cm"
   }

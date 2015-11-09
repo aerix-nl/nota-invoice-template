@@ -17,7 +17,10 @@ module.exports = ( grunt ) ->
       source:
         options:
           sourceMap: true
-          includePaths: require('node-neat').includePaths
+          includePaths: [
+            require('node-neat').includePaths,
+            require('sassyjson').includePaths
+          ]
         files: [
           expand: true
           cwd: 'stylesheets'

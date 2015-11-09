@@ -23,14 +23,14 @@ requirejs.config {
     'requirejs':              'requirejs/require'
 
     # Template stuff
-    'template-controller':    '/dist/template-controller'
-    'template-model':         '/dist/template-model'
+    'template-controller':    '/dist/js/template-controller'
+    'template-model':         '/dist/js/template-model'
     'schema':                 '/json/schema.json'
     'translation_nl':         '/json/locales/nl.json'
     'translation_en':         '/json/locales/en.json'
 
     # Vendor stuff (that is not available on Bower.js booo! :/ )
-    'css-regions':            '/dist/vendor/css-regions-polyfill'
+    'css-regions':            '/dist/js/vendor/css-regions-polyfill'
 }
 
 # In the above config not all dependencies are declared because

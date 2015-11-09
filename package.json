@@ -11,11 +11,15 @@
   "description": "The invoice template used by Aerix (original Nota developer) in production.",
   "license": "MIT",
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-coffee": "^0.13.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-sass": "^1.0.0",
-    "load-grunt-tasks": "^3.2.0",
+    "coffee-script": "^1.10.0",
+    "gulp": "^3.9.0",
+    "gulp-coffee": "^2.3.1",
+    "gulp-load-plugins": "^1.1.0",
+    "gulp-modify": "^0.1.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.1.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "json-sass": "1.2.1",
     "node-bourbon": "^4.2.3",
     "node-neat": "^1.7.2"
   }
