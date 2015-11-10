@@ -12,11 +12,11 @@ define dependencies, ()->
 
   class TemplateModel
 
-    constructor: (data)-> 
+    constructor: (data)->
       _.extend @, data
 
-      # TODO:
-      # Fugly hack, list of computed properties because Handlebars doesn't allow chaining functions
+      # TODO: Fugly hack, list of computed properties because Handlebars
+      # doesn't allow chaining functions
       if @products? then for pr in @products
         pr.subtotal = @productSubtotal pr
 
@@ -29,14 +29,13 @@ define dependencies, ()->
       'filename':       @filename()
 
     # Used for the html head title element
-    documentName: => 
+    documentName: =>
       s.capitalize @fiscalType() + ' ' + @fullID()
 
     filename: =>
       client = @clientDisplay('company')
       client = client.replace /\s/g, '-' # Spaces to dashes using regex
       filename = "#{@fullID()}_#{client}"
-      extension = ".pdf"
 
       if @projectName?
         project = @projectName.replace /\s/g, '-' # Spaces to dashes using regex
@@ -48,7 +47,7 @@ define dependencies, ()->
       if @isQuotation()
         filename = filename + "_O"
 
-      filename + extension
+      filename
 
     companyFull: =>
       @origin.company+' '+@origin.lawform
@@ -195,7 +194,9 @@ define dependencies, ()->
     # Renders the value (and evaluates it first if it's a function) as a
     # currency (tldr; puts a € or such in fron of it)
     currency: (value) =>
-      if not value? then throw new Error "Asked to render currency of undefined variable"
+      if not value?
+        throw new Error "Asked to render currency of undefined variable"
+
       # TODO: Fugly hack because Handlebars evaluate a function when passed to
       # a helper as the value
       if "function" is typeof value then value = value()
@@ -207,9 +208,10 @@ define dependencies, ()->
       else
         return symbol + ' ' + parsed.toFixed(2)
 
-    # Calculates the item subtotal (price times quantity in case of products, or hourly rate times
-    # hours in case of services, and then a possible discount applied).
-    productSubtotal: (item)=>
+    # Calculates the item subtotal (price times quantity in case of products,
+    # or hourly rate times hours in case of services, and then a possible
+    # discount applied).
+    productSubtotal: (item)->
       # Calculate the subtotal of this item
       subtotal = item.price * item.quantity
       # Apply discount over subtotal if it exists
@@ -248,10 +250,12 @@ define dependencies, ()->
         throw new Error "Invoice date is not a valid/parsable value"
 
       unless data.client?
-        throw new Error "No data provided about the client/target of the invoice"
+        throw new Error "No data provided about the client/target of the
+        invoice"
 
       unless data.client.organization or data.client.contactPerson
-        throw new Error "At least the organization name or contact person name must be provided"
+        throw new Error "At least the organization name or contact person name
+        must be provided"
         
       postalCode = data.client.postalcode
       # Postal code is optional, for clients where it is still unknown, but when
@@ -263,21 +267,30 @@ define dependencies, ()->
         else if postalCode.length > 7
           throw new Error "Postal code may not be longer than 7 characters"
         else if not postalCode.match(/\d{4}\s?[A-z]{2}/)
-          throw new Error 'Postal code must be of format /\\d{4}\\s?[A-z]{2}/, e.g. 1234AB or 1234 ab'
+          throw new Error 'Postal code must be of format /\\d{4}\\s?[A-z]{2}/,
+          e.g. 1234AB or 1234 ab'
 
       if (not @services? and not @products) or @services?.length is 0 and @products.length is 0
-        throw new Error "Document must contain at least some products or services. Found none in either category instead. Documents with an empty body are not valid."
+        throw new Error "Document must contain at least some products or
+        services. Found none in either category instead. Documents with an
+        empty body are not valid."
 
       if @services?.length > 0 and not @hourlyRate?
-        throw new Error "No hourly service price rate provided. Must be provided because items
-        contain services."
+        throw new Error "No hourly service price rate provided. Must be
+        provided because items contain services."
 
       if @services? then for item in @services
-        if item.subtotal is 0 then throw new Error "Subtotal of 0 for service item '#{item.description}' with #{item.hours} hours"
+        if item.subtotal is 0
+          throw new Error "Subtotal of 0 for service item
+          '#{item.description}' with #{item.hours} hours"
 
       if @products? then for item in @products
-        if item.subtotal is 0 then throw new Error "Subtotal of 0 for product item '#{item.description}' with a quantity of #{item.quantity}"
+        if item.subtotal is 0
+          throw new Error "Subtotal of 0 for product item
+          '#{item.description}' with a quantity of #{item.quantity}"
 
-      if @subtotal() < 1 then throw new Error "Subtotal of #{@subtotal()} too low for real world usage patterns"
+      if @subtotal() < 1
+        throw new Error "Subtotal of #{@subtotal()} too low for real world
+        usage patterns"
 
   return TemplateModel
