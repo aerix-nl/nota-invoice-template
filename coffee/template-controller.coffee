@@ -45,7 +45,7 @@ define dependencies, ()->
       # strange effects on the layout even though they shouldn't apply (only
       # media='print', and media='all' should apply). This ensures they're not
       # loaded at all if we're going to capture to PDF anyway.
-      if Nota.phantomTarget isnt 'pdf'
+      if not Nota.buildTarget()
         css = '<link href="dist/css/browser.css" rel="stylesheet"
         type="text/css" media="screen">'
         # Make sure that it's prepended, so that the base styles can override
