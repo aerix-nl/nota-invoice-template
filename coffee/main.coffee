@@ -40,12 +40,9 @@ dependencies = [
   'template-controller'
 ]
 
-# If we're hosted in PhantomJS we'll need Nota as well
-if window._phantom then dependencies.push 'nota'
-
 # This function will be executed when all dependencies have successfully
 # loaded (they are passed in as arguments).
-onDependenciesLoaded = ( TemplateController, Nota ) ->
+onDependenciesLoaded = ( TemplateController ) ->
   # We can disable module/script load error catching now. From here on we use
   # our own (Nota.logError) which works with the limitations of PhantomJS and
   # gets the error objects into the consoles (requirejs.onError catches ALL
@@ -60,7 +57,10 @@ onDependenciesLoaded = ( TemplateController, Nota ) ->
   Nota?.trigger 'template:init'
 
   try
-    templateController = new TemplateController(onError, Nota)
+    if Nota?
+      templateController = new TemplateController(onError, Nota)
+    else
+      templateController = new TemplateController(onError)
   catch error
     onError(error)
     if Nota?
@@ -124,8 +124,30 @@ onError = (error, contextMessage)->
 
 
 
+
+withNota = (Nota)->
+  # Good to hear you could join. Time to start the template
+  require(dependencies, onDependenciesLoaded, onError)
+
+withoutNota = (error)->
+  # Aw, no Nota? If we're hosted in PhantomJS we'll need Nota. So in that case
+  # it would be a fatal problem. But we might as well be running standalone,
+  # and we'll do without.
+  if window._phantom then onError(error)
+
+  # Undefine Nota, we know he won't join the ride, so it's not a known
+  # dependency anymore.
+  requirejs.undef('nota')
+
+  # Continue standalone
+  require(dependencies, onDependenciesLoaded, onError)
+
+
+
+
+
 # For catching script/module load errors
 requirejs.onError = onError
 
-# Time to load the dependencies, and if all goes well, start up the invoice
-define(dependencies, onDependenciesLoaded, onError)
+# We'll attempt to load Nota
+require(['nota'], withNota, withoutNota)
