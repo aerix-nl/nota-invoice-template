@@ -1,7 +1,7 @@
 {
   "name": "aerix-invoice-nota-template",
   "exampleData": "json/preview.json",
-  "defaultFilename": "invoice.pdf",
+  "defaultFilename": "invoice.html",
   "paperSize": {
     "format": "A4",
     "orientation": "portrait",
