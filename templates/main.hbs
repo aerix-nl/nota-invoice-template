@@ -1,0 +1,272 @@
+{{!-- Main template. Handlebars.js syntax --}}
+<header>
+  <img id="logo" src="images/aerix-logo-round.svg" alt="Aerix company logo" />
+  <div class="right">
+    <h1 id="document-type">{{i18n fiscalType null null 'uppercase'}}.</h1>
+    <h1 id="price">{{ currency subtotal }}</h1>
+  </div>
+</header>
+<section class="header-details">
+  <div class="left">
+    <p class="muted">{{i18n 'to'}}</p>
+    <table id="client-block">
+      {{#if client.organization}}
+      <tr><td><strong>{{ client.organization }}</strong></td></tr>
+      {{/if}}{{#if client.contactPerson}}
+      <tr><td>{{ client.contactPerson }}</td></tr>
+      {{/if}}{{#if client.address}}
+      <tr><td>{{ client.address }}</td></tr>
+      {{/if}}{{#if client.postalcode}}
+      <tr><td>{{ client.postalcode }}
+      {{/if}}{{#if client.town}}
+      , {{ client.town }}
+      {{/if}}{{#if isInternational}}
+      , {{ client.country }}
+      {{/if}}
+      </td></tr>
+    </table>
+  </div>
+  <div class="right">
+    <p class="muted">{{i18n 'details'}}</p>
+    <table class="meta">
+      <colgroup>
+        <col span="1" class="meta-name">
+        <col span="1" class="meta-value">
+      </colgroup>
+      {{#if projectName}}
+      <tr>
+        <td for="project">{{i18n 'project'}}:</td>
+        <td class="muted">{{ projectName }}</td>
+      </tr>
+      {{/if}}
+      <tr>
+        <td>
+          {{i18n fiscalType null null 'capitalize'}} {{i18n 'number' }}:
+        </td>
+        <td class="muted">{{ fullID }}</td>
+      </tr>
+      <tr>
+        <td>{{i18n fiscalType null null 'capitalize'}} {{i18n 'date' }}:</td>
+        <td class="muted">{{ bookingDate }}</td>
+      </tr>
+      <tr>
+        <td>{{i18n 'valid-through' }}:</td>
+        <td class="muted">{{ expiryDate }}</td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<section id="body">
+  {{#if hasServices }}
+  <table class="services {{#if hasServicesDiscounts}}hasDiscounts{{/if}}">
+    <colgroup>
+      <col span="1" class="servicename">
+      <col span="1" class="hourlyrate">
+      <col span="1" class="hours">
+      {{#if hasServicesDiscounts}}
+      <col span="1" class="discount">
+      {{/if}}
+      <col span="1" class="subtotal">
+    </colgroup>
+
+    <thead>
+      <tr class="table-meta">
+        <th>{{ i18n 'service' }}</th>
+        <th class="hourlyrate">{{ i18n 'hourlyrate' }}: {{currency hourlyRate}}</th>
+        <th>{{ i18n 'hours' }}</th>
+        {{#if hasServicesDiscounts }}
+        <th>{{ i18n 'discount' }}</th>
+        {{/if}}
+        <th>{{ i18n 'amount' }}</th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {{#if hasServicesDiscounts }}
+    {{#each services }}
+      <tr class="item">
+        <td colspan="2">{{description}}</td>
+        <td>{{hours}}</td>
+        {{#if discount }}
+        <td>-{{ ../discountDisplay }}%</td>
+        {{ else }}
+        <td></td>
+        {{/if}}
+        <td>{{ currency subtotal }}</td>
+      </tr>
+    {{/each}}
+    {{ else }}
+    {{#each services }}
+      <tr class="item">
+        <td colspan="2">{{description}}</td>
+        <td>{{hours}}</td>
+        <td>{{ currency subtotal }}</td>
+      </tr>
+    {{/each}}
+    {{/if}}
+    </tbody>
+
+    <tfoot>
+      <tr>
+        {{#if hasServicesDiscounts}}
+        <td></td>
+        {{/if}}
+        <td class="type"><strong>{{ i18n 'service' services 'length' }}</strong></td>
+        <td colspan="2">{{ i18n 'subtotal' }}</td>
+        <td class="subtotal">{{ currency servicesSubtotal }}</td>
+      </tr>
+      <tr>
+        <td {{#if hasServicesDiscounts }} colspan="2" {{/if}}></td>
+        <td colspan="2">{{ VATrate }}% {{ i18n 'vat' }}</span>
+        </td>
+        <td class="vat">{{ currency VATservices }}</td>
+      </tr>
+      <tr>
+        <td {{#if hasServicesDiscounts }} colspan="2" {{/if}}></td>
+        <td colspan="2">
+          {{ i18n 'total' }}
+        </td>
+        <td class="total">{{ currency servicesTotal }}</td>
+      </tr>
+    </tfoot>
+
+  </table>
+  {{/if}}
+
+  {{#if hasProducts }}
+  <table class="products {{#if hasProductsDiscounts}}hasDiscounts{{/if}}">
+    <colgroup>
+      <col span="1" class="description">
+      <col span="1" class="price">
+      <col span="1" class="quantity">
+      {{#if hasProductsDiscounts}}
+      <col span="1" class="discount">
+      {{/if}}
+      <col span="1" class="subtotal">
+    </colgroup>
+
+    <thead>
+      <tr class="table-meta">
+        <th>{{ i18n 'product' }}</th>
+        <th>{{ i18n 'price' }}</th>
+        <th>{{ i18n 'quantity' }}</th>
+        {{#if hasProductsDiscounts }}
+        <th>{{ i18n 'discount' }}</th>
+        {{/if}}
+        <th>{{ i18n 'amount' }}</th>
+      </tr>
+    </thead>
+
+    <tbody>
+    {{#if hasProductsDiscounts }}
+    {{#each products}}
+      <tr class="item">
+        <td>{{          description}}</td>
+        <td>{{ currency price }}</td>
+        <td>{{          quantity}}</td>
+        {{#if discount }}
+        <td>-{{ ../discountDisplay }}%</td>
+        {{ else }}
+        <td></td>
+        {{/if}}
+        <td>{{ currency subtotal }}</td>
+      </tr>
+    {{/each}}
+    {{ else }}
+    {{#each products}}
+      <tr class="item">
+        <td>{{          description}}</td>
+        <td>{{ currency price }}</td>
+        <td>{{          quantity}}</td>
+        <td>{{ currency subtotal }}</td>
+      </tr>
+    {{/each}}
+    {{/if}}
+    </tbody>
+
+    <tfoot>
+      <tr>
+        {{#if hasProductsDiscounts }}
+        <td></td>
+        {{/if}}
+        <td class="type"><strong>{{ i18n 'product' products 'length' }}</strong></td>
+        <td colspan="2">{{ i18n 'subtotal' }}</td>
+        <td class="subtotal">{{ currency productsSubtotal }}</td>
+      </tr>
+      <tr>
+        <td {{#if hasProductsDiscounts }} colspan="2" {{/if}}></td>
+        <td colspan="2">{{ VATrate }}% {{ i18n 'vat' }}
+        </td>
+        <td class="vat">{{ currency VATproducts }}</td>
+      </tr>
+      <tr>
+        <td {{#if hasProductsDiscounts }} colspan="2" {{/if}}></td>
+        <td colspan="2">{{ i18n 'total' }}</td>
+        <td class="total">{{ currency productsTotal }}</td>
+      </tr>
+    </tfoot>
+  </table>
+  {{/if}}
+
+  <span id="show-closing">
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+      {{ i18n 'notes' }}
+    </button>
+  </span>
+
+  <span id="closing">
+    {{#if isQuotation }}
+      <p>
+      {{ i18n 'closing-quotation' }} {{ i18n 'service' invoiceItems 'length' 'lowercase' }}.
+      </p>
+      <p>
+      {{ i18n 'closing-terms' }} <a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
+      </p>
+    {{else}}
+      <p>
+        {{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'expires' }} {{ validityPeriod }}
+        {{ i18n 'days-after'}} {{i18n fiscalType }} {{i18n 'date' }}.
+
+        {{ i18n 'closing-expiry-please' }} <strong>{{ expiryDate }}</strong>
+        {{ i18n 'closing-transfer' }} <strong>{{ currency total }}</strong>
+        {{ i18n 'closing-to-account' }} <strong>{{ origin.iban }}</strong>,
+        {{ i18n 'closing-denoting' }} {{i18n fiscalType }} {{i18n 'number' }} <strong>{{ fullID }}</strong>
+        {{ i18n 'closing-thanks'}}
+      </p>
+    {{/if}}
+
+    <p>
+      {{#if isInvoice}}
+        {{ i18n 'this' }} {{ i18n fiscalType }} {{ i18n 'terms' }}:
+        <a href="https://aerix.nl/algemene-voorwaarden">aerix.nl/algemene-voorwaarden</a>.
+      {{/if}}
+      {{ i18n 'closing-questions' }} {{ i18n fiscalType }}, {{ i18n 'closing-contact' }}
+      <a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a>.
+    </p>
+  </span>
+</section>
+
+<footer>
+  <div class="colorband">
+    <div class="paper layer1"></div>
+    <div class="paper layer2"></div>
+    <div class="paper layer3"></div>
+  </div>
+  <div id="company-info">
+    <table>
+      <tr><td><strong>{{ companyFull }}</strong></td></tr>
+      <tr><td>{{ origin.address }}</span></td></tr>
+      <tr><td>{{ origin.postalcode }}, {{ origin.town }}, {{ origin.country }}</td></tr>
+      <tr><td><a class="website" href="https://{{ origin.website }}">{{ origin.website }}</a></td></tr>
+      <tr><td><a class="email" href="email:{{ origin.email }}">{{ origin.email }}</a></td></tr>
+    </table>
+    <table id="accounts">
+      <tr><td>IBAN:               </td><td>{{ origin.iban }}</td></tr>
+      <tr><td>{{i18n 'bank' }}:   </td><td>{{ origin.bank }}</td></tr>
+      <tr><td>BIC/SWIFT:          </td><td>{{ origin.bic }}</td></tr>
+      <tr><td>{{i18n 'vat' }}:    </td><td>{{ origin.vat }}</td></tr>
+      <tr><td>{{i18n 'coc' }}:    </td><td>{{ origin.kvk }}</td></tr>
+    </table>
+  </div>
+</footer>

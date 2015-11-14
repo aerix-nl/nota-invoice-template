@@ -1,89 +1,83 @@
 dependencies = [
   'template-model'
+  'i18n-controller'
   'jquery'
   'handlebars'
   'underscore.string'
-  'i18next'
-  'json!translation_nl'
-  'json!translation_en'
   'underscore'
   'underscore.string'
   'material-design-lite'
+  'bluebird'
+
+  "text!#{root}templates/main.hbs"
+  "text!#{root}templates/footer.hbs"
+  "text!#{root}templates/error.hbs"
 ]
 define dependencies, ()->
   # Unpack the loaded dependencies we receive as arguments
-  [TemplateModel, $, Handlebars, s, i18n, nlMap, enMap, _, s, mdl] = arguments
+  [TemplateModel, i18nController, $, Handlebars, s, _, s, mdl, Promise] = arguments
+
+  templates = {
+    main:     arguments[9]
+    footer:   arguments[10]
+    error:    arguments[11]
+  }
 
   class TemplateController
 
-    constructor: (@renderError, @nota)->
-      # Set up internationalisation with support for translations in English
-      # and Dutch.
-      i18n.init {
-        resStore:
-          en: { translation: enMap }
-          nl: { translation: nlMap }
+    constructor: (@nota)->
+      try
+        # Signal begin of template initialization
+        @nota?.trigger 'template:init'
 
-        # In case of missing translation
-        missingKeyHandler: (lng, ns, key, defaultValue, lngs) ->
-          throw new Error arguments
-      }
+        @templates = _.mapObject(templates, (val, key)-> Handlebars.compile(val) )
 
-      # If we're not building a PDF we add the browser stylesheet. Sadly
-      # PhantomJS doesn't clean up the styles completely when starting to
-      # capture to PDF, leaving the media='screen' only stylesheets causing
-      # strange effects on the layout even though they shouldn't apply (only
-      # media='print', and media='all' should apply). This ensures they're not
-      # loaded at all if we're going to capture to PDF anyway.
-      if not @nota?.phantomRuntime
-        css = '<link href="dist/css/material-design.css" rel="stylesheet"
-        type="text/css" media="screen">'
-        # Make sure that it's prepended, so that the base styles can override
-        # a few Material Design ones.
-        $('head link[role="normalize"]').after(css)
+        # If we're not building a PDF we add the browser stylesheet. Sadly
+        # PhantomJS doesn't clean up the styles completely when starting to
+        # capture to PDF, leaving the media='screen' only stylesheets causing
+        # strange effects on the layout even though they shouldn't apply (only
+        # media='print', and media='all' should apply). This ensures they're not
+        # loaded at all if we're going to capture to PDF anyway.
+        if not @nota?.phantomRuntime
+          css = document.createElement('link')
+          css.rel = 'stylesheet'
+          css.href = 'dist/css/material-design.css'
+          css.type = 'text/css'
+          css.media = 'screen'
+          # Make sure that it's prepended, so that the base styles can override
+          # a few Material Design ones.
+          $('head link[role="normalize"]').after(css)
 
-      # Get and compile template once to optimize for rendering iterations later
-      @templateMain = Handlebars.compile $('script#template-main').html()
+        # Also listen for data being set
+        @nota?.on 'data:injected', @render
 
-      @templatePartials = {
-        'footer': $('script#template-footer').html()
-      }
+        # If running outside PhantomJS we'll have to our data ourselves from the
+        # server
+        @nota?.getData @render
 
-      # Also listen for data being set
-      @nota?.on 'data:injected', @render
+        # If we're running stand-alone, show some preview data, for now I guess :)
+        if not @nota?
+          require ['json!preview-data'], @render
 
-      # If running outside PhantomJS we'll have to our data ourselves from the
-      # server
-      @nota?.getData @render
+        # Signal that we're done with setup and that we're ready to receive data
+        @nota?.trigger 'template:loaded'
+      catch error
+        @renderError(error, "An error occured during template initialization.")
+        
+      return this
 
-      # If we're running stand-alone, show some preview data, for now I guess :)
-      if not @nota? then require ['json!preview-data'], @render
+    renderError: (error, contextMessage)->
+      if not @errorHistory? then @errorHistory = []
 
+      @errorHistory.push
+        context:  contextMessage
+        error:    error
 
+      if @templates.error?
+        $('body').html @templates.error(@errorHistory)
 
-    translate: (i18n_key, count, attr, caselevel)->
-      # TODO: Fugly hack to get Handlebars to evaluate a function when passed to
-      # a helper as the value
-      if "function" is typeof i18n_key then i18n_key = i18n_key()
-
-      # Hack to achieve pluralization with the helper
-      if "number" is typeof count
-        value = i18n.t(i18n_key, count: count)
-      else if "number" is typeof count?[attr]
-        value = i18n.t(i18n_key, count: count[attr])
-      else
-        value = i18n.t(i18n_key)
-
-      # Also implement simple capitalization while we're at it
-      switch caselevel
-        when 'lowercase' then value.toLowerCase()
-        when 'uppercase' then value.toUpperCase()
-        when 'capitalize' then s.capitalize(value)
-        else value
-
-
-
-
+      if @nota? then @nota.logError error, contextMessage
+      else throw error
 
     render: (data)=>
       # Signal that we've started rendering
@@ -101,16 +95,15 @@ define dependencies, ()->
         @renderError(error, contextMessage)
         @nota?.logError(error, contextMessage)
 
-      i18n.setLng @model.language()
-
-      Handlebars.registerHelper 'i18n', @translate
+      i18nController.setLanguage @model.language()
+      # Update currency helper because currency symbol might have changed with data
       Handlebars.registerHelper 'currency', @model.currency
       
       try
         # The acutal rendering call. Resulting HTML is placed into body DOM
-        $('body').html @templateMain(@model)
+        $('body').html @templates.main(@model)
 
-        type = @translate(@model.fiscalType(), null, null, 'capitalize')
+        type = i18nController.translate(@model.fiscalType(), null, null, 'capitalize')
         id = @model.fullID()
         project = @model.projectName
         title = if project?
@@ -155,10 +148,12 @@ define dependencies, ()->
       try
         # Set footer to generate page numbers, but only if we're so tall that
         # we know we'll get multiple pages as output
-        if @nota?.documentIsMultipage() then @nota?.setDocument 'footer', {
-          height: "1cm"
-          contents: @templatePartials.footer
-        }
+        @templates.footer()
+        if @nota? and @nota.documentIsMultipage()
+          @nota.setDocument 'footer', {
+            height: "1cm"
+            contents: @templates.footer()
+          }
       catch error
         # Supplement error message with contextual information and forward it
         contextMessage = "#{errMsg} Failed to set the document footer in the
@@ -168,5 +163,6 @@ define dependencies, ()->
 
       # Signal that we're done with rendering and that capture can begin
       @nota?.trigger 'template:render:done'
+
 
   return TemplateController
