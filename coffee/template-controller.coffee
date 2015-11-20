@@ -18,9 +18,9 @@ define dependencies, ()->
   [TemplateModel, i18nController, $, Handlebars, s, _, s, mdl, Promise] = arguments
 
   templates = {
-    main:     arguments[9]
-    footer:   arguments[10]
-    error:    arguments[11]
+    main:     arguments[arguments.length-3]
+    footer:   arguments[arguments.length-2]
+    error:    arguments[arguments.length-1]
   }
 
   class TemplateController
@@ -28,9 +28,10 @@ define dependencies, ()->
     constructor: (@nota)->
       try
         # Signal begin of template initialization
-        @nota?.trigger 'template:init'
+        @nota?.trigger 'template:init:start'
 
-        @templates = _.mapObject(templates, (val, key)-> Handlebars.compile(val) )
+        @templates = _.mapObject templates, (val, key)->
+          Handlebars.compile(val)
 
         # If we're not building a PDF we add the browser stylesheet. Sadly
         # PhantomJS doesn't clean up the styles completely when starting to
@@ -55,29 +56,17 @@ define dependencies, ()->
         # server
         @nota?.getData @render
 
-        # If we're running stand-alone, show some preview data, for now I guess :)
+        # If we're running stand-alone, show some preview data, for now I
+        # guess :)
         if not @nota?
           require ['json!preview-data'], @render
 
         # Signal that we're done with setup and that we're ready to receive data
-        @nota?.trigger 'template:loaded'
+        @nota?.trigger 'template:init:done'
       catch error
-        @renderError(error, "An error occured during template initialization.")
+        @onError(error, "An error occured during template initialization.")
         
       return this
-
-    renderError: (error, contextMessage)->
-      if not @errorHistory? then @errorHistory = []
-
-      @errorHistory.push
-        context:  contextMessage
-        error:    error
-
-      if @templates.error?
-        $('body').html @templates.error(@errorHistory)
-
-      if @nota? then @nota.logError error, contextMessage
-      else throw error
 
     render: (data)=>
       # Signal that we've started rendering
@@ -92,11 +81,11 @@ define dependencies, ()->
         # Supplement error message with contextual information and forward it
         contextMessage = "#{errMsg} The provided data
         to render is not a valid model for this template."
-        @renderError(error, contextMessage)
-        @nota?.logError(error, contextMessage)
+        @onError(error, contextMessage)
 
       i18nController.setLanguage @model.language()
-      # Update currency helper because currency symbol might have changed with data
+      # Update currency helper because currency symbol might have changed with
+      # data.
       Handlebars.registerHelper 'currency', @model.currency
       
       try
@@ -115,23 +104,21 @@ define dependencies, ()->
         # Supplement error message with contextual information and forward it
         contextMessage = "#{errMsg} Templating engine
         Handlebars.js encounted an error with the given data."
-        @renderError(error, contextMessage)
-        @nota?.logError(error, contextMessage)
+        @onError(error, contextMessage)
 
-      try
-        # Hook up some Material Design Lite components that are part of the
-        # template
-        if not @nota?.phantomRuntime
+      if not @nota?.phantomRuntime
+        try
+          # Hook up some Material Design Lite components that are part of the
+          # template
           $showClosing = $('span#show-closing button')
           componentHandler.upgradeElement $showClosing[0]
           $showClosing.click (e)->
             $('span#closing').slideToggle()
-      catch error
-        # Supplement error message with contextual information and forward it
-        contextMessage = "#{errMsg} Initializing Material Design Lite
-        components failed."
-        @renderError(error, contextMessage)
-        @nota?.logError(error, contextMessage)
+        catch error
+          # Supplement error message with contextual information and forward it
+          contextMessage = "#{errMsg} Initializing Material Design Lite
+          components failed."
+          @onError(error, contextMessage)
       
       try
         # Provide Nota client with meta data from. This is fetched by
@@ -142,8 +129,7 @@ define dependencies, ()->
         # Supplement error message with contextual information and forward it
         contextMessage = "#{errMsg} Failed to set the document meta data in
         the Nota capture client."
-        @renderError(error, contextMessage)
-        @nota?.logError(error, contextMessage)
+        @onError(error, contextMessage)
 
       try
         # Set footer to generate page numbers, but only if we're so tall that
@@ -158,11 +144,24 @@ define dependencies, ()->
         # Supplement error message with contextual information and forward it
         contextMessage = "#{errMsg} Failed to set the document footer in the
         Nota capture client."
-        @renderError(error, contextMessage)
-        @nota?.logError(error, contextMessage)
+        @onError(error, contextMessage)
 
       # Signal that we're done with rendering and that capture can begin
       @nota?.trigger 'template:render:done'
 
+    onError: (error, contextMessage)->
+      if not @errorHistory? then @errorHistory = []
+
+      # In case multiple errors come in, catch them all and render them in a
+      # list.
+      @errorHistory.push
+        context:  contextMessage
+        error:    error
+
+      if @templates.error?
+        $('body').html @templates.error(@errorHistory)
+
+      if @nota? then @nota.logError error, contextMessage
+      else throw error
 
   return TemplateController

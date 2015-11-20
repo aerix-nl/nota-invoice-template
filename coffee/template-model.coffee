@@ -23,14 +23,8 @@ define dependencies, ()->
       if @services? then for sr in @services
         sr.subtotal = @serviceSubtotal sr
 
-    documentMeta: (data)=>
-      'id':             @fullID()
-      'documentTitle':  @documentName()
-      'filename':       @filename()
-
-    # Used for the html head title element
-    documentName: =>
-      s.capitalize @fiscalType() + ' ' + @fullID()
+    documentMeta: =>
+      'filename': @filename()
 
     filename: =>
       client = @clientDisplay('company')

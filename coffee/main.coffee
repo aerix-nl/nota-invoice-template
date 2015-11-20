@@ -57,7 +57,7 @@ onDependenciesLoaded = ( TemplateController ) ->
 
 
 requireError = (error)->
-  # Ensure we get the template is visible on the first error, and save
+  # Ensure the template is visible on the first error, and save
   # the list item it in the root for all later errors
   if not (document.getElementById('module-require-error').style.display is 'block')
     document.getElementById('module-require-error').style.display = 'block'
