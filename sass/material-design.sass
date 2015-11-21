@@ -1,0 +1,21 @@
+@import '/bower_components/material-icons/css/material-icons.css'
+
+@import 'color-definitions' // From the Material Design Lite src dir
+
+// Override default colors with branding
+$color-primary: $palette-blue-600
+$color-primary-dark: $palette-blue-800
+$color-accent: $palette-orange-800
+
+$preferred_font: 'DINPro', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+
+// Get the main material design stylesheet
+@import 'material-design-lite'
+
+section#body
+
+  span#show-closing
+    display: inherit
+
+  span#closing
+    display: none

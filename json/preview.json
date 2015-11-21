@@ -21,6 +21,7 @@
   "validityPeriod": 14,
   "vatPercentage": 0.21,
   "currencySymbol": "€",
+  "hourlyRate": 150,
   "client": {
     "organization": "Client Company Name",
     "contactPerson": "Client Contactperson Name",
@@ -30,15 +31,14 @@
     "country": "Client Country"
   },
   "projectName": "Optional project name",
-  "invoiceItems": [
+  "services": [
     {
-      "description": "Service string",
-      "quantity": 1,
-      "price": 203.23
+      "description": "Service 1 description",
+      "hours": 2.4
     }, {
-      "description": "Product string",
-      "quantity": 14,
-      "price": 10
+      "description": "Service 2 description",
+      "hours": 10,
+      "discount": 0.1
     }
   ]
 }

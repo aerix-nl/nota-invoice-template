@@ -1,0 +1,50 @@
+@import 'bourbon'
+@import 'neat'
+@import 'variables'
+@import 'paper-size'
+
+body
+  position: relative
+  font-family: $fontStack
+  font-size: 14px
+  @include outer-container
+
+.page
+  color: $textColor !important
+  background-color: white
+  // height: 297mm // Actual A4-portrait height, but we want to allow multiple pages, so no limit
+  // TODO: a single 297mm page somehow overflows to 2 pages during capture. Apparently 287mm is
+  // what PhantomJS considers A4 :/ try find fix
+  min-height: 287mm - 37mm // Minus document border top and bottom (2 * 15mm, which PhantomJS considers 37mm :/)
+  padding-left:  map-get(map-get(nth($paper-size, 1), margin), left)
+  padding-right: map-get(map-get(nth($paper-size, 1), margin), right)
+  box-sizing: border-box
+
+a, .hyperlink
+  color: $primaryBlue !important
+  &:hover
+    color: $secondaryBlue !important
+
+h1
+  font-weight: 200
+  font-size: 3em
+  line-height: 1.35
+  letter-spacing: -0.02em
+  margin-top: 24px
+  margin-bottom: 24px
+
+h1, h2, h3, h4, h5
+  color: $secondaryBlue !important
+
+code, kbd, pre, samp
+  background-color: white
+  color: grey
+  padding: 3px 6px
+  border-radius: 2px
+
+// Override bootstrap
+.muted
+  color: mix($textColor, white) !important
+
+@mixin muted
+  color: mix($textColor, white) !important

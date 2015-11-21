@@ -1,0 +1,39 @@
+@import 'bourbon'
+@import 'neat'
+@import 'variables'
+@import 'paper-size'
+
+header, section.header-details
+  @include row
+  
+  img#logo, div.left
+    @include span-columns(5)
+
+  div.right
+    @include span-columns(7)
+    padding-left: $priceInset
+
+  img#logo
+    padding: 0 12mm 0 0
+
+h1#document-type
+  letter-spacing: 1mm
+
+h1#price
+  padding: 3mm $priceInset
+  margin-left: -$priceInset
+  margin-right: - map-get(map-get(nth($paper-size, 1), margin), right)
+  background-color: $secondaryBlue !important
+  color: white !important
+
+table.meta
+  width: 100%
+  colgroup
+    col.meta-name
+      width: 3.4cm
+
+  td.muted
+    text-align: right
+
+  td[for="project"]
+    vertical-align: top

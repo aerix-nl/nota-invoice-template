@@ -1,10 +1,18 @@
 {
   "name": "aerix-invoice-nota-template",
   "exampleData": "json/preview.json",
-  "defaultFilename": "invoice.pdf",
+  "defaultFilename": "invoice.html",
   "paperSize": {
     "format": "A4",
     "orientation": "portrait",
+    "margin": {
+      "top": "15mm",
+      "left": "21mm",
+      "right": "21mm",
+      "bottom": "15mm",
+      "deferHorizontal": true,
+      "deferVertical": false
+    },
     "border": "0cm"
   }
 }

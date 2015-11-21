@@ -1,0 +1,25 @@
+@import 'variables'
+@import 'paper-size'
+
+section.messages
+  margin-top: 4em
+  margin-right: - map-get(map-get(nth($paper-size, 1), margin), right)
+  margin-bottom: 0
+  margin-left: - map-get(map-get(nth($paper-size, 1), margin), left)
+
+div.error-container, div.manual-container
+  padding: 4em
+  color: transparentize(white, 0.4)  !important
+
+  a 
+    color: white !important
+
+  h1
+    font-weight: 200
+    color: white !important
+
+div.error-container
+  background-color: darken(red, 20) !important
+
+div.manual-container
+  background-color: $secondaryBlue !important

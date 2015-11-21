@@ -6,27 +6,30 @@ dependencies = [
   'moment',
   'moment_nl'
 ]
-define dependencies, (_, s, tv4, schema, moment)->
+define dependencies, ()->
+  # Unpack the loaded dependencies we receive as arguments
+  [_, s, tv4, schema, moment] = arguments
 
-  class Invoice
+  class TemplateModel
 
-    constructor: (data)-> 
+    constructor: (data)->
       _.extend @, data
 
-    documentMeta: (data)=>
-      'id':             @fullID()
-      'documentTitle':  @documentName()
-      'filename':       @filename()
+      # TODO: Fugly hack, list of computed properties because Handlebars
+      # doesn't allow chaining functions
+      if @products? then for pr in @products
+        pr.subtotal = @productSubtotal pr
 
-    # Used for the html head title element
-    documentName: => 
-      s.capitalize @fiscalType() + ' ' + @fullID()
+      if @services? then for sr in @services
+        sr.subtotal = @serviceSubtotal sr
+
+    documentMeta: =>
+      'filename': @filename()
 
     filename: =>
       client = @clientDisplay('company')
       client = client.replace /\s/g, '-' # Spaces to dashes using regex
       filename = "#{@fullID()}_#{client}"
-      extension = ".pdf"
 
       if @projectName?
         project = @projectName.replace /\s/g, '-' # Spaces to dashes using regex
@@ -38,7 +41,7 @@ define dependencies, (_, s, tv4, schema, moment)->
       if @isQuotation()
         filename = filename + "_O"
 
-      filename + extension
+      filename
 
     companyFull: =>
       @origin.company+' '+@origin.lawform
@@ -54,8 +57,8 @@ define dependencies, (_, s, tv4, schema, moment)->
         "meta.type" should be either invoice, quotation or undefined (defaults
         to invoice).'
 
-    isQuotation: =>
-      @fiscalType() is 'quotation'
+    isQuotation: => @fiscalType() is 'quotation'
+    isInvoice: => @fiscalType() is 'invoice'
 
     language: (country)->
       if not country? then country = @client.country
@@ -92,7 +95,7 @@ define dependencies, (_, s, tv4, schema, moment)->
       date = new Date(meta.date)
       date.getUTCFullYear()+'.'+s.pad(meta.id.toString(), 4, '0')
 
-    invoiceDate: =>
+    bookingDate: =>
       if @isInternational(@client.country)
         moment.locale 'en'
       else
@@ -122,33 +125,71 @@ define dependencies, (_, s, tv4, schema, moment)->
       @invoiceItems.length > 1
 
     # Useful for i18n ... 'this service'/'these services'
-    hasDiscounts: ->
-      _.some @invoiceItems, (item)-> item.discount? > 0
+    hasDiscounts: (category)->
+      check = (item)-> item.discount? > 0
+      products = _.some @products, check
+      services = _.some @services, check
+      switch category
+        when 'products'
+          products
+        when 'services'
+          services
+        else
+          products or services
 
-    tableColumns: ->
-      if @hasDiscounts() then 5 else 4
+    hasProductsDiscounts: -> @hasDiscounts('products')
 
-    tableFooterColspan: ->
-      if @hasDiscounts() then 4 else 3
+    hasServicesDiscounts: -> @hasDiscounts('services')
+
+    hasProducts: -> @products?.length > 0
+
+    hasServices: -> @services?.length > 0
+
+    productsTableFooterColspan: ->
+      if @hasDiscounts('products') then 4 else 3
+
+    servicesTableFooterColspan: ->
+      if @hasDiscounts('services') then 2 else 1
 
     discountDisplay: ->
       (@discount * 100)
 
-    # Subtotal of all the invoice items without taxes, but including their individual discounts
-    invoiceSubtotal: =>
-      _.reduce @invoiceItems, ( (sum, item)=> sum + @itemSubtotal item ), 0
+    # Subtotal of all or just one category of items (without taxes)
+    subtotal: (category)=>
+      products = _.reduce @products, ( (sum, item)=> sum + @productSubtotal item ), 0
+      services = _.reduce @services, ( (sum, item)=> sum + @serviceSubtotal item ), 0
+      switch category
+        when 'products'
+          products
+        when 'services'
+          services
+        else
+          products + services
 
-    invoiceTotal: => @invoiceSubtotal() + @VAT()
+    productsSubtotal: => @subtotal('products')
+
+    servicesSubtotal: => @subtotal('services')
     
-    # VAT over the provided value or the invoice subtotal
-    VAT: =>
-      @invoiceSubtotal() * @vatPercentage
+    VAT: (category)=> @subtotal(category) * @vatPercentage
+
+    VATproducts: => @VAT('products')
+
+    VATservices: => @VAT('services')
 
     VATrate: => (@vatPercentage * 100)
+
+    total: (category)=>
+      @subtotal(category) + @VAT(category)
+
+    productsTotal: => @total('products')
+
+    servicesTotal: => @total('services')
 
     # Renders the value (and evaluates it first if it's a function) as a
     # currency (tldr; puts a € or such in fron of it)
     currency: (value) =>
+      if not value?
+        throw new Error "Asked to render currency of undefined variable"
 
       # TODO: Fugly hack because Handlebars evaluate a function when passed to
       # a helper as the value
@@ -157,19 +198,26 @@ define dependencies, (_, s, tv4, schema, moment)->
       symbol = @currencySymbol
       parsed = parseInt(value)
       if isNaN(parsed)
-        throw new Error("Could not parse value '" + value + "'")
+        throw new Error("Could not parse value '" + value + "' to integer")
       else
-        return symbol + ' ' + value.toFixed(2)
+        return symbol + ' ' + parsed.toFixed(2)
 
-    # Calculates the item subtotal (price times quantity, and then a possible discount applied)
-    itemSubtotal: (item)->
+    # Calculates the item subtotal (price times quantity in case of products,
+    # or hourly rate times hours in case of services, and then a possible
+    # discount applied).
+    productSubtotal: (item)->
       # Calculate the subtotal of this item
       subtotal = item.price * item.quantity
       # Apply discount over subtotal if it exists
-      if item.discount? > 0 then subtotal = subtotal * (1-item.discount)
+      if item.discount? then subtotal = subtotal * (1-item.discount)
       subtotal
 
-    decapitalize: (string)-> string.toLowerCase()
+    serviceSubtotal: (item)=>
+      # Calculate the subtotal of this item
+      subtotal = item.hours * @hourlyRate
+      # Apply discount over subtotal if it exists
+      if item.discount? then subtotal = subtotal * (1-item.discount)
+      subtotal
 
     # Validate the new attributes of the model before accepting them
     validate: (data)=>
@@ -196,10 +244,12 @@ define dependencies, (_, s, tv4, schema, moment)->
         throw new Error "Invoice date is not a valid/parsable value"
 
       unless data.client?
-        throw new Error "No data provided about the client/target of the invoice"
+        throw new Error "No data provided about the client/target of the
+        invoice"
 
       unless data.client.organization or data.client.contactPerson
-        throw new Error "At least the organization name or contact person name must be provided"
+        throw new Error "At least the organization name or contact person name
+        must be provided"
         
       postalCode = data.client.postalcode
       # Postal code is optional, for clients where it is still unknown, but when
@@ -211,25 +261,30 @@ define dependencies, (_, s, tv4, schema, moment)->
         else if postalCode.length > 7
           throw new Error "Postal code may not be longer than 7 characters"
         else if not postalCode.match(/\d{4}\s?[A-z]{2}/)
-          throw new Error 'Postal code must be of format /\\d{4}\\s?[A-z]{2}/, e.g. 1234AB or 1234 ab'
+          throw new Error 'Postal code must be of format /\\d{4}\\s?[A-z]{2}/,
+          e.g. 1234AB or 1234 ab'
 
-      unless data.invoiceItems?.length? and data.invoiceItems.length > 0
-        throw new Error "No items to show in invoice provided. Must be an
-        array with at least one entry"
+      if (not @services? and not @products) or @services?.length is 0 and @products.length is 0
+        throw new Error "Document must contain at least some products or
+        services. Found none in either category instead. Documents with an
+        empty body are not valid."
 
-      allItemsValid = _.every data.invoiceItems, (item, idx)->
-        unless item.description?.length? > 0
-          throw new Error "Description not provided or of no length"
-        price = parseFloat(item.price, 10)
-        if isNaN price
-          throw new Error "Price is not a valid floating point number"
-        unless price > 0
-          throw new Error "Price must be greater than zero"
-        if item.discount? and (item.discount < 0 or item.discount > 1)
-          throw new Error "Discount specified out of range (must be between 0 and 1)"
-        if item.quantity? and item.quantity < 1
-          throw new Error "When specified, quantity must be greater than one"
+      if @services?.length > 0 and not @hourlyRate?
+        throw new Error "No hourly service price rate provided. Must be
+        provided because items contain services."
 
+      if @services? then for item in @services
+        if item.subtotal is 0
+          throw new Error "Subtotal of 0 for service item
+          '#{item.description}' with #{item.hours} hours"
 
-  # Hook ourself into the global namespace so we can be interfaced with
-  this.Invoice = Invoice
+      if @products? then for item in @products
+        if item.subtotal is 0
+          throw new Error "Subtotal of 0 for product item
+          '#{item.description}' with a quantity of #{item.quantity}"
+
+      if @subtotal() < 1
+        throw new Error "Subtotal of #{@subtotal()} too low for real world
+        usage patterns"
+
+  return TemplateModel

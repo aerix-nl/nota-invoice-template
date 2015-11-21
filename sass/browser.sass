@@ -1,0 +1,29 @@
+@import 'paper-size'
+
+html
+  background-color: lightgrey
+
+body
+  max-width: 210mm !important
+  box-shadow: 0 0 30px 0 transparentize(black, 0.5)
+  box-sizing: border-box
+  position: relative
+  margin: 6% auto
+  transition-property: margin
+  transition-duration: 200ms
+  padding-top:    map-get(map-get(nth($paper-size, 1), margin), top)
+  padding-bottom: map-get(map-get(nth($paper-size, 1), margin), bottom)
+
+  header
+    margin-bottom: 2cm
+
+  section#body
+    margin-bottom: 2cm
+
+  footer div.colorband
+    margin-top: 1cm
+    margin-bottom: 1cm
+
+@media(max-width: 210mm)
+  body
+    margin: 0
