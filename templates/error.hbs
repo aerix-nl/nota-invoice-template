@@ -11,7 +11,12 @@
     <p>Technical details:</p>
     <ul>
       {{#each this }}
-      <li class="error">{{context}} {{error}}</li>
+      <li class="error">
+        {{context}} {{error}}
+        {{#if error.schemaPath}}
+          at schema path <code>{{error.schemaPath}}</code>
+        {{/if}}
+      </li>
       {{/each}}
     </ul>
   </div>
