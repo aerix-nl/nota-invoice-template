@@ -21,7 +21,7 @@
   "validityPeriod": 14,
   "vatPercentage": 0.21,
   "currencySymbol": "€",
-  "hourlyRate": 150,
+  "hourlyRate": 150.20,
   "client": {
     "organization": "Client Company Name",
     "contactPerson": "Client Contactperson Name",
