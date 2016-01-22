@@ -169,6 +169,9 @@ define dependencies, ()->
     productsSubtotal: => @subtotal('products')
 
     servicesSubtotal: => @subtotal('services')
+
+    hoursSubtotal: =>
+      _.reduce @services, ( (sum, item)=> sum + item.hours ), 0
     
     VAT: (category)=> @subtotal(category) * @vatPercentage
 
@@ -196,9 +199,9 @@ define dependencies, ()->
       if "function" is typeof value then value = value()
 
       symbol = @currencySymbol
-      parsed = parseInt(value)
+      parsed = parseFloat(value)
       if isNaN(parsed)
-        throw new Error("Could not parse value '" + value + "' to integer")
+        throw new Error("Could not parse value '" + value + "' to a number")
       else
         return symbol + ' ' + parsed.toFixed(2)
 
